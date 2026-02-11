@@ -6,7 +6,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <style>
-        :root { --gold: #b89754; --dark: #1a1a1a; --off-white: #fdfaf7; --red: #ff4d4d; --green: #2ecc71; --yellow: #f1c40f; }
+        :root { --gold: #b89754; --dark: #1a1a1a; --off-white: #fdfaf7; --red: #ff4d4d; --green: #2ecc71; --blue: #3b82f6; --yellow: #f1c40f; }
         body { font-family: 'Garamond', serif; background-color: var(--off-white); padding: 20px; color: var(--dark); }
         .container { max-width: 1100px; margin: auto; background: white; padding: 40px; border-top: 5px solid var(--gold); box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
         
@@ -33,9 +33,9 @@
         .group-header { background: #fdfaf7; padding: 10px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--gold); border-left: 4px solid var(--gold); margin: 20px 0 10px 0; }
 
         .status-pendente { color: #d97706; font-weight: bold; }
-        .status-agendado { color: #3b82f6; font-weight: bold; }
-        .status-confirmado { color: #059669; font-weight: bold; }
-        .status-recusado { color: #dc2626; font-weight: bold; }
+        .status-aceito { color: var(--blue); font-weight: bold; }
+        .status-confirmado { color: var(--green); font-weight: bold; }
+        .status-recusado { color: var(--red); font-weight: bold; }
         
         .btn { padding: 8px 12px; border: none; cursor: pointer; font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; color: white; transition: 0.3s; }
         .btn-info { background: #3b82f6; margin-right: 5px; }
@@ -102,13 +102,12 @@
                     <option value="00">Janeiro</option><option value="01" selected>Fevereiro</option><option value="02">Março</option>
                     <option value="03">Abril</option><option value="04">Maio</option><option value="05">Junho</option>
                     <option value="06">Julho</option><option value="07">Agosto</option><option value="08">Setembro</option>
-                    <option value="09">Outubro</option><option value="10">Novembro</option><option value="11">Dezembro</option>
+                    <option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option>
                 </select>
             </div>
         </div>
         
-        <div id="tabelaContainer">
-            </div>
+        <div id="tabelaContainer"></div>
     </div>
 </div>
 
@@ -154,19 +153,10 @@
         database.ref('agendamentos').on('value', (snapshot) => {
             const container = document.getElementById('tabelaContainer');
             container.innerHTML = "";
-            
-            let grupos = {
-                pendentes: [],
-                atendidos: [],
-                hoje: [],
-                amanha: [],
-                proximos: [],
-                recusados: []
-            };
+            let grupos = { pendentes: [], atendidos: [], hoje: [], amanha: [], proximos: [], recusados: [] };
 
             snapshot.forEach(c => { 
-                let d = c.val();
-                d.key = c.key;
+                let d = c.val(); d.key = c.key;
                 const statusAtende = (d.status === statusAtual || (statusAtual === 'agendado' && d.status === 'confirmado'));
                 const mesAgendamento = new Date(d.dataISO + "T00:00:00").getMonth().toString().padStart(2, '0');
                 const mesAtende = (statusAtual === 'pendente') ? true : (mesAgendamento === mesFiltro);
@@ -188,20 +178,21 @@
                 lista.sort((a,b) => a.dataISO.localeCompare(b.dataISO) || a.hora.localeCompare(b.hora));
                 let html = `<div class="group-header">${titulo}</div><table><thead><tr><th>Data/Hora</th><th>Noiva</th><th>WhatsApp</th><th>Status</th><th>Ações</th></tr></thead><tbody>`;
                 lista.forEach(d => {
-                    const labelStatus = (d.status === 'confirmado' || d.status === 'agendado') ? 'AGENDADO' : d.status.toUpperCase();
-                    const statusClass = d.status === 'confirmado' ? 'confirmado' : d.status;
-                    
+                    const statusLabel = d.status === 'confirmado' ? 'CONFIRMADO' : (d.status === 'agendado' ? 'ACEITO' : d.status.toUpperCase());
                     let botoes = `<button class="btn btn-info" onclick="verDetalhes('${encodeURIComponent(JSON.stringify(d))}')">Info</button>`;
+                    
                     if(d.status === 'pendente') {
                         botoes += `<button class="btn btn-aceitar" onclick="mudarStatus('${d.key}', 'agendado')">ACEITAR</button>`;
                         botoes += `<button class="btn btn-recusar" onclick="mudarStatus('${d.key}', 'recusado')">X</button>`;
                     } else {
-                        if(d.status === 'agendado') botoes += `<button class="btn btn-confirmar-final" onclick="mudarStatus('${d.key}', 'confirmado')">CONFIRMAR</button>`;
+                        if(d.status === 'agendado') {
+                            botoes += `<button class="btn btn-confirmar-final" onclick="mudarStatus('${d.key}', 'confirmado')">CONFIRMAR</button>`;
+                        }
                         botoes += `<button class="btn btn-whatsapp" onclick="enviarLembrete('${d.tel}', '${d.nome}', '${d.data}', '${d.hora}')">Lembrete</button>`;
                         botoes += `<button class="btn btn-recusar" style="margin-left:5px" onclick="mudarStatus('${d.key}', 'recusado')">X</button>`;
                     }
 
-                    html += `<tr><td>${d.data} às ${d.hora}</td><td>${d.nome}</td><td>${d.tel}</td><td class="status-${statusClass}">${labelStatus}</td><td>${botoes}</td></tr>`;
+                    html += `<tr><td>${d.data} às ${d.hora}</td><td>${d.nome}</td><td>${d.tel}</td><td class="status-${d.status}">${statusLabel}</td><td>${botoes}</td></tr>`;
                 });
                 return html + "</tbody></table>";
             };
@@ -258,7 +249,7 @@
 
     function ajustarDia(data) { dataSelecionadaExpediente = data; document.getElementById('tituloDiaEspecial').innerText = "Ajustar Expediente: " + data.split('-').reverse().join('/'); document.getElementById('modalDiaEspecial').style.display = "flex"; }
     function toggleInputsEspeciais() { const val = document.getElementById('e_status').value; document.getElementById('divHorariosEspeciais').style.display = (val === 'especial') ? 'block' : 'none'; }
-    function salvarConfigDia() { const status = document.getElementById('e_status').value; const config = { status: status }; if (status === 'especial') { config.inicio = document.getElementById('e_inicio').value; config.fim = document.getElementById('e_fim').value; } database.ref('expediente/config/' + dataSelecionadaExpediente).set(config).then(() => { alert("Configuração salva com sucesso!"); document.getElementById('modalDiaEspecial').style.display = "none"; gerarCalendarioVisivel(); }); }
+    function salvarConfigDia() { const status = document.getElementById('e_status').value; const config = { status: status }; if (status === 'especial') { config.inicio = document.getElementById('e_inicio').value; config.fim = document.getElementById('e_fim').value; } database.ref('expediente/config/' + dataSelecionadaExpediente).set(config).then(() => { alert("Configuração salva!"); document.getElementById('modalDiaEspecial').style.display = "none"; gerarCalendarioVisivel(); }); }
     function buscarOcupacaoManual() { const dataSel = document.getElementById('m_data').value; database.ref('agendamentos').orderByChild('dataISO').equalTo(dataSel).once('value', (snap) => { let ocupados = []; snap.forEach((c) => { if (c.val().status !== "recusado") ocupados.push(c.val().hora); }); gerarHorariosManual(ocupados); }); }
     function gerarHorariosManual(ocupados) { const select = document.getElementById('m_hora'); select.innerHTML = ""; const dataObj = new Date(document.getElementById('m_data').value + "T00:00:00"); const ds = dataObj.getDay(); let lista = []; if (ds === 0) { select.innerHTML = "<option>Fechado</option>"; return; } if (ds >= 1 && ds <= 5) for (let h = 9.5; h <= 17; h += 0.5) lista.push(formatarHora(h)); else { const diaMes = new Date(document.getElementById('m_data').value + "T00:00:00").getDate(); let lim = (diaMes <= 14) ? 16 : 12; for (let h = 9; h <= lim; h += 1) lista.push(formatarHora(h)); } lista.forEach(h => { let opt = document.createElement("option"); opt.value = h; let bloqueado = false; ocupados.forEach(oc => { if (ds >= 1 && ds <= 5) { if (Math.abs(hParaDec(h) - hParaDec(oc)) < 1.5) bloqueado = true; } else if(h === oc) bloqueado = true; }); if (bloqueado) { opt.text = h + " — (OCUPADO)"; opt.disabled = true; } else opt.text = h; select.add(opt); }); }
     function hParaDec(s) { let p = s.split(':'); return parseInt(p[0]) + (p[1] === "30" ? 0.5 : 0); }
@@ -267,7 +258,7 @@
     function abrirModalCadastro() { document.getElementById('modalCadastro').style.display = "flex"; }
     function fecharModais() { document.querySelectorAll('.modal').forEach(m => m.style.display = "none"); }
     function verDetalhes(jsonStr) { const d = JSON.parse(decodeURIComponent(jsonStr)); document.getElementById('detalheNome').innerText = d.nome; document.getElementById('detalheData').innerText = `Agendamento solicitado para ${d.data} às ${d.hora}`; const container = document.getElementById('detalhesNoiva'); container.innerHTML = `<div class=\"info-card-item\"><span class=\"info-card-label\">Instagram</span>${d.insta || '-'}</div><div class=\"info-card-item\"><span class=\"info-card-label\">Cidade</span>${d.cidade || '-'}</div><div class=\"info-card-item\"><span class=\"info-card-label\">Casamento</span>${d.casamento || '-'}</div><div class=\"info-card-item\"><span class=\"info-card-label\">Estilo</span>${d.finalidade}</div><div class=\"info-card-item\"><span class=\"info-card-label\">CPF</span>${d.cpf || '-'}</div><div class=\"info-card-item\"><span class=\"info-card-label\">Investimento</span>${d.orcamento || '-'}</div><div class=\"info-card-item\"><span class=\"info-card-label\">Referências?</span>${d.refs || '-'}</div><div class=\"info-card-item\"><span class=\"info-card-label\">Visitou Lojas?</span>${d.outras || '-'}</div><div class=\"info-card-item\" style=\"grid-column: span 2;\"><span class=\"info-card-label\">Benefício Primeira Visita</span>${d.beneficio || 'Não'}</div>`; document.getElementById('modalDetalhes').style.display = "flex"; }
-    function salvarManual() { const d = { data: document.getElementById('m_data').value.split('-').reverse().join('/'), dataISO: document.getElementById('m_data').value, hora: document.getElementById('m_hora').value, nome: document.getElementById('m_nome').value + " (Interno)", tel: document.getElementById('m_tel').value, cpf: document.getElementById('m_cpf').value, cidade: document.getElementById('m_cidade').value, casamento: document.getElementById('m_casamento').value.split('-').reverse().join('/'), insta: document.getElementById('m_insta').value, finalidade: document.getElementById('m_finalidade').value, refs: document.getElementById('m_refs').value, outcast: document.getElementById('m_outras').value, orcamento: document.getElementById('m_orcamento').value, status: "agendado", timestamp: new Date().toISOString() }; database.ref('agendamentos').push().set(d).then(() => { alert("Reserva confirmada!"); fecharModais(); document.getElementById('formManual').reset(); }); }
+    function salvarManual() { const d = { data: document.getElementById('m_data').value.split('-').reverse().join('/'), dataISO: document.getElementById('m_data').value, hora: document.getElementById('m_hora').value, nome: document.getElementById('m_nome').value + " (Interno)", tel: document.getElementById('m_tel').value, cpf: document.getElementById('m_cpf').value, cidade: document.getElementById('m_cidade').value, casamento: document.getElementById('m_casamento').value.split('-').reverse().join('/'), insta: document.getElementById('m_insta').value, finalidade: document.getElementById('m_finalidade').value, refs: document.getElementById('m_refs').value, overcast: document.getElementById('m_outras').value, orcamento: document.getElementById('m_orcamento').value, status: "agendado", timestamp: new Date().toISOString() }; database.ref('agendamentos').push().set(d).then(() => { alert("Reserva confirmada!"); fecharModais(); document.getElementById('formManual').reset(); }); }
 </script>
 </body>
 </html>
