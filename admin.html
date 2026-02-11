@@ -8,6 +8,10 @@
     <style>
         :root { --gold: #b89754; --dark: #1a1a1a; --off-white: #fdfaf7; --red: #ff4d4d; --green: #2ecc71; --yellow: #f1c40f; }
         body { font-family: 'Garamond', serif; background-color: var(--off-white); padding: 20px; color: var(--dark); }
+        .container { max-width: 1100px; margin: auto; background: white; padding: 40px; border-top: 5px solid var(--gold); box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+        
+        .header-admin { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 20px; margin-bottom: 20px; }
+        h1 { text-transform: uppercase; letter-spacing: 3px; font-size: 20px; margin: 0; }
         
         /* ESTILO TELA DE LOGIN */
         #loginOverlay {
@@ -24,13 +28,8 @@
             font-family: 'Garamond', serif; font-size: 16px; box-sizing: border-box;
         }
         
-        /* CONTEÚDO DO PAINEL (ESCONDIDO INICIALMENTE) */
         #painelConteudo { display: none; }
 
-        .container { max-width: 1100px; margin: auto; background: white; padding: 40px; border-top: 5px solid var(--gold); box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
-        .header-admin { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 20px; margin-bottom: 20px; }
-        h1 { text-transform: uppercase; letter-spacing: 3px; font-size: 20px; margin: 0; }
-        
         .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
         .tab-btn { background: none; border: none; padding: 10px 20px; cursor: pointer; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #999; border-bottom: 2px solid transparent; transition: 0.3s; }
         .tab-btn.active { color: var(--gold); border-bottom: 2px solid var(--gold); font-weight: bold; }
@@ -44,7 +43,7 @@
         td { padding: 12px; border-bottom: 1px solid #eee; }
         
         .status-pendente { color: #d97706; font-weight: bold; }
-        .status-confirmado { color: #059669; font-weight: bold; }
+        .status-confirmado { color: #059669; font-weight: bold; } /* Agendado */
         .status-recusado { color: #dc2626; font-weight: bold; }
         
         .btn { padding: 8px 12px; border: none; cursor: pointer; font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; color: white; transition: 0.3s; }
@@ -53,9 +52,10 @@
         .btn-recusar { background: #ef4444; }
         .btn-novo { background: var(--dark); padding: 12px 20px; font-size: 12px; letter-spacing: 2px; }
         .btn-expediente { background: var(--gold); }
-        
+        .btn-whatsapp { background: #25d366; margin-left: 5px; }
+
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
-        .modal-content { background: white; padding: 40px; width: 90%; max-width: 550px; border-top: 4px solid var(--gold); position: relative; max-height: 95vh; overflow-y: auto; text-align: center; }
+        .modal-content { background: white; padding: 40px; width: 90%; max-width: 900px; border-top: 4px solid var(--gold); position: relative; max-height: 95vh; overflow-y: auto; text-align: center; }
         .close-modal { position: absolute; top: 15px; right: 20px; cursor: pointer; font-size: 24px; color: #999; }
         
         .section-title { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 2.5px; color: var(--gold); margin-top: 30px; margin-bottom: 5px; font-weight: bold; }
@@ -105,7 +105,7 @@
         <div class="filter-bar">
             <div class="tabs">
                 <button class="tab-btn active" onclick="filtrarStatus('pendente', this)">Pendentes</button>
-                <button class="tab-btn" onclick="filtrarStatus('confirmado', this)">Confirmados</button>
+                <button class="tab-btn" onclick="filtrarStatus('confirmado', this)">Agendados</button>
                 <button class="tab-btn" onclick="filtrarStatus('recusado', this)">Recusados</button>
             </div>
             <div class="filter-group">
@@ -126,13 +126,53 @@
     </div>
 </div>
 
-<div id="modalExpediente" class="modal"><div class="modal-content" style="max-width: 900px;"><span class="close-modal" onclick="fecharModais()">&times;</span><h2 style="text-transform: uppercase; letter-spacing: 3px;">Calendário de Trabalho</h2><div style="margin: 20px 0; display: flex; justify-content: center; align-items: center; gap: 15px;"><label style="margin:0">Visualizar Mês:</label><select id="filtroMesCalendario" class="month-select" onchange="gerarCalendarioVisivel()"><option value="00">Janeiro</option><option value="01" selected>Fevereiro</option><option value="02">Março</option><option value="03">Abril</option><option value="04">Maio</option><option value="05">Junho</option><option value="06">Julho</option><option value="07">Agosto</option><option value="08">Setembro</option><option value="09">Outubro</option><option value="10">Novembro</option><option value="11">Dezembro</option></select></div><div class="calendar-grid"><div class="cal-header">DOM</div><div class="cal-header">SEG</div><div class="cal-header">TER</div><div class="cal-header">QUA</div><div class="cal-header">QUI</div><div class="cal-header">SEX</div><div class="cal-header">SÁB</div></div><div id="corpoCalendario" class="calendar-grid" style="margin-top:0;"></div><button class="btn" style="background:var(--dark); margin-top:30px; padding:15px 40px;" onclick="fecharModais()">Sair do Calendário</button></div></div>
-<div id="modalDiaEspecial" class="modal"><div class="modal-content"><span class="close-modal" onclick="fecharModais()">&times;</span><h3 id="tituloDiaEspecial">-</h3><label>Configuração do Dia</label><select id="e_status" onchange="toggleInputsEspeciais()"><option value="padrao">Seguir Padrão do Sistema</option><option value="fechado">Bloquear (Atelier Fechado)</option><option value="especial">Horário Especial / Evento</option></select><div id="divHorariosEspeciais" style="display:none;"><div class="grid-form"><div><label>Horário Início</label><input type="text" id="e_inicio" placeholder="09:30"></div><div><label>Horário Fim</label><input type="text" id="e_fim" placeholder="22:00"></div></div></div><button class="btn btn-novo" style="width:100%; margin-top:30px; padding:15px;" onclick="salvarConfigDia()">Salvar e Sair</button></div></div>
-<div id="modalDetalhes" class="modal"><div class="modal-content"><span class="close-modal" onclick="fecharModais()">&times;</span><div class="header-perfil"><h2 id="detalheNome">-</h2><p id="detalheData">-</p></div><div id="detalhesNoiva" class="info-card-grid"></div><button class="btn" style="background:var(--dark); margin-top:30px; width:100%; padding:15px;" onclick="fecharModais()">Fechar Perfil</button></div></div>
-<div id="modalCadastro" class="modal"><div class="modal-content"><span class="close-modal" onclick="fecharModais()">&times;</span><h2 style="text-transform: uppercase; letter-spacing: 3px; font-size: 18px; margin-bottom: 5px;">Reserva Manual</h2><p style="font-style: italic; color: #888; font-size: 13px;">Lançamento Interno de Agenda</p><form id="formManual"><div class="section-title">Dados do Agendamento</div><div class="grid-form"><div><label>Data</label><input type="date" id="m_data" required onchange="buscarOcupacaoManual()"></div><div><label>Hora</label><select id="m_hora" required><option value="">Escolha a data...</option></select></div></div><div class="section-title">Sua História</div><label>Nome Completo</label><input type="text" id="m_nome" required><div class="grid-form"><div><label>CPF</label><input type="text" id="m_cpf" maxlength="14" oninput="mascaraCPF(this)"></div><div><label>WhatsApp</label><input type="text" id="m_tel" maxlength="15" oninput="mascaraTel(this)" required></div></div><div class="grid-form"><div><label>Cidade</label><input type="text" id="m_cidade"></div><div><label>Data Casamento</label><input type="date" id="m_casamento"></div></div><label>Instagram (@noiva)</label><input type="text" id="m_insta" placeholder="@exemplo"><div class="section-title">A Escolha</div><label>Finalidade</label><select id="m_finalidade"><option value="Cerimonial">Cerimonial</option><option value="Civil">Civil</option><option value="Ambos">Ambos</option></select><div class="grid-form"><div><label>Referências?</label><select id="m_refs"><option value="Sim">Sim</option><option value="Não">Não</option></select></div><div><label>Outras Lojas?</label><select id="m_outras"><option value="Não">Não</option><option value="Sim">Sim</option></select></div></div><label>Investimento no Sonho</label><input type="text" id="m_orcamento" oninput="mascaraMoeda(this)" placeholder="R$ 0,00"><button type="button" class="btn btn-novo" style="width:100%; margin-top:30px;" onclick="salvarManual()">Confirmar na Agenda</button></form></div></div>
+<div id="modalExpediente" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="fecharModais()">&times;</span>
+        <h2 style="text-transform: uppercase; letter-spacing: 3px;">Calendário de Trabalho</h2>
+        <div style="margin: 20px 0; display: flex; justify-content: center; align-items: center; gap: 15px;">
+            <label style="margin:0">Visualizar Mês:</label>
+            <select id="filtroMesCalendario" class="month-select" onchange="gerarCalendarioVisivel()">
+                <option value="00">Janeiro</option><option value="01" selected>Fevereiro</option><option value="02">Março</option>
+                <option value="03">Abril</option><option value="04">Maio</option><option value="05">Junho</option>
+                <option value="06">Julho</option><option value="07">Agosto</option><option value="08">Setembro</option>
+                <option value="09">Outubro</option><option value="10">Novembro</option><option value="11">Dezembro</option>
+            </select>
+        </div>
+        <div class="calendar-grid">
+            <div class="cal-header">DOM</div><div class="cal-header">SEG</div><div class="cal-header">TER</div>
+            <div class="cal-header">QUA</div><div class="cal-header">QUI</div><div class="cal-header">SEX</div><div class="cal-header">SÁB</div>
+        </div>
+        <div id="corpoCalendario" class="calendar-grid" style="margin-top:0;"></div>
+        <button class="btn" style="background:var(--dark); margin-top:30px; padding:15px 40px;" onclick="fecharModais()">Sair do Calendário</button>
+    </div>
+</div>
+
+<div id="modalDiaEspecial" class="modal">
+    <div class="modal-content" style="max-width: 550px;">
+        <span class="close-modal" onclick="fecharModais()">&times;</span>
+        <h3 id="tituloDiaEspecial">-</h3>
+        <label>Configuração do Dia</label>
+        <select id="e_status" onchange="toggleInputsEspeciais()">
+            <option value="padrao">Seguir Padrão do Sistema</option>
+            <option value="fechado">Bloquear (Atelier Fechado)</option>
+            <option value="especial">Horário Especial / Evento</option>
+        </select>
+        <div id="divHorariosEspeciais" style="display:none;">
+            <div class="grid-form">
+                <div><label>Horário Início</label><input type="text" id="e_inicio" placeholder="09:30"></div>
+                <div><label>Horário Fim</label><input type="text" id="e_fim" placeholder="22:00"></div>
+            </div>
+        </div>
+        <button class="btn btn-novo" style="width:100%; margin-top:30px; padding:15px;" onclick="salvarConfigDia()">Salvar e Sair</button>
+    </div>
+</div>
+
+<div id="modalDetalhes" class="modal"><div class="modal-content" style="max-width: 550px;"><span class="close-modal" onclick="fecharModais()">&times;</span><div class="header-perfil"><h2 id="detalheNome">-</h2><p id="detalheData">-</p></div><div id="detalhesNoiva" class="info-card-grid"></div><button class="btn" style="background:var(--dark); margin-top:30px; width:100%; padding:15px;" onclick="fecharModais()">Fechar Perfil</button></div></div>
+
+<div id="modalCadastro" class="modal"><div class="modal-content" style="max-width: 550px;"><span class="close-modal" onclick="fecharModais()">&times;</span><h2 style="text-transform: uppercase; letter-spacing: 3px; font-size: 18px; margin-bottom: 5px;">Reserva Manual</h2><p style="font-style: italic; color: #888; font-size: 13px;">Lançamento Interno de Agenda</p><form id="formManual"><div class="section-title">Dados do Agendamento</div><div class="grid-form"><div><label>Data</label><input type="date" id="m_data" required onchange="buscarOcupacaoManual()"></div><div><label>Hora</label><select id="m_hora" required><option value="">Escolha a data...</option></select></div></div><div class="section-title">Sua História</div><label>Nome Completo</label><input type="text" id="m_nome" required><div class="grid-form"><div><label>CPF</label><input type="text" id="m_cpf" maxlength="14" oninput="mascaraCPF(this)"></div><div><label>WhatsApp</label><input type="text" id="m_tel" maxlength="15" oninput="mascaraTel(this)" required></div></div><div class="grid-form"><div><label>Cidade</label><input type="text" id="m_cidade"></div><div><label>Data Casamento</label><input type="date" id="m_casamento"></div></div><label>Instagram (@noiva)</label><input type="text" id="m_insta" placeholder="@exemplo"><div class="section-title">A Escolha</div><label>Finalidade</label><select id="m_finalidade"><option value="Cerimonial">Cerimonial</option><option value="Civil">Civil</option><option value="Ambos">Ambos</option></select><div class="grid-form"><div><label>Referências?</label><select id="m_refs"><option value="Sim">Sim</option><option value="Não">Não</option></select></div><div><label>Outras Lojas?</label><select id="m_outras"><option value="Não">Não</option><option value="Sim">Sim</option></select></div></div><label>Investimento no Sonho</label><input type="text" id="m_orcamento" oninput="mascaraMoeda(this)" placeholder="R$ 0,00"><button type="button" class="btn btn-novo" style="width:100%; margin-top:30px;" onclick="salvarManual()">Confirmar na Agenda</button></form></div></div>
 
 <script>
-    // FUNÇÃO DE LOGIN
     function verificarLogin() {
         const user = document.getElementById('userLogin').value;
         const pass = document.getElementById('passLogin').value;
@@ -140,9 +180,7 @@
             document.getElementById('loginOverlay').style.display = "none";
             document.getElementById('painelConteudo').style.display = "block";
             carregarDados();
-        } else {
-            alert("Credenciais incorretas.");
-        }
+        } else { alert("Credenciais incorretas."); }
     }
 
     const firebaseConfig = { apiKey: "AIzaSyC8MacELfK0_avvpWIWBHZpJO_WYqhjOaE", authDomain: "exclusiva-noivas---agendamento.firebaseapp.com", databaseURL: "https://exclusiva-noivas---agendamento-default-rtdb.firebaseio.com", projectId: "exclusiva-noivas---agendamento", storageBucket: "exclusiva-noivas---agendamento.firebasestorage.app", messagingSenderId: "891467475836", appId: "1:891467475836:web:9565af78e44e9d6d53d2f9" };
@@ -176,18 +214,32 @@
             });
             agendamentos.reverse().forEach(d => {
                 const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${d.data} às ${d.hora}</td><td>${d.nome}</td><td>${d.tel}</td><td class="status-${d.status}">${d.status.toUpperCase()}</td>
-                <td><button class="btn btn-info" onclick="verDetalhes('${encodeURIComponent(JSON.stringify(d))}')">Info</button><button class="btn btn-confirmar" onclick="mudarStatus('${d.key}', 'confirmado')">OK</button><button class="btn btn-recusar" onclick="mudarStatus('${d.key}', 'recusado')">X</button></td>`;
+                const labelStatus = d.status === 'confirmado' ? 'AGENDADO' : d.status.toUpperCase();
+                
+                let btnLembrete = "";
+                if(d.status === 'confirmado') {
+                    btnLembrete = `<button class="btn btn-whatsapp" onclick="enviarLembrete('${d.tel}', '${d.nome}', '${d.data}', '${d.hora}')">Lembrete</button>`;
+                }
+
+                tr.innerHTML = `<td>${d.data} às ${d.hora}</td><td>${d.nome}</td><td>${d.tel}</td><td class="status-${d.status}">${labelStatus}</td>
+                <td>
+                    <button class="btn btn-info" onclick="verDetalhes('${encodeURIComponent(JSON.stringify(d))}')">Info</button>
+                    <button class="btn btn-confirmar" onclick="mudarStatus('${d.key}', 'confirmado')">ACEITAR</button>
+                    <button class="btn btn-recusar" onclick="mudarStatus('${d.key}', 'recusado')">Recusar</button>
+                    ${btnLembrete}
+                </td>`;
                 corpo.appendChild(tr);
             });
         });
     }
 
-    function abrirModalExpediente() { 
-        document.getElementById('filtroMesCalendario').value = document.getElementById('filtroMes').value;
-        document.getElementById('modalExpediente').style.display = "flex"; 
-        gerarCalendarioVisivel(); 
+    function enviarLembrete(tel, nome, data, hora) {
+        const fone = tel.replace(/\D/g, "");
+        const msg = `Olá *${nome}*! Tudo bem? %0A%0APassando para lembrar do seu horário agendado aqui na *Exclusiva Noivas* para o dia *${data}* às *${hora}*. %0A%0APoderia nos confirmar se está tudo certo para o seu atendimento? 💍`;
+        window.open(`https://wa.me/55${fone}?text=${msg}`, '_blank');
     }
+
+    function abrirModalExpediente() { document.getElementById('filtroMesCalendario').value = document.getElementById('filtroMes').value; document.getElementById('modalExpediente').style.display = "flex"; gerarCalendarioVisivel(); }
     
     function gerarCalendarioVisivel() {
         const mes = parseInt(document.getElementById('filtroMesCalendario').value);
@@ -227,26 +279,9 @@
         });
     }
 
-    function ajustarDia(data) {
-        dataSelecionadaExpediente = data;
-        document.getElementById('tituloDiaEspecial').innerText = "Ajustar Expediente: " + data.split('-').reverse().join('/');
-        document.getElementById('modalDiaEspecial').style.display = "flex";
-    }
-
-    function toggleInputsEspeciais() {
-        const val = document.getElementById('e_status').value;
-        document.getElementById('divHorariosEspeciais').style.display = (val === 'especial') ? 'block' : 'none';
-    }
-
-    function salvarConfigDia() {
-        const status = document.getElementById('e_status').value;
-        const config = { status: status };
-        if (status === 'especial') { config.inicio = document.getElementById('e_inicio').value; config.fim = document.getElementById('e_fim').value; }
-        database.ref('expediente/config/' + dataSelecionadaExpediente).set(config).then(() => {
-            alert("Configuração salva com sucesso!"); document.getElementById('modalDiaEspecial').style.display = "none"; gerarCalendarioVisivel();
-        });
-    }
-
+    function ajustarDia(data) { dataSelecionadaExpediente = data; document.getElementById('tituloDiaEspecial').innerText = "Ajustar Expediente: " + data.split('-').reverse().join('/'); document.getElementById('modalDiaEspecial').style.display = "flex"; }
+    function toggleInputsEspeciais() { const val = document.getElementById('e_status').value; document.getElementById('divHorariosEspeciais').style.display = (val === 'especial') ? 'block' : 'none'; }
+    function salvarConfigDia() { const status = document.getElementById('e_status').value; const config = { status: status }; if (status === 'especial') { config.inicio = document.getElementById('e_inicio').value; config.fim = document.getElementById('e_fim').value; } database.ref('expediente/config/' + dataSelecionadaExpediente).set(config).then(() => { alert("Configuração salva com sucesso!"); document.getElementById('modalDiaEspecial').style.display = "none"; gerarCalendarioVisivel(); }); }
     function buscarOcupacaoManual() { const dataSel = document.getElementById('m_data').value; database.ref('agendamentos').orderByChild('dataISO').equalTo(dataSel).once('value', (snap) => { let ocupados = []; snap.forEach((c) => { if (c.val().status !== "recusado") ocupados.push(c.val().hora); }); gerarHorariosManual(ocupados); }); }
     function gerarHorariosManual(ocupados) { const select = document.getElementById('m_hora'); select.innerHTML = ""; const dataObj = new Date(document.getElementById('m_data').value + "T00:00:00"); const ds = dataObj.getDay(); let lista = []; if (ds === 0) { select.innerHTML = "<option>Fechado</option>"; return; } if (ds >= 1 && ds <= 5) for (let h = 9.5; h <= 17; h += 0.5) lista.push(formatarHora(h)); else { const diaMes = new Date(document.getElementById('m_data').value + "T00:00:00").getDate(); let lim = (diaMes <= 14) ? 16 : 12; for (let h = 9; h <= lim; h += 1) lista.push(formatarHora(h)); } lista.forEach(h => { let opt = document.createElement("option"); opt.value = h; let bloqueado = false; ocupados.forEach(oc => { if (ds >= 1 && ds <= 5) { if (Math.abs(hParaDec(h) - hParaDec(oc)) < 1.5) bloqueado = true; } else if(h === oc) bloqueado = true; }); if (bloqueado) { opt.text = h + " — (OCUPADO)"; opt.disabled = true; } else opt.text = h; select.add(opt); }); }
     function hParaDec(s) { let p = s.split(':'); return parseInt(p[0]) + (p[1] === "30" ? 0.5 : 0); }
@@ -255,7 +290,7 @@
     function abrirModalCadastro() { document.getElementById('modalCadastro').style.display = "flex"; }
     function fecharModais() { document.querySelectorAll('.modal').forEach(m => m.style.display = "none"); }
     function verDetalhes(jsonStr) { const d = JSON.parse(decodeURIComponent(jsonStr)); document.getElementById('detalheNome').innerText = d.nome; document.getElementById('detalheData').innerText = `Agendamento solicitado para ${d.data} às ${d.hora}`; const container = document.getElementById('detalhesNoiva'); container.innerHTML = `<div class=\"info-card-item\"><span class=\"info-card-label\">Instagram</span>${d.insta || '-'}</div><div class=\"info-card-item\"><span class=\"info-card-label\">Cidade</span>${d.cidade || '-'}</div><div class=\"info-card-item\"><span class=\"info-card-label\">Casamento</span>${d.casamento || '-'}</div><div class=\"info-card-item\"><span class=\"info-card-label\">Estilo</span>${d.finalidade}</div><div class=\"info-card-item\"><span class=\"info-card-label\">CPF</span>${d.cpf || '-'}</div><div class=\"info-card-item\"><span class=\"info-card-label\">Investimento</span>${d.orcamento || '-'}</div><div class=\"info-card-item\"><span class=\"info-card-label\">Referências?</span>${d.refs || '-'}</div><div class=\"info-card-item\"><span class=\"info-card-label\">Visitou Lojas?</span>${d.outras || '-'}</div><div class=\"info-card-item\" style=\"grid-column: span 2;\"><span class=\"info-card-label\">Benefício Primeira Visita</span>${d.beneficio || 'Não'}</div>`; document.getElementById('modalDetalhes').style.display = "flex"; }
-    function salvarManual() { const d = { data: document.getElementById('m_data').value.split('-').reverse().join('/'), dataISO: document.getElementById('m_data').value, hora: document.getElementById('m_hora').value, nome: document.getElementById('m_nome').value + " (Interno)", tel: document.getElementById('m_tel').value, cpf: document.getElementById('m_cpf').value, cidade: document.getElementById('m_cidade').value, casamento: document.getElementById('m_casamento').value.split('-').reverse().join('/'), insta: document.getElementById('m_insta').value, finalidade: document.getElementById('m_finalidade').value, refs: document.getElementById('m_refs').value, outcast: document.getElementById('m_outras').value, orcamento: document.getElementById('m_orcamento').value, status: "confirmado", timestamp: new Date().toISOString() }; database.ref('agendamentos').push().set(d).then(() => { alert("Reserva confirmada!"); fecharModais(); document.getElementById('formManual').reset(); }); }
+    function salvarManual() { const d = { data: document.getElementById('m_data').value.split('-').reverse().join('/'), dataISO: document.getElementById('m_data').value, hora: document.getElementById('m_hora').value, nome: document.getElementById('m_nome').value + " (Interno)", tel: document.getElementById('m_tel').value, cpf: document.getElementById('m_cpf').value, cidade: document.getElementById('m_cidade').value, casamento: document.getElementById('m_casamento').value.split('-').reverse().join('/'), insta: document.getElementById('m_insta').value, finalidade: document.getElementById('m_finalidade').value, refs: document.getElementById('m_refs').value, overcast: document.getElementById('m_outras').value, orcamento: document.getElementById('m_orcamento').value, status: "confirmado", timestamp: new Date().toISOString() }; database.ref('agendamentos').push().set(d).then(() => { alert("Reserva confirmada!"); fecharModais(); document.getElementById('formManual').reset(); }); }
 </script>
 </body>
 </html>
