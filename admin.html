@@ -42,6 +42,7 @@
         .btn-aceitar { background: #10b981; margin-right: 5px; }
         .btn-confirmar-final { background: #059669; margin-right: 5px; }
         .btn-recusar { background: #ef4444; }
+        .btn-reativar { background: var(--gold); }
         .btn-novo { background: var(--dark); padding: 12px 20px; font-size: 12px; letter-spacing: 2px; }
         .btn-expediente { background: var(--gold); }
         .btn-whatsapp { background: #25d366; margin-left: 5px; }
@@ -184,6 +185,8 @@
                     if(d.status === 'pendente') {
                         botoes += `<button class="btn btn-aceitar" onclick="mudarStatus('${d.key}', 'agendado')">ACEITAR</button>`;
                         botoes += `<button class="btn btn-recusar" onclick="mudarStatus('${d.key}', 'recusado')">X</button>`;
+                    } else if(d.status === 'recusado') {
+                        botoes += `<button class="btn btn-reativar" onclick="mudarStatus('${d.key}', 'pendente')">REATIVAR</button>`;
                     } else {
                         if(d.status === 'agendado') {
                             botoes += `<button class="btn btn-confirmar-final" onclick="mudarStatus('${d.key}', 'confirmado')">CONFIRMAR</button>`;
@@ -258,7 +261,7 @@
     function abrirModalCadastro() { document.getElementById('modalCadastro').style.display = "flex"; }
     function fecharModais() { document.querySelectorAll('.modal').forEach(m => m.style.display = "none"); }
     function verDetalhes(jsonStr) { const d = JSON.parse(decodeURIComponent(jsonStr)); document.getElementById('detalheNome').innerText = d.nome; document.getElementById('detalheData').innerText = `Agendamento solicitado para ${d.data} às ${d.hora}`; const container = document.getElementById('detalhesNoiva'); container.innerHTML = `<div class=\"info-card-item\"><span class=\"info-card-label\">Instagram</span>${d.insta || '-'}</div><div class=\"info-card-item\"><span class=\"info-card-label\">Cidade</span>${d.cidade || '-'}</div><div class=\"info-card-item\"><span class=\"info-card-label\">Casamento</span>${d.casamento || '-'}</div><div class=\"info-card-item\"><span class=\"info-card-label\">Estilo</span>${d.finalidade}</div><div class=\"info-card-item\"><span class=\"info-card-label\">CPF</span>${d.cpf || '-'}</div><div class=\"info-card-item\"><span class=\"info-card-label\">Investimento</span>${d.orcamento || '-'}</div><div class=\"info-card-item\"><span class=\"info-card-label\">Referências?</span>${d.refs || '-'}</div><div class=\"info-card-item\"><span class=\"info-card-label\">Visitou Lojas?</span>${d.outras || '-'}</div><div class=\"info-card-item\" style=\"grid-column: span 2;\"><span class=\"info-card-label\">Benefício Primeira Visita</span>${d.beneficio || 'Não'}</div>`; document.getElementById('modalDetalhes').style.display = "flex"; }
-    function salvarManual() { const d = { data: document.getElementById('m_data').value.split('-').reverse().join('/'), dataISO: document.getElementById('m_data').value, hora: document.getElementById('m_hora').value, nome: document.getElementById('m_nome').value + " (Interno)", tel: document.getElementById('m_tel').value, cpf: document.getElementById('m_cpf').value, cidade: document.getElementById('m_cidade').value, casamento: document.getElementById('m_casamento').value.split('-').reverse().join('/'), insta: document.getElementById('m_insta').value, finalidade: document.getElementById('m_finalidade').value, refs: document.getElementById('m_refs').value, overcast: document.getElementById('m_outras').value, orcamento: document.getElementById('m_orcamento').value, status: "agendado", timestamp: new Date().toISOString() }; database.ref('agendamentos').push().set(d).then(() => { alert("Reserva confirmada!"); fecharModais(); document.getElementById('formManual').reset(); }); }
+    function salvarManual() { const d = { data: document.getElementById('m_data').value.split('-').reverse().join('/'), dataISO: document.getElementById('m_data').value, hora: document.getElementById('m_hora').value, nome: document.getElementById('m_nome').value + " (Interno)", tel: document.getElementById('m_tel').value, cpf: document.getElementById('m_cpf').value, cidade: document.getElementById('m_cidade').value, casamento: document.getElementById('m_casamento').value.split('-').reverse().join('/'), insta: document.getElementById('m_insta').value, finalidade: document.getElementById('m_finalidade').value, refs: document.getElementById('m_refs').value, outcast: document.getElementById('m_outras').value, orcamento: document.getElementById('m_orcamento').value, status: "agendado", timestamp: new Date().toISOString() }; database.ref('agendamentos').push().set(d).then(() => { alert("Reserva confirmada!"); fecharModais(); document.getElementById('formManual').reset(); }); }
 </script>
 </body>
 </html>
