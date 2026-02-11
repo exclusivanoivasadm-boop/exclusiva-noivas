@@ -13,7 +13,6 @@
         .header-admin { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 20px; margin-bottom: 20px; }
         h1 { text-transform: uppercase; letter-spacing: 3px; font-size: 20px; margin: 0; }
         
-        /* ESTILO TELA DE LOGIN */
         #loginOverlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--off-white); z-index: 9999;
@@ -43,12 +42,14 @@
         td { padding: 12px; border-bottom: 1px solid #eee; }
         
         .status-pendente { color: #d97706; font-weight: bold; }
-        .status-confirmado { color: #059669; font-weight: bold; } /* Agendado */
+        .status-agendado { color: #3b82f6; font-weight: bold; }
+        .status-confirmado { color: #059669; font-weight: bold; }
         .status-recusado { color: #dc2626; font-weight: bold; }
         
         .btn { padding: 8px 12px; border: none; cursor: pointer; font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; color: white; transition: 0.3s; }
         .btn-info { background: #3b82f6; margin-right: 5px; }
-        .btn-confirmar { background: #10b981; margin-right: 5px; }
+        .btn-aceitar { background: #10b981; margin-right: 5px; }
+        .btn-confirmar-final { background: #059669; margin-right: 5px; } /* Verde escuro */
         .btn-recusar { background: #ef4444; }
         .btn-novo { background: var(--dark); padding: 12px 20px; font-size: 12px; letter-spacing: 2px; }
         .btn-expediente { background: var(--gold); }
@@ -105,7 +106,8 @@
         <div class="filter-bar">
             <div class="tabs">
                 <button class="tab-btn active" onclick="filtrarStatus('pendente', this)">Pendentes</button>
-                <button class="tab-btn" onclick="filtrarStatus('confirmado', this)">Agendados</button>
+                <button class="tab-btn" onclick="filtrarStatus('agendado', this)">Agendados</button>
+                <button class="tab-btn" onclick="filtrarStatus('confirmado', this)">Confirmados</button>
                 <button class="tab-btn" onclick="filtrarStatus('recusado', this)">Recusados</button>
             </div>
             <div class="filter-group">
@@ -114,7 +116,7 @@
                     <option value="00">Janeiro</option><option value="01" selected>Fevereiro</option><option value="02">Março</option>
                     <option value="03">Abril</option><option value="04">Maio</option><option value="05">Junho</option>
                     <option value="06">Julho</option><option value="07">Agosto</option><option value="08">Setembro</option>
-                    <option value="09">Outubro</option><option value="10">Novembro</option><option value="11">Dezembro</option>
+                    <option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option>
                 </select>
             </div>
         </div>
@@ -126,50 +128,9 @@
     </div>
 </div>
 
-<div id="modalExpediente" class="modal">
-    <div class="modal-content">
-        <span class="close-modal" onclick="fecharModais()">&times;</span>
-        <h2 style="text-transform: uppercase; letter-spacing: 3px;">Calendário de Trabalho</h2>
-        <div style="margin: 20px 0; display: flex; justify-content: center; align-items: center; gap: 15px;">
-            <label style="margin:0">Visualizar Mês:</label>
-            <select id="filtroMesCalendario" class="month-select" onchange="gerarCalendarioVisivel()">
-                <option value="00">Janeiro</option><option value="01" selected>Fevereiro</option><option value="02">Março</option>
-                <option value="03">Abril</option><option value="04">Maio</option><option value="05">Junho</option>
-                <option value="06">Julho</option><option value="07">Agosto</option><option value="08">Setembro</option>
-                <option value="09">Outubro</option><option value="10">Novembro</option><option value="11">Dezembro</option>
-            </select>
-        </div>
-        <div class="calendar-grid">
-            <div class="cal-header">DOM</div><div class="cal-header">SEG</div><div class="cal-header">TER</div>
-            <div class="cal-header">QUA</div><div class="cal-header">QUI</div><div class="cal-header">SEX</div><div class="cal-header">SÁB</div>
-        </div>
-        <div id="corpoCalendario" class="calendar-grid" style="margin-top:0;"></div>
-        <button class="btn" style="background:var(--dark); margin-top:30px; padding:15px 40px;" onclick="fecharModais()">Sair do Calendário</button>
-    </div>
-</div>
-
-<div id="modalDiaEspecial" class="modal">
-    <div class="modal-content" style="max-width: 550px;">
-        <span class="close-modal" onclick="fecharModais()">&times;</span>
-        <h3 id="tituloDiaEspecial">-</h3>
-        <label>Configuração do Dia</label>
-        <select id="e_status" onchange="toggleInputsEspeciais()">
-            <option value="padrao">Seguir Padrão do Sistema</option>
-            <option value="fechado">Bloquear (Atelier Fechado)</option>
-            <option value="especial">Horário Especial / Evento</option>
-        </select>
-        <div id="divHorariosEspeciais" style="display:none;">
-            <div class="grid-form">
-                <div><label>Horário Início</label><input type="text" id="e_inicio" placeholder="09:30"></div>
-                <div><label>Horário Fim</label><input type="text" id="e_fim" placeholder="22:00"></div>
-            </div>
-        </div>
-        <button class="btn btn-novo" style="width:100%; margin-top:30px; padding:15px;" onclick="salvarConfigDia()">Salvar e Sair</button>
-    </div>
-</div>
-
+<div id="modalExpediente" class="modal"><div class="modal-content" style="max-width: 900px;"><span class="close-modal" onclick="fecharModais()">&times;</span><h2 style="text-transform: uppercase; letter-spacing: 3px;">Calendário de Trabalho</h2><div style="margin: 20px 0; display: flex; justify-content: center; align-items: center; gap: 15px;"><label style="margin:0">Visualizar Mês:</label><select id="filtroMesCalendario" class="month-select" onchange="gerarCalendarioVisivel()"><option value="00">Janeiro</option><option value="01" selected>Fevereiro</option><option value="02">Março</option><option value="03">Abril</option><option value="04">Maio</option><option value="05">Junho</option><option value="06">Julho</option><option value="07">Agosto</option><option value="08">Setembro</option><option value="09">Outubro</option><option value="10">Novembro</option><option value="11">Dezembro</option></select></div><div class="calendar-grid"><div class="cal-header">DOM</div><div class="cal-header">SEG</div><div class="cal-header">TER</div><div class="cal-header">QUA</div><div class="cal-header">QUI</div><div class="cal-header">SEX</div><div class="cal-header">SÁB</div></div><div id="corpoCalendario" class="calendar-grid" style="margin-top:0;"></div><button class="btn" style="background:var(--dark); margin-top:30px; padding:15px 40px;" onclick="fecharModais()">Sair do Calendário</button></div></div>
+<div id="modalDiaEspecial" class="modal"><div class="modal-content" style="max-width: 550px;"><span class="close-modal" onclick="fecharModais()">&times;</span><h3 id="tituloDiaEspecial">-</h3><label>Configuração do Dia</label><select id="e_status" onchange="toggleInputsEspeciais()"><option value="padrao">Seguir Padrão do Sistema</option><option value="fechado">Bloquear (Atelier Fechado)</option><option value="especial">Horário Especial / Evento</option></select><div id="divHorariosEspeciais" style="display:none;"><div class="grid-form"><div><label>Horário Início</label><input type="text" id="e_inicio" placeholder="09:30"></div><div><label>Horário Fim</label><input type="text" id="e_fim" placeholder="22:00"></div></div></div><button class="btn btn-novo" style="width:100%; margin-top:30px; padding:15px;" onclick="salvarConfigDia()">Salvar e Sair</button></div></div>
 <div id="modalDetalhes" class="modal"><div class="modal-content" style="max-width: 550px;"><span class="close-modal" onclick="fecharModais()">&times;</span><div class="header-perfil"><h2 id="detalheNome">-</h2><p id="detalheData">-</p></div><div id="detalhesNoiva" class="info-card-grid"></div><button class="btn" style="background:var(--dark); margin-top:30px; width:100%; padding:15px;" onclick="fecharModais()">Fechar Perfil</button></div></div>
-
 <div id="modalCadastro" class="modal"><div class="modal-content" style="max-width: 550px;"><span class="close-modal" onclick="fecharModais()">&times;</span><h2 style="text-transform: uppercase; letter-spacing: 3px; font-size: 18px; margin-bottom: 5px;">Reserva Manual</h2><p style="font-style: italic; color: #888; font-size: 13px;">Lançamento Interno de Agenda</p><form id="formManual"><div class="section-title">Dados do Agendamento</div><div class="grid-form"><div><label>Data</label><input type="date" id="m_data" required onchange="buscarOcupacaoManual()"></div><div><label>Hora</label><select id="m_hora" required><option value="">Escolha a data...</option></select></div></div><div class="section-title">Sua História</div><label>Nome Completo</label><input type="text" id="m_nome" required><div class="grid-form"><div><label>CPF</label><input type="text" id="m_cpf" maxlength="14" oninput="mascaraCPF(this)"></div><div><label>WhatsApp</label><input type="text" id="m_tel" maxlength="15" oninput="mascaraTel(this)" required></div></div><div class="grid-form"><div><label>Cidade</label><input type="text" id="m_cidade"></div><div><label>Data Casamento</label><input type="date" id="m_casamento"></div></div><label>Instagram (@noiva)</label><input type="text" id="m_insta" placeholder="@exemplo"><div class="section-title">A Escolha</div><label>Finalidade</label><select id="m_finalidade"><option value="Cerimonial">Cerimonial</option><option value="Civil">Civil</option><option value="Ambos">Ambos</option></select><div class="grid-form"><div><label>Referências?</label><select id="m_refs"><option value="Sim">Sim</option><option value="Não">Não</option></select></div><div><label>Outras Lojas?</label><select id="m_outras"><option value="Não">Não</option><option value="Sim">Sim</option></select></div></div><label>Investimento no Sonho</label><input type="text" id="m_orcamento" oninput="mascaraMoeda(this)" placeholder="R$ 0,00"><button type="button" class="btn btn-novo" style="width:100%; margin-top:30px;" onclick="salvarManual()">Confirmar na Agenda</button></form></div></div>
 
 <script>
@@ -214,20 +175,19 @@
             });
             agendamentos.reverse().forEach(d => {
                 const tr = document.createElement('tr');
-                const labelStatus = d.status === 'confirmado' ? 'AGENDADO' : d.status.toUpperCase();
+                let botoesAcao = `<button class="btn btn-info" onclick="verDetalhes('${encodeURIComponent(JSON.stringify(d))}')">Info</button>`;
                 
-                let btnLembrete = "";
-                if(d.status === 'confirmado') {
-                    btnLembrete = `<button class="btn btn-whatsapp" onclick="enviarLembrete('${d.tel}', '${d.nome}', '${d.data}', '${d.hora}')">Lembrete</button>`;
+                if(d.status === 'pendente') {
+                    botoesAcao += `<button class="btn btn-aceitar" onclick="mudarStatus('${d.key}', 'agendado')">ACEITAR</button>`;
+                    botoesAcao += `<button class="btn btn-recusar" onclick="mudarStatus('${d.key}', 'recusado')">Recusar</button>`;
+                } else if(d.status === 'agendado') {
+                    botoesAcao += `<button class="btn btn-confirmar-final" onclick="mudarStatus('${d.key}', 'confirmado')">CONFIRMAR</button>`;
+                    botoesAcao += `<button class="btn btn-whatsapp" onclick="enviarLembrete('${d.tel}', '${d.nome}', '${d.data}', '${d.hora}')">Lembrete</button>`;
+                    botoesAcao += `<button class="btn btn-recusar" style="margin-left:5px" onclick="mudarStatus('${d.key}', 'recusado')">X</button>`;
                 }
 
-                tr.innerHTML = `<td>${d.data} às ${d.hora}</td><td>${d.nome}</td><td>${d.tel}</td><td class="status-${d.status}">${labelStatus}</td>
-                <td>
-                    <button class="btn btn-info" onclick="verDetalhes('${encodeURIComponent(JSON.stringify(d))}')">Info</button>
-                    <button class="btn btn-confirmar" onclick="mudarStatus('${d.key}', 'confirmado')">ACEITAR</button>
-                    <button class="btn btn-recusar" onclick="mudarStatus('${d.key}', 'recusado')">Recusar</button>
-                    ${btnLembrete}
-                </td>`;
+                tr.innerHTML = `<td>${d.data} às ${d.hora}</td><td>${d.nome}</td><td>${d.tel}</td><td class="status-${d.status}">${d.status.toUpperCase()}</td>
+                <td>${botoesAcao}</td>`;
                 corpo.appendChild(tr);
             });
         });
@@ -240,7 +200,6 @@
     }
 
     function abrirModalExpediente() { document.getElementById('filtroMesCalendario').value = document.getElementById('filtroMes').value; document.getElementById('modalExpediente').style.display = "flex"; gerarCalendarioVisivel(); }
-    
     function gerarCalendarioVisivel() {
         const mes = parseInt(document.getElementById('filtroMesCalendario').value);
         const ano = 2026;
@@ -248,16 +207,11 @@
         const diasNoMes = new Date(ano, mes + 1, 0).getDate();
         const corpo = document.getElementById('corpoCalendario');
         corpo.innerHTML = "";
-
-        Promise.all([
-            database.ref('expediente/config').once('value'),
-            database.ref('agendamentos').once('value')
-        ]).then(([snapConfig, snapAgend]) => {
+        Promise.all([database.ref('expediente/config').once('value'), database.ref('agendamentos').once('value')]).then(([snapConfig, snapAgend]) => {
             const configs = snapConfig.val() || {};
             const agendamentos = snapAgend.val() || {};
             let contagemPorData = {};
-            Object.values(agendamentos).forEach(a => { if(a.status === 'confirmado') contagemPorData[a.dataISO] = (contagemPorData[a.dataISO] || 0) + 1; });
-
+            Object.values(agendamentos).forEach(a => { if(a.status === 'agendado' || a.status === 'confirmado') contagemPorData[a.dataISO] = (contagemPorData[a.dataISO] || 0) + 1; });
             for (let i = 0; i < primeiroDia; i++) corpo.innerHTML += `<div style="background:none; border:none;"></div>`;
             for (let dia = 1; dia <= diasNoMes; dia++) {
                 const dataISO = `${ano}-${(mes + 1).toString().padStart(2, '0')}-${dia.toString().padStart(2, '0')}`;
@@ -266,7 +220,6 @@
                 const dataObj = new Date(dataISO + "T00:00:00");
                 const ds = dataObj.getDay();
                 let classe = "dia-padrao"; let horarioLabel = "09:30 - 17:00";
-
                 if (configDia.status === 'fechado' || ds === 0) { classe = "dia-fechado"; horarioLabel = "FECHADO"; }
                 else if (configDia.status === 'especial') { classe = "dia-longo"; horarioLabel = `${configDia.inicio} - ${configDia.fim}`; }
                 else if (ds === 6) {
@@ -290,7 +243,7 @@
     function abrirModalCadastro() { document.getElementById('modalCadastro').style.display = "flex"; }
     function fecharModais() { document.querySelectorAll('.modal').forEach(m => m.style.display = "none"); }
     function verDetalhes(jsonStr) { const d = JSON.parse(decodeURIComponent(jsonStr)); document.getElementById('detalheNome').innerText = d.nome; document.getElementById('detalheData').innerText = `Agendamento solicitado para ${d.data} às ${d.hora}`; const container = document.getElementById('detalhesNoiva'); container.innerHTML = `<div class=\"info-card-item\"><span class=\"info-card-label\">Instagram</span>${d.insta || '-'}</div><div class=\"info-card-item\"><span class=\"info-card-label\">Cidade</span>${d.cidade || '-'}</div><div class=\"info-card-item\"><span class=\"info-card-label\">Casamento</span>${d.casamento || '-'}</div><div class=\"info-card-item\"><span class=\"info-card-label\">Estilo</span>${d.finalidade}</div><div class=\"info-card-item\"><span class=\"info-card-label\">CPF</span>${d.cpf || '-'}</div><div class=\"info-card-item\"><span class=\"info-card-label\">Investimento</span>${d.orcamento || '-'}</div><div class=\"info-card-item\"><span class=\"info-card-label\">Referências?</span>${d.refs || '-'}</div><div class=\"info-card-item\"><span class=\"info-card-label\">Visitou Lojas?</span>${d.outras || '-'}</div><div class=\"info-card-item\" style=\"grid-column: span 2;\"><span class=\"info-card-label\">Benefício Primeira Visita</span>${d.beneficio || 'Não'}</div>`; document.getElementById('modalDetalhes').style.display = "flex"; }
-    function salvarManual() { const d = { data: document.getElementById('m_data').value.split('-').reverse().join('/'), dataISO: document.getElementById('m_data').value, hora: document.getElementById('m_hora').value, nome: document.getElementById('m_nome').value + " (Interno)", tel: document.getElementById('m_tel').value, cpf: document.getElementById('m_cpf').value, cidade: document.getElementById('m_cidade').value, casamento: document.getElementById('m_casamento').value.split('-').reverse().join('/'), insta: document.getElementById('m_insta').value, finalidade: document.getElementById('m_finalidade').value, refs: document.getElementById('m_refs').value, overcast: document.getElementById('m_outras').value, orcamento: document.getElementById('m_orcamento').value, status: "confirmado", timestamp: new Date().toISOString() }; database.ref('agendamentos').push().set(d).then(() => { alert("Reserva confirmada!"); fecharModais(); document.getElementById('formManual').reset(); }); }
+    function salvarManual() { const d = { data: document.getElementById('m_data').value.split('-').reverse().join('/'), dataISO: document.getElementById('m_data').value, hora: document.getElementById('m_hora').value, nome: document.getElementById('m_nome').value + " (Interno)", tel: document.getElementById('m_tel').value, cpf: document.getElementById('m_cpf').value, cidade: document.getElementById('m_cidade').value, casamento: document.getElementById('m_casamento').value.split('-').reverse().join('/'), insta: document.getElementById('m_insta').value, finalidade: document.getElementById('m_finalidade').value, refs: document.getElementById('m_refs').value, outcast: document.getElementById('m_outras').value, orcamento: document.getElementById('m_orcamento').value, status: "agendado", timestamp: new Date().toISOString() }; database.ref('agendamentos').push().set(d).then(() => { alert("Reserva confirmada!"); fecharModais(); document.getElementById('formManual').reset(); }); }
 </script>
 </body>
 </html>
