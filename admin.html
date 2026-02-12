@@ -13,6 +13,11 @@
         .header-admin { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 20px; margin-bottom: 20px; }
         h1 { text-transform: uppercase; letter-spacing: 3px; font-size: 20px; margin: 0; }
         
+        .dashboard-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px; }
+        .dash-card { background: #fff; border: 1px solid #eee; padding: 20px; text-align: center; border-radius: 4px; border-top: 3px solid var(--gold); }
+        .dash-val { display: block; font-size: 24px; font-weight: bold; color: var(--gold); }
+        .dash-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #999; }
+
         #loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--off-white); z-index: 9999; display: flex; justify-content: center; align-items: center; }
         .login-box { background: white; padding: 50px; border-top: 4px solid var(--gold); box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; width: 100%; max-width: 350px; }
         .login-box input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; font-family: 'Garamond', serif; font-size: 16px; box-sizing: border-box; }
@@ -33,9 +38,10 @@
         .group-header { background: #fdfaf7; padding: 10px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--gold); border-left: 4px solid var(--gold); margin: 20px 0 10px 0; }
 
         .status-pendente { color: #d97706; font-weight: bold; }
-        .status-aceito { color: var(--blue); font-weight: bold; }
+        .status-agendado { color: var(--blue); font-weight: bold; }
         .status-confirmado { color: var(--green); font-weight: bold; }
         .status-recusado { color: var(--red); font-weight: bold; }
+        .status-finalizado { color: var(--dark); font-weight: bold; }
         
         .btn { padding: 8px 12px; border: none; cursor: pointer; font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; color: white; transition: 0.3s; }
         .btn-info { background: #3b82f6; margin-right: 5px; }
@@ -46,14 +52,19 @@
         .btn-novo { background: var(--dark); padding: 12px 20px; font-size: 12px; letter-spacing: 2px; }
         .btn-expediente { background: var(--gold); }
         .btn-whatsapp { background: #25d366; margin-left: 5px; }
+        .btn-finalizar { background: #6366f1; margin-left: 5px; }
+        .btn-editar { background: #8b5cf6; margin-right: 5px; }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
-        .modal-content { background: white; padding: 40px; width: 90%; max-width: 900px; border-top: 4px solid var(--gold); position: relative; max-height: 95vh; overflow-y: auto; text-align: center; }
+        .modal-content { background: white; padding: 40px; width: 95%; max-width: 800px; border-top: 4px solid var(--gold); position: relative; max-height: 95vh; overflow-y: auto; text-align: center; }
         .close-modal { position: absolute; top: 15px; right: 20px; cursor: pointer; font-size: 24px; color: #999; }
         
-        .grid-form { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+        .grid-form { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: left; }
+        .grid-form div { display: flex; flex-direction: column; }
+        .section-title { text-align: left; font-weight: bold; color: var(--gold); text-transform: uppercase; font-size: 11px; margin: 15px 0 5px 0; border-bottom: 1px solid #eee; padding-bottom: 3px; }
+
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-top: 10px; background: #eee; padding: 5px; }
-        .cal-day { background: white; min-height: 90px; padding: 8px; font-size: 12px; cursor: pointer; border: 1px solid #ddd; display: flex; flex-direction: column; justify-content: space-between; }
+        .cal-day { background: white; min-height: 90px; padding: 8px; font-size: 12px; cursor: pointer; border: 1px solid #ddd; display: flex; flex-direction: column; justify-content: space-between; text-align: left; }
         .cal-header { font-weight: bold; background: var(--dark); color: white; padding: 10px 0; font-size: 10px; text-align: center; }
         .dia-fechado { background-color: var(--red) !important; color: white; }
         .dia-longo { background-color: var(--green) !important; color: white; }
@@ -66,7 +77,9 @@
         .info-card-label { font-size: 9px; text-transform: uppercase; color: var(--gold); font-weight: bold; display: block; }
         .header-perfil { border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 15px; }
         .header-perfil h2 { margin: 0; text-transform: uppercase; letter-spacing: 2px; font-size: 18px; color: var(--dark); }
-        .header-perfil p { margin: 5px 0 0 0; color: #7a5d24; font-weight: bold; font-style: italic; font-size: 15px; }
+        
+        input, select { font-family: 'Garamond', serif; width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ddd; box-sizing: border-box; }
+        label { font-size: 11px; text-transform: uppercase; font-weight: bold; margin-top: 5px; display: block; text-align: left;}
     </style>
 </head>
 <body>
@@ -91,33 +104,160 @@
             </div>
         </div>
 
+        <div class="dashboard-bar">
+            <div class="dash-card"><span class="dash-label">Total Atendimentos (Filtrado)</span><span class="dash-val" id="statTotal">0</span></div>
+            <div class="dash-card"><span class="dash-label">Aluguéis Fechados</span><span class="dash-val" id="statAluguel">0</span></div>
+            <div class="dash-card"><span class="dash-label">Taxa de Conversão</span><span class="dash-val" id="statConv">0%</span></div>
+        </div>
+
         <div class="filter-bar">
             <div class="tabs">
                 <button class="tab-btn active" onclick="filtrarStatus('pendente', this)">Pendentes</button>
                 <button class="tab-btn" onclick="filtrarStatus('agendado', this)">Agendados</button>
+                <button class="tab-btn" onclick="filtrarStatus('finalizado', this)">Finalizadas</button>
                 <button class="tab-btn" onclick="filtrarStatus('recusado', this)">Recusados</button>
             </div>
-            <div class="filter-group">
+            <div class="filter-group" id="filtroDataContainer" style="display:none;">
                 <label style="margin:0">Mês Ref:</label>
                 <select id="filtroMes" class="month-select" onchange="carregarDados();">
+                    <option value="todos">Todos</option>
                     <option value="00">Janeiro</option><option value="01" selected>Fevereiro</option><option value="02">Março</option>
                     <option value="03">Abril</option><option value="04">Maio</option><option value="05">Junho</option>
                     <option value="06">Julho</option><option value="07">Agosto</option><option value="08">Setembro</option>
-                    <option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option>
+                    <option value="09">Outubro</option><option value="10">Novembro</option><option value="11">Dezembro</option>
                 </select>
             </div>
         </div>
-        
         <div id="tabelaContainer"></div>
     </div>
 </div>
 
-<div id="modalExpediente" class="modal"><div class="modal-content" style="max-width: 900px;"><span class="close-modal" onclick="fecharModais()">&times;</span><h2 style="text-transform: uppercase; letter-spacing: 3px;">Calendário de Trabalho</h2><div style="margin: 20px 0; display: flex; justify-content: center; align-items: center; gap: 15px;"><label style="margin:0">Visualizar Mês:</label><select id="filtroMesCalendario" class="month-select" onchange="gerarCalendarioVisivel()"><option value="00">Janeiro</option><option value="01" selected>Fevereiro</option><option value="02">Março</option><option value="03">Abril</option><option value="04">Maio</option><option value="05">Junho</option><option value="06">Julho</option><option value="07">Agosto</option><option value="08">Setembro</option><option value="09">Outubro</option><option value="10">Novembro</option><option value="11">Dezembro</option></select></div><div class="calendar-grid"><div class="cal-header">DOM</div><div class="cal-header">SEG</div><div class="cal-header">TER</div><div class="cal-header">QUA</div><div class="cal-header">QUI</div><div class="cal-header">SEX</div><div class="cal-header">SÁB</div></div><div id="corpoCalendario" class="calendar-grid" style="margin-top:0;"></div><button class="btn" style="background:var(--dark); margin-top:30px; padding:15px 40px;" onclick="fecharModais()">Sair do Calendário</button></div></div>
-<div id="modalDiaEspecial" class="modal"><div class="modal-content" style="max-width: 550px;"><span class="close-modal" onclick="fecharModais()">&times;</span><h3 id="tituloDiaEspecial">-</h3><label>Configuração do Dia</label><select id="e_status" onchange="toggleInputsEspeciais()"><option value="padrao">Seguir Padrão do Sistema</option><option value="fechado">Bloquear (Atelier Fechado)</option><option value="especial">Horário Especial / Evento</option></select><div id="divHorariosEspeciais" style="display:none;"><div class="grid-form"><div><label>Horário Início</label><input type="text" id="e_inicio" placeholder="09:30"></div><div><label>Horário Fim</label><input type="text" id="e_fim" placeholder="22:00"></div></div></div><button class="btn btn-novo" style="width:100%; margin-top:30px; padding:15px;" onclick="salvarConfigDia()">Salvar e Sair</button></div></div>
-<div id="modalDetalhes" class="modal"><div class="modal-content" style="max-width: 550px;"><span class="close-modal" onclick="fecharModais()">&times;</span><div class="header-perfil"><h2 id="detalheNome">-</h2><p id="detalheData">-</p></div><div id="detalhesNoiva" class="info-card-grid"></div><button class="btn" style="background:var(--dark); margin-top:30px; width:100%; padding:15px;" onclick="fecharModais()">Fechar Perfil</button></div></div>
-<div id="modalCadastro" class="modal"><div class="modal-content" style="max-width: 550px;"><span class="close-modal" onclick="fecharModais()">&times;</span><h2 style="text-transform: uppercase; letter-spacing: 3px; font-size: 18px; margin-bottom: 5px;">Reserva Manual</h2><p style="font-style: italic; color: #888; font-size: 13px;">Lançamento Interno de Agenda</p><form id="formManual"><div class="section-title">Dados do Agendamento</div><div class="grid-form"><div><label>Data</label><input type="date" id="m_data" required onchange="buscarOcupacaoManual()"></div><div><label>Hora</label><select id="m_hora" required><option value="">Escolha a data...</option></select></div></div><div class="section-title">Sua História</div><label>Nome Completo</label><input type="text" id="m_nome" required><div class="grid-form"><div><label>CPF</label><input type="text" id="m_cpf" maxlength="14" oninput="mascaraCPF(this)"></div><div><label>WhatsApp</label><input type="text" id="m_tel" maxlength="15" oninput="mascaraTel(this)" required></div></div><div class="grid-form"><div><label>Cidade</label><input type="text" id="m_cidade"></div><div><label>Data Casamento</label><input type="date" id="m_casamento"></div></div><label>Instagram (@noiva)</label><input type="text" id="m_insta" placeholder="@exemplo"><div class="section-title">A Escolha</div><label>Finalidade</label><select id="m_finalidade"><option value="Cerimonial">Cerimonial</option><option value="Civil">Civil</option><option value="Ambos">Ambos</option></select><div class="grid-form"><div><label>Referências?</label><select id="m_refs"><option value="Sim">Sim</option><option value="Não">Não</option></select></div><div><label>Outras Lojas?</label><select id="m_outras"><option value="Não">Não</option><option value="Sim">Sim</option></select></div></div><label>Investimento no Sonho</label><input type="text" id="m_orcamento" oninput="mascaraMoeda(this)" placeholder="R$ 0,00"><button type="button" class="btn btn-novo" style="width:100%; margin-top:30px;" onclick="salvarManual()">Confirmar na Agenda</button></form></div></div>
+<div id="modalExpediente" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="fecharModais()">&times;</span>
+        <h2 style="text-transform: uppercase;">Calendário de Trabalho</h2>
+        <select id="filtroMesCalendario" class="month-select" onchange="gerarCalendarioVisivel()">
+            <option value="00">Janeiro</option><option value="01" selected>Fevereiro</option><option value="02">Março</option>
+            <option value="03">Abril</option><option value="04">Maio</option><option value="05">Junho</option>
+            <option value="06">Julho</option><option value="07">Agosto</option><option value="08">Setembro</option>
+            <option value="09">Outubro</option><option value="10">Novembro</option><option value="11">Dezembro</option>
+        </select>
+        <div class="calendar-grid"><div class="cal-header">DOM</div><div class="cal-header">SEG</div><div class="cal-header">TER</div><div class="cal-header">QUA</div><div class="cal-header">QUI</div><div class="cal-header">SEX</div><div class="cal-header">SÁB</div></div>
+        <div id="corpoCalendario" class="calendar-grid" style="margin-top:0;"></div>
+    </div>
+</div>
+
+<div id="modalDiaEspecial" class="modal">
+    <div class="modal-content" style="max-width: 400px;">
+        <span class="close-modal" onclick="fecharModais()">&times;</span>
+        <h3 id="tituloDiaEspecial">-</h3>
+        <select id="e_status" onchange="toggleInputsEspeciais()">
+            <option value="padrao">Padrão</option>
+            <option value="fechado">Bloquear</option>
+            <option value="especial">Especial</option>
+        </select>
+        <div id="divHorariosEspeciais" style="display:none;">
+            <input type="text" id="e_inicio" placeholder="09:30">
+            <input type="text" id="e_fim" placeholder="18:00">
+        </div>
+        <button class="btn btn-novo" style="width:100%; margin-top:20px;" onclick="salvarConfigDia()">Salvar</button>
+    </div>
+</div>
+
+<div id="modalDetalhes" class="modal">
+    <div class="modal-content" style="max-width: 700px;">
+        <span class="close-modal" onclick="fecharModais()">&times;</span>
+        <div class="header-perfil"><h2 id="detalheNome">-</h2><p id="detalheData">-</p></div>
+        <div id="detalhesNoiva" class="info-card-grid"></div>
+        <button class="btn btn-novo" style="width:100%; margin-top:30px;" onclick="fecharModais()">Fechar</button>
+    </div>
+</div>
+
+<div id="modalEditar" class="modal">
+    <div class="modal-content" style="max-width: 750px;">
+        <span class="close-modal" onclick="fecharModais()">&times;</span>
+        <h3>Editar Informações da Noiva</h3>
+        <div class="grid-form">
+            <div><label>Nome</label><input type="text" id="edit_nome"></div>
+            <div><label>WhatsApp</label><input type="text" id="edit_tel"></div>
+            <div><label>Data Agendamento</label><input type="date" id="edit_dataISO"></div>
+            <div><label>Hora</label><input type="text" id="edit_hora"></div>
+            <div><label>Instagram</label><input type="text" id="edit_insta"></div>
+            <div><label>Cidade</label><input type="text" id="edit_cidade"></div>
+            <div><label>Data Casamento</label><input type="text" id="edit_casamento"></div>
+            <div><label>Orçamento</label><input type="text" id="edit_orcamento"></div>
+            <div><label>CPF</label><input type="text" id="edit_cpf"></div>
+            <div><label>Cerimonialista</label><input type="text" id="edit_cerimonialista"></div>
+            <div><label>Finalidade</label><select id="edit_finalidade"><option value="Cerimonial">Cerimonial</option><option value="Civil">Civil</option><option value="Ambos">Ambos</option></select></div>
+            <div><label>Referências?</label><select id="edit_refs"><option value="Sim">Sim</option><option value="Não">Não</option></select></div>
+            <div><label>Outras Lojas?</label><select id="edit_outras"><option value="Sim">Sim</option><option value="Não">Não</option></select></div>
+            <div><label>Benefício?</label><select id="edit_beneficio"><option value="SIM">SIM</option><option value="NÃO">NÃO</option></select></div>
+        </div>
+        <button class="btn btn-novo" style="width:100%; margin-top:20px;" onclick="salvarEdicao()">Salvar Alterações</button>
+    </div>
+</div>
+
+<div id="modalFinalizar" class="modal">
+    <div class="modal-content" style="max-width: 450px;">
+        <span class="close-modal" onclick="fecharModais()">&times;</span>
+        <h3>Encerrar Atendimento</h3>
+        <select id="f_resultado" onchange="toggleConcorrente()">
+            <option value="alugou">Alugou</option>
+            <option value="nao_alugou">Não Alugou</option>
+            <option value="remarcou">Remarcou</option>
+        </select>
+        <div id="divConcorrente" style="display:none; margin-top:15px;">
+            <label>Onde ela alugou? (Concorrente)</label>
+            <input type="text" id="f_concorrente" placeholder="Nome da loja">
+        </div>
+        <button class="btn btn-novo" style="width:100%; margin-top:20px;" onclick="confirmarFinalizacao()">Confirmar</button>
+    </div>
+</div>
+
+<div id="modalCadastro" class="modal">
+    <div class="modal-content" style="max-width: 800px;">
+        <span class="close-modal" onclick="fecharModais()">&times;</span>
+        <h2 style="text-transform: uppercase; letter-spacing: 2px;">Nova Reserva Manual</h2>
+        <form id="formManual">
+            <div class="section-title">Logística do Atendimento</div>
+            <div class="grid-form">
+                <div><label>Data do Atendimento</label><input type="date" id="m_data" required onchange="buscarOcupacaoManual()"></div>
+                <div><label>Hora</label><select id="m_hora" required><option value="">Selecione a data primeiro...</option></select></div>
+            </div>
+            
+            <div class="section-title">Dados da Noiva</div>
+            <div class="grid-form">
+                <div><label>Nome Completo</label><input type="text" id="m_nome" required></div>
+                <div><label>WhatsApp</label><input type="text" id="m_tel" oninput="mascaraTel(this)" required></div>
+                <div><label>CPF</label><input type="text" id="m_cpf"></div>
+                <div><label>Instagram</label><input type="text" id="m_insta" placeholder="@noiva"></div>
+                <div><label>Cidade</label><input type="text" id="m_cidade"></div>
+                <div><label>Data Casamento</label><input type="date" id="m_casamento"></div>
+            </div>
+            
+            <div class="section-title">Perfil e Preferências</div>
+            <div class="grid-form">
+                <div><label>Orçamento</label><input type="text" id="m_orcamento" placeholder="Ex: R$ 5.000,00"></div>
+                <div><label>Cerimonialista</label><input type="text" id="m_cerimonialista"></div>
+                <div><label>Finalidade</label><select id="m_finalidade"><option value="Cerimonial">Cerimonial</option><option value="Civil">Civil</option><option value="Ambos">Ambos</option></select></div>
+                <div><label>Trouxe Referências?</label><select id="m_refs"><option value="Sim">Sim</option><option value="Não">Não</option></select></div>
+                <div><label>Visitou Outras Lojas?</label><select id="m_outras"><option value="Não">Não</option><option value="Sim">Sim</option></select></div>
+                <div><label>Benefício 1ª Visita?</label><select id="m_beneficio"><option value="NÃO">NÃO</option><option value="SIM">SIM</option></select></div>
+            </div>
+            <button type="button" class="btn btn-novo" style="width:100%; margin-top:30px;" onclick="salvarManual()">Confirmar Agendamento Interno</button>
+        </form>
+    </div>
+</div>
 
 <script>
+    const firebaseConfig = { apiKey: "AIzaSyC8MacELfK0_avvpWIWBHZpJO_WYqhjOaE", authDomain: "exclusiva-noivas---agendamento.firebaseapp.com", databaseURL: "https://exclusiva-noivas---agendamento-default-rtdb.firebaseio.com", projectId: "exclusiva-noivas---agendamento", storageBucket: "exclusiva-noivas---agendamento.firebasestorage.app", messagingSenderId: "891467475836", appId: "1:891467475836:web:9565af78e44e9d6d53d2f9" };
+    firebase.initializeApp(firebaseConfig); 
+    const database = firebase.database();
+
+    let statusAtual = 'pendente';
+    let dataSelecionadaExpediente = "";
+    let keySendoEditada = "";
+
     function verificarLogin() {
         const user = document.getElementById('userLogin').value;
         const pass = document.getElementById('passLogin').value;
@@ -128,140 +268,252 @@
         } else { alert("Credenciais incorretas."); }
     }
 
-    const firebaseConfig = { apiKey: "AIzaSyC8MacELfK0_avvpWIWBHZpJO_WYqhjOaE", authDomain: "exclusiva-noivas---agendamento.firebaseapp.com", databaseURL: "https://exclusiva-noivas---agendamento-default-rtdb.firebaseio.com", projectId: "exclusiva-noivas---agendamento", storageBucket: "exclusiva-noivas---agendamento.firebasestorage.app", messagingSenderId: "891467475836", appId: "1:891467475836:web:9565af78e44e9d6d53d2f9" };
-    firebase.initializeApp(firebaseConfig); const database = firebase.database();
-
-    let statusAtual = 'pendente';
-    let dataSelecionadaExpediente = "";
-
-    function mascaraCPF(i) { let v = i.value.replace(/\D/g, ""); v = v.replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d{1,2})$/, "$1-$2"); i.value = v; }
+    function hParaDec(s) { if(!s) return 0; let p = s.split(':'); return parseInt(p[0]) + (p[1] === "30" ? 0.5 : 0); }
+    function formatarHora(d) { let h = Math.floor(d); let m = (d % 1 === 0) ? "00" : "30"; return `${h.toString().padStart(2, '0')}:${m}`; }
+    function fecharModais() { document.querySelectorAll('.modal').forEach(m => m.style.display = "none"); }
+    function toggleInputsEspeciais() { document.getElementById('divHorariosEspeciais').style.display = (document.getElementById('e_status').value === 'especial') ? 'block' : 'none'; }
+    function toggleConcorrente() { document.getElementById('divConcorrente').style.display = (document.getElementById('f_resultado').value === 'nao_alugou') ? 'block' : 'none'; }
     function mascaraTel(i) { let v = i.value.replace(/\D/g, ""); v = v.replace(/^(\d{2})(\d)/g, "($1) $2").replace(/(\d)(\d{4})$/, "$1-$2"); i.value = v; }
-    function mascaraMoeda(i) { let v = i.value.replace(/\D/g, ""); v = (Number(v)/100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); i.value = v; }
-
-    function filtrarStatus(status, btn) {
-        statusAtual = status;
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        carregarDados();
-    }
 
     function carregarDados() {
         const mesFiltro = document.getElementById('filtroMes').value;
-        const hoje = new Date().toISOString().split('T')[0];
-        const amanha = new Date(); amanha.setDate(amanha.getDate() + 1);
-        const amanhaISO = amanha.toISOString().split('T')[0];
-
         database.ref('agendamentos').on('value', (snapshot) => {
             const container = document.getElementById('tabelaContainer');
-            container.innerHTML = "";
-            let grupos = { pendentes: [], atendidos: [], hoje: [], amanha: [], proximos: [], recusados: [] };
+            let lista = [];
+            let cTotal = 0, cAlugou = 0;
 
-            snapshot.forEach(c => { 
+            snapshot.forEach(c => {
                 let d = c.val(); d.key = c.key;
-                const statusAtende = (d.status === statusAtual || (statusAtual === 'agendado' && d.status === 'confirmado'));
-                const mesAgendamento = new Date(d.dataISO + "T00:00:00").getMonth().toString().padStart(2, '0');
-                const mesAtende = (statusAtual === 'pendente') ? true : (mesAgendamento === mesFiltro);
+                let mesAtende = false;
+                
+                if (statusAtual === 'pendente' || mesFiltro === 'todos') {
+                    mesAtende = true;
+                } else if (d.dataISO) {
+                    const mesAgend = d.dataISO.split('-')[1];
+                    const mesDesejado = (parseInt(mesFiltro) + 1).toString().padStart(2, '0');
+                    if (mesAgend === mesDesejado) mesAtende = true;
+                }
 
-                if (statusAtende && mesAtende) {
-                    if(statusAtual === 'pendente') grupos.pendentes.push(d);
-                    else if(statusAtual === 'recusado') grupos.recusados.push(d);
-                    else {
-                        if (d.dataISO < hoje) grupos.atendidos.push(d);
-                        else if (d.dataISO === hoje) grupos.hoje.push(d);
-                        else if (d.dataISO === amanhaISO) grupos.amanha.push(d);
-                        else grupos.proximos.push(d);
+                if (d.status === statusAtual || (statusAtual === 'agendado' && d.status === 'confirmado')) {
+                    if (mesAtende) lista.push(d);
+                }
+
+                if (d.status === 'finalizado') {
+                    const mesF = d.dataISO ? d.dataISO.split('-')[1] : "";
+                    const mesDesejadoDash = (parseInt(mesFiltro) + 1).toString().padStart(2, '0');
+                    if (mesFiltro === 'todos' || mesF === mesDesejadoDash) {
+                        cTotal++;
+                        if (d.resultado === 'alugou') cAlugou++;
                     }
                 }
             });
 
-            const renderTabela = (lista, titulo) => {
-                if (lista.length === 0) return "";
-                lista.sort((a,b) => a.dataISO.localeCompare(b.dataISO) || a.hora.localeCompare(b.hora));
-                let html = `<div class="group-header">${titulo}</div><table><thead><tr><th>Data/Hora</th><th>Noiva</th><th>WhatsApp</th><th>Status</th><th>Ações</th></tr></thead><tbody>`;
-                lista.forEach(d => {
-                    const statusLabel = d.status === 'confirmado' ? 'CONFIRMADO' : (d.status === 'agendado' ? 'ACEITO' : d.status.toUpperCase());
-                    let botoes = `<button class="btn btn-info" onclick="verDetalhes('${encodeURIComponent(JSON.stringify(d))}')">Info</button>`;
-                    
-                    if(d.status === 'pendente') {
-                        botoes += `<button class="btn btn-aceitar" onclick="mudarStatus('${d.key}', 'agendado')">ACEITAR</button>`;
-                        botoes += `<button class="btn btn-recusar" onclick="mudarStatus('${d.key}', 'recusado')">X</button>`;
-                    } else if(d.status === 'recusado') {
-                        botoes += `<button class="btn btn-reativar" onclick="mudarStatus('${d.key}', 'pendente')">REATIVAR</button>`;
-                    } else {
-                        if(d.status === 'agendado') {
-                            botoes += `<button class="btn btn-confirmar-final" onclick="mudarStatus('${d.key}', 'confirmado')">CONFIRMAR</button>`;
-                        }
-                        botoes += `<button class="btn btn-whatsapp" onclick="enviarLembrete('${d.tel}', '${d.nome}', '${d.data}', '${d.hora}')">Lembrete</button>`;
-                        botoes += `<button class="btn btn-recusar" style="margin-left:5px" onclick="mudarStatus('${d.key}', 'recusado')">X</button>`;
-                    }
+            document.getElementById('statTotal').innerText = cTotal;
+            document.getElementById('statAluguel').innerText = cAlugou;
+            document.getElementById('statConv').innerText = cTotal > 0 ? Math.round((cAlugou/cTotal)*100) + "%" : "0%";
+            renderTabela(lista);
+        });
+    }
 
-                    html += `<tr><td>${d.data} às ${d.hora}</td><td>${d.nome}</td><td>${d.tel}</td><td class="status-${d.status}">${statusLabel}</td><td>${botoes}</td></tr>`;
-                });
-                return html + "</tbody></table>";
-            };
+    function renderTabela(lista) {
+        const container = document.getElementById('tabelaContainer');
+        if (lista.length === 0) { container.innerHTML = "<p style='text-align:center; padding:40px;'>Nenhum registro encontrado.</p>"; return; }
+        lista.sort((a,b) => a.dataISO.localeCompare(b.dataISO) || a.hora.localeCompare(b.hora));
+        
+        let html = `<table><thead><tr><th>Data/Hora</th><th>Noiva</th><th>WhatsApp</th><th>Status</th><th>Ações</th></tr></thead><tbody>`;
+        lista.forEach(d => {
+            let botoes = `<button class="btn btn-info" onclick="verDetalhes('${encodeURIComponent(JSON.stringify(d))}')">Info</button>`;
+            
+            if (d.status === 'pendente') {
+                botoes += `<button class="btn btn-aceitar" onclick="mudarStatus('${d.key}', 'agendado')">ACEITAR</button>`;
+                botoes += `<button class="btn btn-recusar" onclick="mudarStatus('${d.key}', 'recusado')">X</button>`;
+            } else if (d.status === 'agendado' || d.status === 'confirmado') {
+                botoes += `<button class="btn btn-editar" onclick="abrirEdicao('${d.key}')">EDITAR</button>`;
+                if(d.status === 'agendado') botoes += `<button class="btn btn-confirmar-final" onclick="mudarStatus('${d.key}', 'confirmado')">CONFIRMAR</button>`;
+                botoes += `<button class="btn btn-whatsapp" onclick="enviarLembrete('${d.tel}', '${d.nome}', '${d.data}', '${d.hora}')">Lembrete</button>`;
+                botoes += `<button class="btn btn-finalizar" onclick="abrirFinalizar('${d.key}')">FINALIZAR</button>`;
+                botoes += `<button class="btn btn-recusar" onclick="mudarStatus('${d.key}', 'recusado')">CANCELAR</button>`;
+            } else if (d.status === 'recusado') {
+                botoes += `<button class="btn btn-reativar" onclick="mudarStatus('${d.key}', 'pendente')">REATIVAR</button>`;
+            } else {
+                botoes = `<span style="font-size:10px">${d.resultado ? d.resultado.toUpperCase() : 'FINALIZADO'}</span>`;
+            }
+            html += `<tr><td>${d.data} às ${d.hora}</td><td>${d.nome}</td><td>${d.tel}</td><td class="status-${d.status}">${d.status.toUpperCase()}</td><td>${botoes}</td></tr>`;
+        });
+        container.innerHTML = html + "</tbody></table>";
+    }
 
-            if(statusAtual === 'pendente') container.innerHTML = renderTabela(grupos.pendentes, "Solicitações Pendentes");
-            else if(statusAtual === 'recusado') container.innerHTML = renderTabela(grupos.recusados, "Histórico de Recusados");
-            else {
-                container.innerHTML += renderTabela(grupos.hoje, "⭐ Hoje");
-                container.innerHTML += renderTabela(grupos.amanha, "📅 Amanhã");
-                container.innerHTML += renderTabela(grupos.proximos, "🚀 Próximos Dias");
-                container.innerHTML += renderTabela(grupos.atendidos, "✅ Atendidos / Passados");
+    function verDetalhes(jsonStr) {
+        const d = JSON.parse(decodeURIComponent(jsonStr));
+        document.getElementById('detalheNome').innerText = d.nome;
+        document.getElementById('detalheData').innerText = `${d.data} às ${d.hora}`;
+        document.getElementById('detalhesNoiva').innerHTML = `
+            <div class="info-card-item"><span class="info-card-label">WhatsApp</span>${d.tel}</div>
+            <div class="info-card-item"><span class="info-card-label">CPF</span>${d.cpf || '-'}</div>
+            <div class="info-card-item"><span class="info-card-label">Cidade</span>${d.cidade || '-'}</div>
+            <div class="info-card-item"><span class="info-card-label">Casamento</span>${d.casamento || '-'}</div>
+            <div class="info-card-item"><span class="info-card-label">Instagram</span>${d.insta || '-'}</div>
+            <div class="info-card-item"><span class="info-card-label">Estilo</span>${d.finalidade || '-'}</div>
+            <div class="info-card-item"><span class="info-card-label">Orçamento</span>${d.orcamento || '-'}</div>
+            <div class="info-card-item"><span class="info-card-label">Cerimonialista</span>${d.cerimonialista || '-'}</div>
+            <div class="info-card-item"><span class="info-card-label">Referências</span>${d.refs || '-'}</div>
+            <div class="info-card-item"><span class="info-card-label">Outras Lojas</span>${d.outras || '-'}</div>
+            <div class="info-card-item"><span class="info-card-label">Benefício</span>${d.beneficio || '-'}</div>
+        `;
+        document.getElementById('modalDetalhes').style.display = "flex";
+    }
+
+    function abrirEdicao(key) {
+        keySendoEditada = key;
+        database.ref('agendamentos/' + key).once('value', snap => {
+            const d = snap.val();
+            document.getElementById('edit_nome').value = d.nome || "";
+            document.getElementById('edit_tel').value = d.tel || "";
+            document.getElementById('edit_dataISO').value = d.dataISO || "";
+            document.getElementById('edit_hora').value = d.hora || "";
+            document.getElementById('edit_insta').value = d.insta || "";
+            document.getElementById('edit_cidade').value = d.cidade || "";
+            document.getElementById('edit_casamento').value = d.casamento || "";
+            document.getElementById('edit_orcamento').value = d.orcamento || "";
+            document.getElementById('edit_cpf').value = d.cpf || "";
+            document.getElementById('edit_cerimonialista').value = d.cerimonialista || "";
+            document.getElementById('edit_finalidade').value = d.finalidade || "Cerimonial";
+            document.getElementById('edit_refs').value = d.refs || "Não";
+            document.getElementById('edit_outras').value = d.outras || "Não";
+            document.getElementById('edit_beneficio').value = d.beneficio || "NÃO";
+            document.getElementById('modalEditar').style.display = "flex";
+        });
+    }
+
+    function salvarEdicao() {
+        const dISO = document.getElementById('edit_dataISO').value;
+        const up = {
+            nome: document.getElementById('edit_nome').value,
+            tel: document.getElementById('edit_tel').value,
+            dataISO: dISO, data: dISO.split('-').reverse().join('/'),
+            hora: document.getElementById('edit_hora').value,
+            insta: document.getElementById('edit_insta').value,
+            cidade: document.getElementById('edit_cidade').value,
+            casamento: document.getElementById('edit_casamento').value,
+            orcamento: document.getElementById('edit_orcamento').value,
+            cpf: document.getElementById('edit_cpf').value,
+            cerimonialista: document.getElementById('edit_cerimonialista').value,
+            finalidade: document.getElementById('edit_finalidade').value,
+            refs: document.getElementById('edit_refs').value,
+            outras: document.getElementById('edit_outras').value,
+            beneficio: document.getElementById('edit_beneficio').value
+        };
+        database.ref('agendamentos/' + keySendoEditada).update(up).then(() => fecharModais());
+    }
+
+    function salvarManual() {
+        const dISO = document.getElementById('m_data').value;
+        const cISO = document.getElementById('m_casamento').value;
+        const d = { 
+            data: dISO.split('-').reverse().join('/'), 
+            dataISO: dISO, 
+            hora: document.getElementById('m_hora').value, 
+            nome: document.getElementById('m_nome').value, 
+            tel: document.getElementById('m_tel').value, 
+            cpf: document.getElementById('m_cpf').value,
+            insta: document.getElementById('m_insta').value,
+            cidade: document.getElementById('m_cidade').value,
+            casamento: cISO ? cISO.split('-').reverse().join('/') : "-",
+            orcamento: document.getElementById('m_orcamento').value,
+            cerimonialista: document.getElementById('m_cerimonialista').value,
+            finalidade: document.getElementById('m_finalidade').value,
+            refs: document.getElementById('m_refs').value,
+            outras: document.getElementById('m_outras').value,
+            beneficio: document.getElementById('m_beneficio').value,
+            status: "agendado", timestamp: new Date().toISOString() 
+        };
+        database.ref('agendamentos').push().set(d).then(() => { alert("Agendamento Manual Realizado!"); fecharModais(); document.getElementById('formManual').reset(); });
+    }
+
+    function buscarOcupacaoManual() {
+        const dataSel = document.getElementById('m_data').value;
+        if(!dataSel) return;
+        database.ref('agendamentos').orderByChild('dataISO').equalTo(dataSel).once('value', snap => {
+            let ocup = []; snap.forEach(c => { if(c.val().status !== 'recusado') ocup.push(c.val().hora); });
+            const select = document.getElementById('m_hora'); select.innerHTML = "";
+            const ds = new Date(dataSel + "T00:00:00").getDay();
+            
+            let inicio = 9, fim = 18;
+            if(ds === 6) fim = 16;
+            if(ds === 0) { select.innerHTML = "<option>Domingo Fechado</option>"; return; }
+
+            for (let h = inicio; h <= fim; h += 0.5) {
+                let horaStr = formatarHora(h);
+                let opt = document.createElement("option"); opt.value = horaStr; opt.text = ocup.includes(horaStr) ? horaStr + " (OCUPADO)" : horaStr;
+                if(ocup.includes(horaStr)) opt.disabled = true;
+                select.add(opt);
             }
         });
     }
 
+    function mudarStatus(key, status) { database.ref('agendamentos/' + key).update({ status: status }); }
+    function abrirFinalizar(key) { keySendoEditada = key; document.getElementById('modalFinalizar').style.display = "flex"; }
+    function confirmarFinalizacao() {
+        const res = document.getElementById('f_resultado').value;
+        const conc = document.getElementById('f_concorrente').value;
+        database.ref('agendamentos/' + keySendoEditada).update({ status: 'finalizado', resultado: res, concorrente: conc }).then(() => fecharModais());
+    }
     function enviarLembrete(tel, nome, data, hora) {
         const fone = tel.replace(/\D/g, "");
         const msg = `Olá *${nome}*! Tudo bem? %0A%0APassando para lembrar do seu horário agendado aqui na *Exclusiva Noivas* para o dia *${data}* às *${hora}*. %0A%0APoderia nos confirmar se está tudo certo para o seu atendimento? 💍`;
         window.open(`https://wa.me/55${fone}?text=${msg}`, '_blank');
     }
 
-    function abrirModalExpediente() { document.getElementById('filtroMesCalendario').value = document.getElementById('filtroMes').value; document.getElementById('modalExpediente').style.display = "flex"; gerarCalendarioVisivel(); }
+    function abrirModalExpediente() { document.getElementById('modalExpediente').style.display = "flex"; gerarCalendarioVisivel(); }
     function gerarCalendarioVisivel() {
-        const mes = parseInt(document.getElementById('filtroMesCalendario').value);
+        const mes = parseInt(document.getElementById('filtroMesCalendario')?.value || new Date().getMonth());
         const ano = 2026;
         const primeiroDia = new Date(ano, mes, 1).getDay();
         const diasNoMes = new Date(ano, mes + 1, 0).getDate();
         const corpo = document.getElementById('corpoCalendario');
         corpo.innerHTML = "";
+
         Promise.all([database.ref('expediente/config').once('value'), database.ref('agendamentos').once('value')]).then(([snapConfig, snapAgend]) => {
             const configs = snapConfig.val() || {};
             const agendamentos = snapAgend.val() || {};
-            let contagemPorData = {};
-            Object.values(agendamentos).forEach(a => { if(a.status === 'agendado' || a.status === 'confirmado') contagemPorData[a.dataISO] = (contagemPorData[a.dataISO] || 0) + 1; });
-            for (let i = 0; i < primeiroDia; i++) corpo.innerHTML += `<div style="background:none; border:none;"></div>`;
+            let contagem = {};
+            Object.values(agendamentos).forEach(a => { if(a.status === 'agendado' || a.status === 'confirmado') contagem[a.dataISO] = (contagem[a.dataISO] || 0) + 1; });
+
+            for (let i = 0; i < primeiroDia; i++) corpo.innerHTML += `<div></div>`;
             for (let dia = 1; dia <= diasNoMes; dia++) {
-                const dataISO = `${ano}-${(mes + 1).toString().padStart(2, '0')}-${dia.toString().padStart(2, '0')}`;
-                const configDia = configs[dataISO] || { status: 'padrao' };
-                const qtd = contagemPorData[dataISO] || 0;
-                const dataObj = new Date(dataISO + "T00:00:00");
-                const ds = dataObj.getDay();
-                let classe = "dia-padrao"; let horarioLabel = "09:30 - 17:00";
-                if (configDia.status === 'fechado' || ds === 0) { classe = "dia-fechado"; horarioLabel = "FECHADO"; }
-                else if (configDia.status === 'especial') { classe = "dia-longo"; horarioLabel = `${configDia.inicio} - ${configDia.fim}`; }
-                else if (ds === 6) {
-                    const sabadoNoMes = Math.ceil(dia / 7);
-                    if (sabadoNoMes <= 2) { classe = "dia-longo"; horarioLabel = "09:00 - 16:00"; }
-                    else { classe = "dia-curto"; horarioLabel = "09:00 - 12:00"; }
-                }
-                corpo.innerHTML += `<div class="cal-day ${classe}" onclick="ajustarDia('${dataISO}')"><div><b>${dia}</b><br><span style="font-size:8px; font-weight:bold;">${horarioLabel}</span></div><span class="agendamento-count">${qtd} agend.</span></div>`;
+                const dISO = `${ano}-${(mes + 1).toString().padStart(2, '0')}-${dia.toString().padStart(2, '0')}`;
+                const conf = configs[dISO] || { status: 'padrao' };
+                const qtd = contagem[dISO] || 0;
+                let classe = "dia-padrao";
+                let labelHora = "09:30-17:00";
+                const ds = new Date(dISO + "T00:00:00").getDay();
+                if (conf.status === 'fechado' || ds === 0) { classe = "dia-fechado"; labelHora = "FECHADO"; }
+                else if (conf.status === 'especial') { classe = "dia-longo"; labelHora = conf.inicio + "-" + conf.fim; }
+                else if (ds === 6) { classe = (dia <= 14) ? "dia-longo" : "dia-curto"; labelHora = (dia <= 14) ? "09:00-16:00" : "09:00-12:00"; }
+                corpo.innerHTML += `<div class="cal-day ${classe}" onclick="ajustarDia('${dISO}')"><b>${dia}</b><span style="font-size:8px;">${labelHora}</span><span class="agendamento-count">${qtd}</span></div>`;
             }
         });
     }
 
-    function ajustarDia(data) { dataSelecionadaExpediente = data; document.getElementById('tituloDiaEspecial').innerText = "Ajustar Expediente: " + data.split('-').reverse().join('/'); document.getElementById('modalDiaEspecial').style.display = "flex"; }
-    function toggleInputsEspeciais() { const val = document.getElementById('e_status').value; document.getElementById('divHorariosEspeciais').style.display = (val === 'especial') ? 'block' : 'none'; }
-    function salvarConfigDia() { const status = document.getElementById('e_status').value; const config = { status: status }; if (status === 'especial') { config.inicio = document.getElementById('e_inicio').value; config.fim = document.getElementById('e_fim').value; } database.ref('expediente/config/' + dataSelecionadaExpediente).set(config).then(() => { alert("Configuração salva!"); document.getElementById('modalDiaEspecial').style.display = "none"; gerarCalendarioVisivel(); }); }
-    function buscarOcupacaoManual() { const dataSel = document.getElementById('m_data').value; database.ref('agendamentos').orderByChild('dataISO').equalTo(dataSel).once('value', (snap) => { let ocupados = []; snap.forEach((c) => { if (c.val().status !== "recusado") ocupados.push(c.val().hora); }); gerarHorariosManual(ocupados); }); }
-    function gerarHorariosManual(ocupados) { const select = document.getElementById('m_hora'); select.innerHTML = ""; const dataObj = new Date(document.getElementById('m_data').value + "T00:00:00"); const ds = dataObj.getDay(); let lista = []; if (ds === 0) { select.innerHTML = "<option>Fechado</option>"; return; } if (ds >= 1 && ds <= 5) for (let h = 9.5; h <= 17; h += 0.5) lista.push(formatarHora(h)); else { const diaMes = new Date(document.getElementById('m_data').value + "T00:00:00").getDate(); let lim = (diaMes <= 14) ? 16 : 12; for (let h = 9; h <= lim; h += 1) lista.push(formatarHora(h)); } lista.forEach(h => { let opt = document.createElement("option"); opt.value = h; let bloqueado = false; ocupados.forEach(oc => { if (ds >= 1 && ds <= 5) { if (Math.abs(hParaDec(h) - hParaDec(oc)) < 1.5) bloqueado = true; } else if(h === oc) bloqueado = true; }); if (bloqueado) { opt.text = h + " — (OCUPADO)"; opt.disabled = true; } else opt.text = h; select.add(opt); }); }
-    function hParaDec(s) { let p = s.split(':'); return parseInt(p[0]) + (p[1] === "30" ? 0.5 : 0); }
-    function formatarHora(d) { let h = Math.floor(d); let m = (d % 1 === 0) ? "00" : "30"; return `${h.toString().padStart(2, '0')}:${m}`; }
-    function mudarStatus(key, status) { database.ref('agendamentos/' + key).update({ status: status }); }
-    function abrirModalCadastro() { document.getElementById('modalCadastro').style.display = "flex"; }
-    function fecharModais() { document.querySelectorAll('.modal').forEach(m => m.style.display = "none"); }
-    function verDetalhes(jsonStr) { const d = JSON.parse(decodeURIComponent(jsonStr)); document.getElementById('detalheNome').innerText = d.nome; document.getElementById('detalheData').innerText = `Agendamento solicitado para ${d.data} às ${d.hora}`; const container = document.getElementById('detalhesNoiva'); container.innerHTML = `<div class=\"info-card-item\"><span class=\"info-card-label\">Instagram</span>${d.insta || '-'}</div><div class=\"info-card-item\"><span class=\"info-card-label\">Cidade</span>${d.cidade || '-'}</div><div class=\"info-card-item\"><span class=\"info-card-label\">Casamento</span>${d.casamento || '-'}</div><div class=\"info-card-item\"><span class=\"info-card-label\">Estilo</span>${d.finalidade}</div><div class=\"info-card-item\"><span class=\"info-card-label\">CPF</span>${d.cpf || '-'}</div><div class=\"info-card-item\"><span class=\"info-card-label\">Investimento</span>${d.orcamento || '-'}</div><div class=\"info-card-item\"><span class=\"info-card-label\">Referências?</span>${d.refs || '-'}</div><div class=\"info-card-item\"><span class=\"info-card-label\">Visitou Lojas?</span>${d.outras || '-'}</div><div class=\"info-card-item\" style=\"grid-column: span 2;\"><span class=\"info-card-label\">Benefício Primeira Visita</span>${d.beneficio || 'Não'}</div>`; document.getElementById('modalDetalhes').style.display = "flex"; }
-    function salvarManual() { const d = { data: document.getElementById('m_data').value.split('-').reverse().join('/'), dataISO: document.getElementById('m_data').value, hora: document.getElementById('m_hora').value, nome: document.getElementById('m_nome').value + " (Interno)", tel: document.getElementById('m_tel').value, cpf: document.getElementById('m_cpf').value, cidade: document.getElementById('m_cidade').value, casamento: document.getElementById('m_casamento').value.split('-').reverse().join('/'), insta: document.getElementById('m_insta').value, finalidade: document.getElementById('m_finalidade').value, refs: document.getElementById('m_refs').value, outcast: document.getElementById('m_outras').value, orcamento: document.getElementById('m_orcamento').value, status: "agendado", timestamp: new Date().toISOString() }; database.ref('agendamentos').push().set(d).then(() => { alert("Reserva confirmada!"); fecharModais(); document.getElementById('formManual').reset(); }); }
+    function ajustarDia(data) { dataSelecionadaExpediente = data; document.getElementById('tituloDiaEspecial').innerText = data; document.getElementById('modalDiaEspecial').style.display = "flex"; }
+    function salvarConfigDia() {
+        const conf = { status: document.getElementById('e_status').value, inicio: document.getElementById('e_inicio').value, fim: document.getElementById('e_fim').value };
+        database.ref('expediente/config/' + dataSelecionadaExpediente).set(conf).then(() => { fecharModais(); gerarCalendarioVisivel(); });
+    }
+
+    function filtrarStatus(status, btn) {
+        statusAtual = status;
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('filtroDataContainer').style.display = (status === 'pendente') ? 'none' : 'flex';
+        carregarDados();
+    }
+
+    function abrirModalCadastro() {
+        document.getElementById('formManual').reset();
+        document.getElementById('m_hora').innerHTML = "<option value=''>Selecione a data primeiro...</option>";
+        document.getElementById('modalCadastro').style.display = "flex";
+    }
 </script>
 </body>
 </html>
