@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exclusiva Noivas | Solicitação de Reserva</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+
+    <style>
+        :root { 
+            --gold: #b89754; 
+            --dark: #1a1a1a; 
+            --off-white: #fdfaf7; 
+        }
+        
+        body { 
+            font-family: 'Garamond', serif; 
+            background-color: var(--off-white); 
+            color: var(--dark); 
+            margin: 0; 
+            padding: 40px 20px;
+        }
+        
+        .container { 
+            max-width: 550px; margin: auto; 
+            background: #ffffff; padding: 45px; 
+            border-radius: 2px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.04);
+            text-align: center;
+        }
+
+        .logo-container { margin-bottom: 25px; }
+        .logo-container img { max-width: 220px; height: auto; }
+
+        .subtitle { 
+            font-style: italic; color: #444; 
+            margin-bottom: 50px; font-size: 15px; 
+            letter-spacing: 1.2px; line-height: 1.6;
+            border-top: 1px solid #eee; padding-top: 15px;
+        }
+
+        .section-title { 
+            text-align: left; font-size: 11px; text-transform: uppercase; 
+            letter-spacing: 2.5px; color: var(--gold); 
+            margin-top: 40px; margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        label { 
+            display: block; text-align: left; margin-top: 25px; 
+            font-size: 11px; text-transform: uppercase; 
+            letter-spacing: 1.2px; color: #222;
+            font-weight: 600;
+        }
+        
+        input, select { 
+            width: 100%; padding: 12px 0; margin-top: 5px; 
+            border: none; border-bottom: 1px solid #ccc; 
+            background: transparent; font-size: 16px; outline: none;
+            color: var(--dark);
+        }
+
+        input:focus, select:focus { border-bottom: 2px solid var(--gold); }
+
+        .beneficio-container {
+            text-align: left; margin-top: 30px; padding: 20px;
+            background-color: #fcf8f3; border-left: 3px solid var(--gold);
+        }
+        
+        .beneficio-flex { display: flex; align-items: flex-start; gap: 12px; cursor: pointer; }
+        .beneficio-flex input { width: auto; margin-top: 3px; cursor: pointer; }
+        
+        .beneficio-texto { font-size: 13px; line-height: 1.5; color: #333; }
+        .beneficio-titulo { font-weight: bold; color: var(--gold); display: block; margin-bottom: 5px; text-transform: uppercase; font-size: 11px; }
+
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+
+        .btn-confirm { 
+            background-color: var(--dark); color: #fff; 
+            border: none; padding: 22px; width: 100%; 
+            text-transform: uppercase; letter-spacing: 4px; 
+            cursor: pointer; margin-top: 50px;
+            font-size: 13px; font-weight: bold;
+            transition: 0.3s;
+        }
+        .btn-confirm:hover { background-color: var(--gold); }
+
+        #modalResumo {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(253, 250, 247, 0.98); z-index: 1000; justify-content: center; align-items: center;
+        }
+        .modal-content { background: white; padding: 40px; max-width: 450px; width: 85%; border: 1px solid #eee; text-align: left; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="logo-container">
+        <img src="logo.png" alt="Exclusiva Noivas">
+    </div>
+    <p class="subtitle">Referência em Aluguel de Vestidos de Noiva em Marília e Região<br><b>Seja Exclusiva</b></p>
+
+    <div class="section-title">Dados do Agendamento</div>
+    
+    <div class="grid">
+        <div>
+            <label>Data Escolhida</label>
+            <input type="date" id="data" min="2026-02-01" max="2026-12-31" onchange="buscarOcupacao()">
+        </div>
+        <div>
+            <label>Horário Disponível</label>
+            <select id="horario"><option value="">Selecione o dia...</option></select>
+        </div>
+    </div>
+
+    <div id="formNoiva" style="display:none;">
+        <div class="section-title">Sua História</div>
+        
+        <label>Nome Completo</label>
+        <input type="text" id="nome">
+
+        <div class="grid">
+            <div><label>CPF</label><input type="text" id="cpf" maxlength="14" oninput="mascaraCPF(this)"></div>
+            <div><label>WhatsApp</label><input type="text" id="tel" maxlength="15" oninput="mascaraTel(this)"></div>
+        </div>
+
+        <div class="grid">
+            <div><label>Sua Cidade</label><input type="text" id="cidade"></div>
+            <div><label>O Grande Dia (Data)</label><input type="date" id="dataCasamento"></div>
+        </div>
+
+        <label>Seu Instagram (@noiva)</label>
+        <input type="text" id="insta" placeholder="@seuperfil">
+
+        <div class="section-title">A Escolha</div>
+
+        <label>Tipo de Vestido</label>
+        <select id="finalidade">
+            <option value="Cerimonial">Vestido para Cerimonial </option>
+            <option value="Civil">Vestido para Casamento Civil</option>
+            <option value="Ambos">Ambos os momentos</option>
+        </select>
+
+        <div class="grid">
+            <div>
+                <label>Possui Referências?</label>
+                <select id="refs"><option value="Sim">Sim</option><option value="Não">Não</option></select>
+            </div>
+            <div>
+                <label>Visitou outras lojas?</label>
+                <select id="outras"><option value="Não">Não</option><option value="Sim">Sim</option></select>
+            </div>
+        </div>
+
+        <label>Cerimonialista Responsável</label>
+        <input type="text" id="cerimonialista" placeholder="Nome do profissional (opcional)">
+
+        <label>Quanto planeia investir no sonho do seu vestido ideal?</label>
+        <input type="text" id="orcamento" oninput="mascaraMoeda(this)" placeholder="R$ 0,00">
+
+        <div class="beneficio-container">
+            <label class="beneficio-flex">
+                <input type="checkbox" id="querBeneficio">
+                <span class="beneficio-texto">
+                    <span class="beneficio-titulo">🎁 Benefício de Primeira Visita</span>
+                    Desejo solicitar o benefício exclusivo, válido apenas para noivas que realizam o contrato no ato da primeira visita ao atelier.
+                </span>
+            </label>
+        </div>
+
+        <button class="btn-confirm" onclick="abrirResumo()">Solicitar Reserva</button>
+    </div>
+</div>
+
+<div id="modalResumo">
+    <div class="modal-content">
+        <p style="text-transform:uppercase; letter-spacing:2px; font-weight:bold; color:var(--gold);">Conferir Solicitação</p>
+        <div id="conteudoResumo" style="margin-top:20px; font-size:14px; line-height:1.8;"></div>
+        <button class="btn-confirm" onclick="enviarWhatsApp()">Confirmar e Enviar</button>
+        <button onclick="fecharModal()" style="background:none; border:none; width:100%; margin-top:20px; cursor:pointer; color:#999; text-decoration:underline; text-transform:uppercase; font-size:10px; letter-spacing:1px;">Ajustar</button>
+    </div>
+</div>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyC8MacELfK0_avvpWIWBHZpJO_WYqhjOaE",
+        authDomain: "exclusiva-noivas---agendamento.firebaseapp.com",
+        databaseURL: "https://exclusiva-noivas---agendamento-default-rtdb.firebaseio.com",
+        projectId: "exclusiva-noivas---agendamento",
+        storageBucket: "exclusiva-noivas---agendamento.firebasestorage.app",
+        messagingSenderId: "891467475836",
+        appId: "1:891467475836:web:9565af78e44e9d6d53d2f9"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    function mascaraCPF(i) {
+        let v = i.value.replace(/\D/g, "");
+        v = v.replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+        i.value = v;
+    }
+    function mascaraTel(i) {
+        let v = i.value.replace(/\D/g, "");
+        v = v.replace(/^(\d{2})(\d)/g, "($1) $2").replace(/(\d)(\d{4})$/, "$1-$2");
+        i.value = v;
+    }
+    function mascaraMoeda(i) {
+        let v = i.value.replace(/\D/g, "");
+        v = (Number(v)/100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        i.value = v;
+    }
+    function formatarDataBR(data) {
+        if(!data) return "";
+        const [ano, mes, dia] = data.split("-");
+        return `${dia}/${mes}/${ano}`;
+    }
+
+    function buscarOcupacao() {
+        const dataSel = document.getElementById('data').value;
+        if (!dataSel) return;
+
+        // Busca tanto os agendamentos quanto a configuração de expediente
+        Promise.all([
+            database.ref('agendamentos').orderByChild('dataISO').equalTo(dataSel).once('value'),
+            database.ref('expediente/config/' + dataSel).once('value')
+        ]).then(([snapAgend, snapConfig]) => {
+            let ocupados = [];
+            snapAgend.forEach((child) => {
+                if (child.val().status !== "recusado") ocupados.push(child.val().hora);
+            });
+            const configDia = snapConfig.val();
+            gerarHorariosInteligentes(ocupados, configDia);
+        });
+    }
+
+    function gerarHorariosInteligentes(ocupados, configDia) {
+        const inputData = document.getElementById('data').value;
+        const select = document.getElementById('horario');
+        select.innerHTML = "";
+        
+        // Bloqueio Total se a loja estiver fechada no Admin
+        if (configDia && configDia.status === 'fechado') {
+            alert("Atelier fechado nesta data específica.");
+            document.getElementById('formNoiva').style.display = "none";
+            return;
+        }
+
+        document.getElementById('formNoiva').style.display = "block";
+        const dataObj = new Date(inputData + "T00:00:00");
+        const diaSemana = dataObj.getDay();
+        const diaMes = dataObj.getDate();
+        let listaTeorica = [];
+
+        // 1. Definição do Horário de Início e Fim (Obedece ao Horário Especial do Admin)
+        let horaInicio = 9.5; // 09:30 padrão
+        let horaFim = 17;     // 17:00 padrão
+        let step = 0.5;
+
+        if (configDia && configDia.status === 'especial') {
+            horaInicio = horaParaDecimal(configDia.inicio);
+            horaFim = horaParaDecimal(configDia.fim);
+        } else if (diaSemana === 0) { 
+            alert("Atelier fechado aos domingos."); 
+            document.getElementById('formNoiva').style.display = "none";
+            return; 
+        } else if (diaSemana === 6) {
+            horaInicio = 9;
+            horaFim = (diaMes <= 14) ? 16 : 12;
+            step = 1;
+        }
+
+        // 2. Montagem da Lista de Horários
+        for (let h = horaInicio; h <= horaFim; h += step) {
+            listaTeorica.push(formatarHora(h));
+        }
+
+        // 3. Aplicação da Lógica de Bloqueio (Regra de 1h30 em dias úteis)
+        listaTeorica.forEach(hora => {
+            let bloqueado = false;
+            ocupados.forEach(horaOcupada => {
+                let hOcupadaDec = horaParaDecimal(horaOcupada);
+                let hAtualDec = horaParaDecimal(hora);
+
+                if (diaSemana >= 1 && diaSemana <= 5 && (!configDia || configDia.status !== 'especial')) {
+                    if (Math.abs(hAtualDec - hOcupadaDec) < 1.5) bloqueado = true;
+                } else {
+                    if (hora === horaOcupada) bloqueado = true;
+                }
+            });
+
+            let opt = document.createElement("option");
+            opt.value = hora;
+            if (bloqueado) {
+                opt.text = `${hora} — (Reservado)`;
+                opt.disabled = true;
+                opt.style.color = "#bbbbbb";
+                opt.style.textDecoration = "line-through";
+            } else {
+                opt.text = hora;
+            }
+            select.add(opt);
+        });
+    }
+
+    function horaParaDecimal(horaStr) {
+        let p = horaStr.split(':');
+        return parseInt(p[0]) + (p[1] === "30" ? 0.5 : 0);
+    }
+
+    function formatarHora(decimal) {
+        const h = Math.floor(decimal);
+        const m = (decimal % 1 === 0) ? "00" : "30";
+        return `${h.toString().padStart(2, '0')}:${m}`;
+    }
+
+    function abrirResumo() {
+        if(!document.getElementById('nome').value || !document.getElementById('tel').value) {
+            alert("Nome e WhatsApp são essenciais.");
+            return;
+        }
+        const resumo = `
+            <b>Noiva:</b> ${document.getElementById('nome').value}<br>
+            <b>Data:</b> ${formatarDataBR(document.getElementById('data').value)} às ${document.getElementById('horario').value}<br>
+            <b>Instagram:</b> ${document.getElementById('insta').value || "Não informado"}<br>
+            <b>Finalidade:</b> ${document.getElementById('finalidade').value}<br>
+            <b>Benefício 1ª Visita:</b> ${document.getElementById('querBeneficio').checked ? "Solicitado" : "Não"}
+        `;
+        document.getElementById('conteudoResumo').innerHTML = resumo;
+        document.getElementById('modalResumo').style.display = "flex";
+    }
+
+    function fecharModal() { document.getElementById('modalResumo').style.display = "none"; }
+
+    function enviarWhatsApp() {
+        const d = {
+            data: formatarDataBR(document.getElementById('data').value),
+            dataISO: document.getElementById('data').value,
+            hora: document.getElementById('horario').value,
+            nome: document.getElementById('nome').value,
+            cpf: document.getElementById('cpf').value,
+            tel: document.getElementById('tel').value,
+            cidade: document.getElementById('cidade').value,
+            casamento: formatarDataBR(document.getElementById('dataCasamento').value),
+            insta: document.getElementById('insta').value,
+            finalidade: document.getElementById('finalidade').value,
+            refs: document.getElementById('refs').value,
+            outras: document.getElementById('outras').value,
+            cerimonialista: document.getElementById('cerimonialista').value || "Não informado",
+            orcamento: document.getElementById('orcamento').value,
+            beneficio: document.getElementById('querBeneficio').checked ? "SIM" : "NÃO",
+            status: "pendente",
+            timestamp: new Date().toISOString()
+        };
+
+        const ref = database.ref('agendamentos').push();
+        ref.set(d).then(() => {
+            const msg = `*SOLICITAÇÃO DE RESERVA - EXCLUSIVA NOIVAS*%0A%0A` +
+                        `*Noiva:* ${d.nome}%0A` +
+                        `*Data:* ${d.data}%0A` +
+                        `*Hora:* ${d.hora}%0A%0A` +
+                        `Olá! Acabei de solicitar minha reserva através do site. Aguardo contato.`;
+            window.open(`https://wa.me/5514997105505?text=${msg}`, '_blank');
+            location.reload();
+        }).catch(e => alert("Erro ao conectar. Tente novamente."));
+    }
+</script>
+</body>
+</html>
