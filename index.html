@@ -9,10 +9,9 @@
     <style>
         :root { 
             --gold: #b89754; 
-            --gold-soft: #c9ae78;
             --dark: #1a1a1a; 
             --off-white: #fdfaf7; 
-            --glass: rgba(255, 255, 255, 0.9);
+            --glass: rgba(255, 255, 255, 0.92);
         }
         
         body { 
@@ -22,8 +21,9 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            padding: 40px 20px;
-            background: linear-gradient(rgba(253, 250, 247, 0.85), rgba(253, 250, 247, 0.85)), 
+            padding: 30px 20px;
+            /* Fundo com imagem de noiva embaçada para profundidade */
+            background: linear-gradient(rgba(253, 250, 247, 0.8), rgba(253, 250, 247, 0.8)), 
                         url('https://images.unsplash.com/photo-1594462250123-bc91442130e4?q=80&w=2000&auto=format&fit=crop');
             background-size: cover;
             background-position: center;
@@ -32,48 +32,52 @@
 
         .profile-container {
             text-align: center;
-            max-width: 420px;
+            max-width: 400px;
             width: 100%;
             background: var(--glass);
-            padding: 50px 30px;
-            border-radius: 4px;
+            padding: 45px 25px;
+            border-radius: 2px;
             backdrop-filter: blur(10px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
-            border: 1px solid rgba(184, 151, 84, 0.2);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(184, 151, 84, 0.15);
         }
 
         .logo {
-            width: 220px;
-            margin-bottom: 15px;
+            width: 200px;
+            margin-bottom: 25px;
+        }
+
+        .pronovias-box {
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+            margin-bottom: 30px;
         }
 
         .grife-badge {
-            font-size: 10px;
+            font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 2px;
             color: var(--dark);
-            margin-bottom: 5px;
             font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
         }
 
         .grife-desc {
-            font-size: 12px;
-            font-style: italic;
-            color: var(--gold);
-            margin-bottom: 35px;
+            font-size: 13px;
+            color: #444; /* Cor mais escura para legibilidade */
             display: block;
-            line-height: 1.4;
+            font-style: italic;
         }
 
         h2 {
             text-transform: uppercase;
             letter-spacing: 5px;
-            font-size: 13px;
-            margin-bottom: 40px;
-            color: #666;
+            font-size: 14px;
+            margin-bottom: 30px;
+            color: var(--gold);
             font-weight: 300;
-            border-top: 1px solid #eee;
-            padding-top: 20px;
         }
 
         .links-wrapper {
@@ -84,24 +88,23 @@
 
         .link-card {
             background: white;
-            border: 1px solid #e5e5e5;
+            border: 1px solid #ddd;
             padding: 18px;
             text-decoration: none;
             color: var(--dark);
             text-transform: uppercase;
-            letter-spacing: 3px;
+            letter-spacing: 2px;
             font-size: 11px;
             font-weight: bold;
             transition: all 0.3s ease;
-            border-radius: 2px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            border-radius: 1px;
         }
 
-        /* Cores de Grife */
-        .btn-principal {
+        /* Destaque para o agendamento */
+        .btn-black {
             background-color: var(--dark);
             color: white;
             border: none;
@@ -110,33 +113,32 @@
         .link-card:hover {
             border-color: var(--gold);
             background-color: #fffdfa;
-            letter-spacing: 4px;
+            transform: translateY(-2px);
         }
 
-        .btn-principal:hover {
+        .btn-black:hover {
             background-color: var(--gold);
-            color: white;
         }
 
         .footer-info {
-            margin-top: 45px;
+            margin-top: 40px;
             text-align: center;
             font-size: 10px;
-            color: #888;
+            color: #666;
             line-height: 1.8;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
-        .cnpj-text {
+        .cnpj-footer {
             margin-top: 10px;
             font-weight: bold;
-            color: var(--gold-soft);
+            color: var(--gold);
         }
 
         @media (max-width: 480px) {
-            .profile-container { padding: 40px 20px; }
-            .logo { width: 180px; }
+            .profile-container { padding: 35px 20px; }
+            .logo { width: 170px; }
         }
     </style>
 </head>
@@ -145,43 +147,43 @@
     <div class="profile-container">
         <img src="logo.png" alt="Exclusiva Noivas" class="logo">
         
-        <div class="grife-section">
-            <span class="grife-badge">Exclusividade Regional Grupo Pronovias Barcelona</span>
+        <div class="pronovias-box">
+            <span class="grife-badge">🇪🇸 GRUPO PRONOVIAS BARCELONA</span>
             <span class="grife-desc">A maior referência mundial em moda noiva</span>
         </div>
         
         <h2>Seja Exclusiva</h2>
 
         <div class="links-wrapper">
-            <a href="agenda.html" class="link-card btn-principal" onclick="registrarClique('agendar_horario')">
-                💍 Agendar Experiência
+            <a href="agenda.html" class="link-card btn-black" onclick="registrarClique('agendar_horario')">
+                💍 Agendar um Horário
             </a>
 
-            <a href="https://wa.me/5514997105505?text=Olá! Gostaria de conversar com uma consultora sobre os modelos Pronovias." 
+            <a href="https://wa.me/5514997105505?text=Olá Gostaria de Conversar com uma Consultora" 
                target="_blank" class="link-card" onclick="registrarClique('falar_consultora')">
-                💬 Consultoria VIP
+                💬 Falar com uma Consultora
             </a>
 
             <a href="https://www.instagram.com/exclusivanoivas.marilia/" 
                target="_blank" class="link-card" onclick="registrarClique('instagram')">
-                📸 Galeria de Modelos
+                📸 Instagram Oficial
             </a>
 
-            <a href="https://www.google.com/maps/search/?api=1&query=Exclusiva+Noivas+Marilia" 
+            <a href="https://maps.app.goo.gl/XvT9N1tBfV5A2f6X9%0A" 
                target="_blank" class="link-card" onclick="registrarClique('localizacao')">
-                📍 Onde Estamos
+                📍 Localização da Loja
             </a>
         </div>
 
         <div class="footer-info">
-            <p>Avenida Rio Branco, 481 - Marília/SP</p>
-            <p>Seg a Sex: 09:30 às 17:00 | Sáb: 09:00 às 16:00</p>
-            <p class="cnpj-text">CNPJ: 24.508-035/0001-02</p>
+            <p><strong>Avenida Rio Branco, 481 - Marília/SP</strong><br>
+            Seg a Sex: 09:30 às 17:00 | Sáb: 09:00 às 16:00</p>
+            <p class="cnpj-footer">CNPJ: 24.508-035/0001-02</p>
         </div>
     </div>
 
     <script>
-        // Configuração Firebase (Sincronizado com seu admin/agenda)
+        // Configuração Firebase
         const firebaseConfig = { 
             apiKey: "AIzaSyC8MacELfK0_avvpWIWBHZpJO_WYqhjOaE", 
             authDomain: "exclusiva-noivas---agendamento.firebaseapp.com", 
