@@ -11,7 +11,7 @@
             --gold: #b89754; 
             --dark: #1a1a1a; 
             --off-white: #fdfaf7; 
-            --glass: rgba(255, 255, 255, 0.92);
+            --glass: rgba(255, 255, 255, 0.94);
         }
         
         body { 
@@ -22,9 +22,9 @@
             align-items: center;
             min-height: 100vh;
             padding: 30px 20px;
-            /* Fundo com imagem de noiva embaçada para profundidade */
-            background: linear-gradient(rgba(253, 250, 247, 0.8), rgba(253, 250, 247, 0.8)), 
-                        url('https://images.unsplash.com/photo-1594462250123-bc91442130e4?q=80&w=2000&auto=format&fit=crop');
+            /* Fundo personalizado */
+            background: linear-gradient(rgba(253, 250, 247, 0.7), rgba(253, 250, 247, 0.7)), 
+                        url('fundo.png');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -37,9 +37,9 @@
             background: var(--glass);
             padding: 45px 25px;
             border-radius: 2px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
-            border: 1px solid rgba(184, 151, 84, 0.15);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(184, 151, 84, 0.2);
         }
 
         .logo {
@@ -48,10 +48,27 @@
         }
 
         .pronovias-box {
-            border-top: 1px solid #eee;
-            border-bottom: 1px solid #eee;
-            padding: 15px 0;
-            margin-bottom: 30px;
+            border-top: 1px solid rgba(0,0,0,0.05);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding: 20px 0;
+            margin-bottom: 35px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badge-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .flag-icon {
+            width: 20px;
+            height: auto;
+            display: inline-block;
         }
 
         .grife-badge {
@@ -60,15 +77,13 @@
             letter-spacing: 2px;
             color: var(--dark);
             font-weight: bold;
-            display: block;
-            margin-bottom: 5px;
         }
 
         .grife-desc {
-            font-size: 13px;
-            color: #444; /* Cor mais escura para legibilidade */
-            display: block;
+            font-size: 14px;
+            color: #222;
             font-style: italic;
+            font-weight: 500;
         }
 
         h2 {
@@ -103,7 +118,6 @@
             border-radius: 1px;
         }
 
-        /* Destaque para o agendamento */
         .btn-black {
             background-color: var(--dark);
             color: white;
@@ -124,7 +138,7 @@
             margin-top: 40px;
             text-align: center;
             font-size: 10px;
-            color: #666;
+            color: #555;
             line-height: 1.8;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -148,7 +162,10 @@
         <img src="logo.png" alt="Exclusiva Noivas" class="logo">
         
         <div class="pronovias-box">
-            <span class="grife-badge">🇪🇸 GRUPO PRONOVIAS BARCELONA</span>
+            <div class="badge-wrapper">
+                <img src="espanha.png" alt="Espanha" class="flag-icon">
+                <span class="grife-badge">GRUPO PRONOVIAS BARCELONA</span>
+            </div>
             <span class="grife-desc">A maior referência mundial em moda noiva</span>
         </div>
         
@@ -169,7 +186,7 @@
                 📸 Instagram Oficial
             </a>
 
-            <a href="https://maps.app.goo.gl/XvT9N1tBfV5A2f6X9%0A" 
+            <a href="http://googleusercontent.com/maps.google.com/6" 
                target="_blank" class="link-card" onclick="registrarClique('localizacao')">
                 📍 Localização da Loja
             </a>
