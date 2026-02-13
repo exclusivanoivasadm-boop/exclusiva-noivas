@@ -9,9 +9,10 @@
     <style>
         :root { 
             --gold: #b89754; 
+            --gold-gradient: linear-gradient(135deg, #b89754 0%, #d4af37 50%, #b89754 100%);
             --dark: #1a1a1a; 
-            --off-white: #fdfaf7; 
-            --glass: rgba(255, 255, 255, 0.94);
+            --text-gray: #444;
+            --glass: rgba(255, 255, 255, 0.85);
         }
         
         body { 
@@ -20,10 +21,11 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
             min-height: 100vh;
-            padding: 30px 20px;
-            /* Fundo personalizado */
-            background: linear-gradient(rgba(253, 250, 247, 0.7), rgba(253, 250, 247, 0.7)), 
+            padding: 20px;
+            /* Fundo com a sua imagem personalizada */
+            background: linear-gradient(rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.4)), 
                         url('fundo.png');
             background-size: cover;
             background-position: center;
@@ -34,45 +36,41 @@
             text-align: center;
             max-width: 400px;
             width: 100%;
-            background: var(--glass);
-            padding: 45px 25px;
-            border-radius: 2px;
-            backdrop-filter: blur(15px);
-            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.08);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 50px 30px;
+            border-radius: 4px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
             border: 1px solid rgba(184, 151, 84, 0.2);
         }
 
         .logo {
-            width: 200px;
+            width: 220px;
             margin-bottom: 25px;
         }
 
-        .pronovias-box {
-            border-top: 1px solid rgba(0,0,0,0.05);
-            border-bottom: 1px solid rgba(0,0,0,0.05);
+        .pronovias-section {
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #eee;
             padding: 20px 0;
-            margin-bottom: 35px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
+            margin-bottom: 40px;
         }
 
         .badge-wrapper {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
+            margin-bottom: 8px;
         }
 
         .flag-icon {
-            width: 20px;
+            width: 22px;
             height: auto;
-            display: inline-block;
+            border-radius: 2px;
         }
 
         .grife-badge {
-            font-size: 11px;
+            font-size: 12px;
             text-transform: uppercase;
             letter-spacing: 2px;
             color: var(--dark);
@@ -80,19 +78,20 @@
         }
 
         .grife-desc {
-            font-size: 14px;
-            color: #222;
+            font-size: 15px;
+            color: var(--text-gray); /* Cor ajustada para leitura perfeita */
+            display: block;
             font-style: italic;
             font-weight: 500;
         }
 
-        h2 {
+        .cta-title {
             text-transform: uppercase;
-            letter-spacing: 5px;
+            letter-spacing: 6px;
             font-size: 14px;
             margin-bottom: 30px;
             color: var(--gold);
-            font-weight: 300;
+            font-weight: 400;
         }
 
         .links-wrapper {
@@ -103,7 +102,7 @@
 
         .link-card {
             background: white;
-            border: 1px solid #ddd;
+            border: 1px solid #e0e0e0;
             padding: 18px;
             text-decoration: none;
             color: var(--dark);
@@ -111,48 +110,54 @@
             letter-spacing: 2px;
             font-size: 11px;
             font-weight: bold;
-            transition: all 0.3s ease;
+            transition: all 0.4s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 1px;
+            border-radius: 2px;
         }
 
-        .btn-black {
-            background-color: var(--dark);
+        /* O NOVO BOTÃO DOURADO METALIZADO */
+        .btn-gold {
+            background: var(--gold-gradient);
             color: white;
             border: none;
+            box-shadow: 0 4px 15px rgba(184, 151, 84, 0.3);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
 
         .link-card:hover {
             border-color: var(--gold);
             background-color: #fffdfa;
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
         }
 
-        .btn-black:hover {
-            background-color: var(--gold);
+        .btn-gold:hover {
+            filter: brightness(1.1);
+            box-shadow: 0 8px 25px rgba(184, 151, 84, 0.5);
         }
 
         .footer-info {
-            margin-top: 40px;
+            margin-top: 45px;
             text-align: center;
-            font-size: 10px;
-            color: #555;
+            font-size: 11px;
+            color: #777;
             line-height: 1.8;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
-        .cnpj-footer {
-            margin-top: 10px;
+        .cnpj-tag {
+            display: block;
+            margin-top: 12px;
             font-weight: bold;
             color: var(--gold);
         }
 
         @media (max-width: 480px) {
-            .profile-container { padding: 35px 20px; }
-            .logo { width: 170px; }
+            .profile-container { padding: 40px 20px; }
+            .logo { width: 180px; }
         }
     </style>
 </head>
@@ -161,7 +166,7 @@
     <div class="profile-container">
         <img src="logo.png" alt="Exclusiva Noivas" class="logo">
         
-        <div class="pronovias-box">
+        <div class="pronovias-section">
             <div class="badge-wrapper">
                 <img src="espanha.png" alt="Espanha" class="flag-icon">
                 <span class="grife-badge">GRUPO PRONOVIAS BARCELONA</span>
@@ -169,10 +174,10 @@
             <span class="grife-desc">A maior referência mundial em moda noiva</span>
         </div>
         
-        <h2>Seja Exclusiva</h2>
+        <h3 class="cta-title">Seja Exclusiva</h3>
 
         <div class="links-wrapper">
-            <a href="agenda.html" class="link-card btn-black" onclick="registrarClique('agendar_horario')">
+            <a href="agenda.html" class="link-card btn-gold" onclick="registrarClique('agendar_horario')">
                 💍 Agendar um Horário
             </a>
 
@@ -186,21 +191,21 @@
                 📸 Instagram Oficial
             </a>
 
-            <a href="http://googleusercontent.com/maps.google.com/6" 
+            <a href="https://goo.gl/maps/SeuLinkAqui" 
                target="_blank" class="link-card" onclick="registrarClique('localizacao')">
                 📍 Localização da Loja
             </a>
         </div>
 
         <div class="footer-info">
-            <p><strong>Avenida Rio Branco, 481 - Marília/SP</strong><br>
+            <p>Avenida Rio Branco, 481 - Marília/SP<br>
             Seg a Sex: 09:30 às 17:00 | Sáb: 09:00 às 16:00</p>
-            <p class="cnpj-footer">CNPJ: 24.508-035/0001-02</p>
+            <span class="cnpj-tag">CNPJ: 24.508-035/0001-02</span>
         </div>
     </div>
 
     <script>
-        // Configuração Firebase
+        // Configuração Firebase Sincronizada
         const firebaseConfig = { 
             apiKey: "AIzaSyC8MacELfK0_avvpWIWBHZpJO_WYqhjOaE", 
             authDomain: "exclusiva-noivas---agendamento.firebaseapp.com", 
