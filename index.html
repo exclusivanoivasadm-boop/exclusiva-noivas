@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exclusiva Noivas | Links Oficiais</title>
+    <title>Exclusiva Noivas | Grife Internacional</title>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <style>
         :root { 
             --gold: #b89754; 
-            --gold-light: #d4af37;
+            --gold-soft: #c9ae78;
             --dark: #1a1a1a; 
             --off-white: #fdfaf7; 
-            --glass: rgba(255, 255, 255, 0.85);
+            --glass: rgba(255, 255, 255, 0.9);
         }
         
         body { 
@@ -23,9 +23,8 @@
             align-items: center;
             min-height: 100vh;
             padding: 40px 20px;
-            /* Imagem de fundo luxuosa embaçada */
-            background: linear-gradient(rgba(253, 250, 247, 0.8), rgba(253, 250, 247, 0.8)), 
-                        url('https://images.unsplash.com/photo-1546193430-c2d20773d15d?q=80&w=2000&auto=format&fit=crop');
+            background: linear-gradient(rgba(253, 250, 247, 0.85), rgba(253, 250, 247, 0.85)), 
+                        url('https://images.unsplash.com/photo-1594462250123-bc91442130e4?q=80&w=2000&auto=format&fit=crop');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -33,107 +32,111 @@
 
         .profile-container {
             text-align: center;
-            max-width: 400px;
+            max-width: 420px;
             width: 100%;
             background: var(--glass);
-            padding: 40px 30px;
-            border-radius: 15px;
+            padding: 50px 30px;
+            border-radius: 4px;
             backdrop-filter: blur(10px);
-            box-shadow: 0 10px 30px rgba(184, 151, 84, 0.1);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
             border: 1px solid rgba(184, 151, 84, 0.2);
         }
 
         .logo {
-            width: 200px;
-            margin-bottom: 20px;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+            width: 220px;
+            margin-bottom: 15px;
+        }
+
+        .grife-badge {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--dark);
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .grife-desc {
+            font-size: 12px;
+            font-style: italic;
+            color: var(--gold);
+            margin-bottom: 35px;
+            display: block;
+            line-height: 1.4;
         }
 
         h2 {
             text-transform: uppercase;
-            letter-spacing: 4px;
-            font-size: 14px;
-            margin-bottom: 35px;
-            color: var(--gold);
+            letter-spacing: 5px;
+            font-size: 13px;
+            margin-bottom: 40px;
+            color: #666;
             font-weight: 300;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
         }
 
         .links-wrapper {
             display: flex;
             flex-direction: column;
-            gap: 18px;
+            gap: 15px;
         }
 
         .link-card {
             background: white;
-            border: 1px solid rgba(184, 151, 84, 0.3);
-            padding: 16px;
+            border: 1px solid #e5e5e5;
+            padding: 18px;
             text-decoration: none;
             color: var(--dark);
             text-transform: uppercase;
-            letter-spacing: 2px;
-            font-size: 12px;
+            letter-spacing: 3px;
+            font-size: 11px;
             font-weight: bold;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border-radius: 50px; /* Botões arredondados trazem leveza */
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            transition: all 0.3s ease;
+            border-radius: 2px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
         }
 
-        /* Cores Glamurosas nos botões */
-        .btn-agenda {
-            background: linear-gradient(135deg, var(--dark) 0%, #333 100%);
+        /* Cores de Grife */
+        .btn-principal {
+            background-color: var(--dark);
             color: white;
             border: none;
-        }
-
-        .btn-insta {
-            background: linear-gradient(135deg, #fff 0%, #fff 100%);
-            border: 1px solid #e1306c;
-            color: #e1306c;
-        }
-
-        .btn-whats {
-            background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
-            color: white;
-            border: none;
-        }
-
-        .btn-maps {
-            background: linear-gradient(135deg, #fff 0%, #fdfaf7 100%);
         }
 
         .link-card:hover {
-            transform: scale(1.03);
-            box-shadow: 0 8px 20px rgba(184, 151, 84, 0.2);
             border-color: var(--gold);
+            background-color: #fffdfa;
+            letter-spacing: 4px;
+        }
+
+        .btn-principal:hover {
+            background-color: var(--gold);
+            color: white;
         }
 
         .footer-info {
-            margin-top: 40px;
+            margin-top: 45px;
             text-align: center;
             font-size: 10px;
-            color: #777;
+            color: #888;
             line-height: 1.8;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
-        .cnpj {
+        .cnpj-text {
             margin-top: 10px;
             font-weight: bold;
-            color: var(--gold);
+            color: var(--gold-soft);
         }
 
-        /* Ajuste para telas pequenas */
         @media (max-width: 480px) {
-            .profile-container {
-                padding: 30px 20px;
-            }
-            .logo { width: 160px; }
+            .profile-container { padding: 40px 20px; }
+            .logo { width: 180px; }
         }
     </style>
 </head>
@@ -142,39 +145,43 @@
     <div class="profile-container">
         <img src="logo.png" alt="Exclusiva Noivas" class="logo">
         
-        <h2>Seu sonho começa aqui</h2>
+        <div class="grife-section">
+            <span class="grife-badge">Exclusividade Regional Grupo Pronovias Barcelona</span>
+            <span class="grife-desc">A maior referência mundial em moda noiva</span>
+        </div>
+        
+        <h2>Seja Exclusiva</h2>
 
         <div class="links-wrapper">
-            <a href="agenda.html" class="link-card btn-agenda" onclick="registrarClique('agendar_horario')">
-                💍 Agendar um Horário
+            <a href="agenda.html" class="link-card btn-principal" onclick="registrarClique('agendar_horario')">
+                💍 Agendar Experiência
             </a>
 
-            <a href="https://wa.me/5514997105505?text=Olá! Gostaria de conversar com uma consultora." 
-               target="_blank" class="link-card btn-whats" onclick="registrarClique('falar_consultora')">
-                💬 Falar com uma Consultora
+            <a href="https://wa.me/5514997105505?text=Olá! Gostaria de conversar com uma consultora sobre os modelos Pronovias." 
+               target="_blank" class="link-card" onclick="registrarClique('falar_consultora')">
+                💬 Consultoria VIP
             </a>
 
             <a href="https://www.instagram.com/exclusivanoivas.marilia/" 
-               target="_blank" class="link-card btn-insta" onclick="registrarClique('instagram')">
-                📸 Instagram Oficial
+               target="_blank" class="link-card" onclick="registrarClique('instagram')">
+                📸 Galeria de Modelos
             </a>
 
-            <a href="https://www.google.com/maps/dir//Avenida+Rio+Branco,+481+-+Mar%C3%ADlia" 
-               target="_blank" class="link-card btn-maps" onclick="registrarClique('localizacao')">
-                📍 Como Chegar na Loja
+            <a href="https://www.google.com/maps/search/?api=1&query=Exclusiva+Noivas+Marilia" 
+               target="_blank" class="link-card" onclick="registrarClique('localizacao')">
+                📍 Onde Estamos
             </a>
         </div>
 
         <div class="footer-info">
-            <p><strong>Horário de Atendimento</strong><br>
-            Seg a Sex: 09:30 às 17:00 | Sáb: 09:00 às 16:00</p>
             <p>Avenida Rio Branco, 481 - Marília/SP</p>
-            <p class="cnpj">CNPJ: 24.508-035/0001-02</p>
+            <p>Seg a Sex: 09:30 às 17:00 | Sáb: 09:00 às 16:00</p>
+            <p class="cnpj-text">CNPJ: 24.508-035/0001-02</p>
         </div>
     </div>
 
     <script>
-        // Configuração Firebase
+        // Configuração Firebase (Sincronizado com seu admin/agenda)
         const firebaseConfig = { 
             apiKey: "AIzaSyC8MacELfK0_avvpWIWBHZpJO_WYqhjOaE", 
             authDomain: "exclusiva-noivas---agendamento.firebaseapp.com", 
