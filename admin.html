@@ -567,14 +567,13 @@
         const dataBR = dataISO.split('-').reverse().join('/');
         
         let msg = `*LEMBRETE DE AGENDAMENTO*%0A*Exclusiva Noivas*%0A%0A`;
-        msg += `*Noiva:* ${nome}%0A`;
-        msg += `*Data do Agendamento:* ${dataBR} (${diaSemana})%0A`;
-        msg += `*Horário:* ${hora}hs%0A%0A`;
+        msg += `👰‍♀️*Noiva:* ${nome}%0A`;
+        msg += `📅*Data do Agendamento:* ${dataBR} (${diaSemana})%0A`;
+        msg += `🕛*Horário:* ${hora}hs%0A%0A`;
         msg += `*Benefício de Primeira Visita:* ${beneficio === 'SIM' ? '✅ Ativo' : 'Não se aplica'}%0A%0A`;
-        msg += `*Endereço:* Avenida Rio Branco, 481 - Marília/SP%0A`;
-        msg += `📍 *Link do Maps:* https://maps.app.goo.gl/XvT9N1tBfV5A2f6X9%0A`;
+        msg += `📍*Endereço:* Avenida Rio Branco, 481 - Marília/SP%0A`;
         msg += `*Temos estacionamento em frente à loja.*%0A%0A`;
-        msg += `Podemos confirmar seu horário? ✨💍`;
+        msg += `Podemos confirmar seu horário? ✨`;
 
         database.ref('agendamentos/' + key).update({ lembreteEnviado: true });
         window.open(`https://wa.me/55${fone}?text=${msg}`, '_blank');
@@ -747,3 +746,4 @@
 </script>
 </body>
 </html>
+
