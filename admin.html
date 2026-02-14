@@ -233,6 +233,18 @@
             <div><label>Referências?</label><select id="edit_refs"><option value="Sim">Sim</option><option value="Não">Não</option></select></div>
             <div><label>Outras Lojas?</label><select id="edit_outras"><option value="Sim">Sim</option><option value="Não">Não</option></select></div>
             <div><label>Benefício?</label><select id="edit_beneficio"><option value="SIM">SIM</option><option value="NÃO">NÃO</option></select></div>
+            <div id="divEditResultado" style="display:none;">
+                <label>Resultado do Atendimento</label>
+                <select id="edit_resultado">
+                    <option value="alugou">Alugou Conosco</option>
+                    <option value="nao_alugou">Não Alugou / Alugou no Concorrente</option>
+                    <option value="remarcou">Irá Remarcar</option>
+                </select>
+            </div>
+            <div id="divEditConcorrente" style="display:none;">
+                <label>Onde ela alugou? (Concorrente)</label>
+                <select id="edit_concorrente_select"></select>
+            </div>
             <div style="grid-column: span 2;">
                 <label>📝 Observações Internas (Somente a loja vê)</label>
                 <textarea id="edit_obs" rows="4" placeholder="Ex: Noiva vem com 4 acompanhantes, prefere estilo princesa..."></textarea>
@@ -480,13 +492,16 @@
 
     function carregarLojistasSelect() {
         database.ref('configuracoes/lojistas').on('value', snap => {
-            const select = document.getElementById('f_concorrente_select');
-            select.innerHTML = '<option value="">Não soube informar</option>';
+            const selectFinalizar = document.getElementById('f_concorrente_select');
+            const selectEditar = document.getElementById('edit_concorrente_select');
+            
+            let html = '<option value="">Não soube informar</option>';
             snap.forEach(l => {
-                let opt = document.createElement('option');
-                opt.value = l.val().nome; opt.text = l.val().nome;
-                select.add(opt);
+                html += `<option value="${l.val().nome}">${l.val().nome}</option>`;
             });
+            
+            selectFinalizar.innerHTML = html;
+            selectEditar.innerHTML = html;
         });
     }
 
@@ -527,14 +542,17 @@
         lista.sort((a,b) => a.dataISO.localeCompare(b.dataISO) || a.hora.localeCompare(b.hora));
         let html = `<table><thead><tr><th>Data/Hora</th><th>Noiva</th><th>WhatsApp</th><th>Status</th><th>Ações</th></tr></thead><tbody>`;
         lista.forEach(d => {
+            // INFO E EDITAR AGORA FICAM SEMPRE DISPONÍVEIS
             let botoes = `<button class="btn btn-info" onclick="verDetalhes('${encodeURIComponent(JSON.stringify(d))}')">Info</button>`;
+            botoes += `<button class="btn btn-editar" onclick="abrirEdicao('${d.key}')">EDITAR</button>`;
+
             if (d.status === 'pendente') {
                 botoes += `<button class="btn btn-aceitar" onclick="mudarStatus('${d.key}', 'agendado')">ACEITAR</button>`;
                 botoes += `<button class="btn btn-recusar" onclick="mudarStatus('${d.key}', 'recusado')">X</button>`;
             } else if (d.status === 'recusado') {
                 botoes += `<button class="btn btn-reativar" onclick="mudarStatus('${d.key}', 'pendente')">REATIVAR</button>`;
             } else if (d.status === 'finalizado') {
-                botoes = `<span style="font-size:10px">${d.resultado ? d.resultado.toUpperCase() : 'FINALIZADO'} ${d.concorrente ? '('+d.concorrente+')' : ''}</span>`;
+                botoes += `<span style="font-size:10px; margin-left:10px; color:var(--gold); font-weight:bold;">[${d.resultado ? d.resultado.toUpperCase() : 'FINALIZADO'} ${d.concorrente ? '('+d.concorrente+')' : ''}]</span>`;
             }
             html += `<tr><td>${d.data} às ${d.hora}</td><td>${d.nome}</td><td>${d.tel}</td><td class="status-${d.status}">${d.status.toUpperCase()}</td><td>${botoes}</td></tr>`;
         });
@@ -602,6 +620,18 @@
             document.getElementById('edit_outras').value = d.outras || "Não";
             document.getElementById('edit_beneficio').value = d.beneficio || "NÃO";
             document.getElementById('edit_obs').value = d.obs || "";
+            
+            // EXIBIR CAMPOS DE RESULTADO SE JÁ ESTIVER FINALIZADO
+            if(d.status === 'finalizado') {
+                document.getElementById('divEditResultado').style.display = "block";
+                document.getElementById('divEditConcorrente').style.display = "block";
+                document.getElementById('edit_resultado').value = d.resultado || "alugou";
+                document.getElementById('edit_concorrente_select').value = d.concorrente || "";
+            } else {
+                document.getElementById('divEditResultado').style.display = "none";
+                document.getElementById('divEditConcorrente').style.display = "none";
+            }
+            
             document.getElementById('modalEditar').style.display = "flex";
         });
     }
@@ -618,6 +648,13 @@
             outras: document.getElementById('edit_outras').value, beneficio: document.getElementById('edit_beneficio').value,
             obs: document.getElementById('edit_obs').value
         };
+
+        // SALVAR RESULTADOS SE ESTIVEREM VISÍVEIS
+        if(document.getElementById('divEditResultado').style.display === "block") {
+            up.resultado = document.getElementById('edit_resultado').value;
+            up.concorrente = document.getElementById('edit_concorrente_select').value;
+        }
+
         database.ref('agendamentos/' + keySendoEditada).update(up).then(() => fecharModais());
     }
 
