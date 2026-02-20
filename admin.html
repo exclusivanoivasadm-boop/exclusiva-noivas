@@ -48,7 +48,7 @@
         th { text-align: left; background: #f9f9f9; padding: 12px; border-bottom: 2px solid var(--gold); text-transform: uppercase; font-size: 11px; }
         td { padding: 12px; border-bottom: 1px solid #eee; }
         
-        .group-header { background: #fdfaf7; padding: 10px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--gold); border-left: 4px solid var(--gold); margin: 20px 0 10px 0; }
+        .group-header { background: #fdfaf7; padding: 10px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--gold); border-left: 4px solid var(--gold); margin: 20px 0 10px 0; display: flex; align-items: center; gap: 8px; }
 
         .status-pendente { color: #d97706; font-weight: bold; }
         .status-agendado { color: var(--blue); font-weight: bold; }
@@ -56,19 +56,22 @@
         .status-recusado { color: var(--red); font-weight: bold; }
         .status-finalizado { color: var(--dark); font-weight: bold; }
         
-        .btn { padding: 8px 12px; border: none; cursor: pointer; font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; color: white; transition: 0.3s; }
-        .btn-info { background: #3b82f6; margin-right: 5px; }
-        .btn-aceitar { background: #10b981; margin-right: 5px; }
-        .btn-confirmar-final { background: #059669; margin-right: 5px; }
+        /* Design System de Botões Upgrade */
+        .btn-group { display: inline-flex; gap: 4px; align-items: center; }
+        .btn { padding: 6px 10px; border: none; cursor: pointer; font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: white; transition: 0.3s; border-radius: 2px; font-weight: bold; }
+        .btn-info { background: #3b82f6; }
+        .btn-aceitar { background: #10b981; }
+        .btn-confirmar-final { background: #059669; }
         .btn-recusar { background: #ef4444; }
-        .btn-excluir { background: #000000; margin-left: 5px; }
+        .btn-excluir { background: #000000; }
         .btn-reativar { background: var(--gold); }
         .btn-novo { background: var(--dark); padding: 12px 20px; font-size: 12px; letter-spacing: 2px; }
         .btn-expediente { background: var(--gold); }
-        .btn-whatsapp { background: #25d366; margin-left: 5px; }
-        .btn-confirm-whatsapp { background: #3b82f6; margin-left: 5px; }
-        .btn-finalizar { background: #6366f1; margin-left: 5px; }
-        .btn-editar { background: #8b5cf6; margin-right: 5px; }
+        .btn-whatsapp { background: #25d366; }
+        .btn-confirm-whatsapp { background: #6366f1; }
+        .btn-finalizar { background: var(--dark); border: 1px solid #ccc; color: #fff; }
+        .btn-finalizar.highlight { background: #6366f1; border: none; }
+        .btn-editar { background: #8b5cf6; }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
         .modal-content { background: white; padding: 40px; width: 95%; max-width: 800px; border-top: 4px solid var(--gold); position: relative; max-height: 95vh; overflow-y: auto; text-align: center; }
@@ -97,7 +100,7 @@
         label { font-size: 11px; text-transform: uppercase; font-weight: bold; margin-top: 5px; display: block; text-align: left;}
 
         .lojista-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; }
-        .badge-lembrete { font-size: 12px; margin-left: 5px; }
+        .badge-lembrete { font-size: 12px; margin-left: 2px; }
         
         .obs-box { grid-column: span 2; background: #fffdf9; border: 1px dashed var(--gold); padding: 10px; margin-top: 10px; font-style: italic; font-size: 13px; }
     </style>
@@ -342,7 +345,6 @@
     function carregarDados() {
         const mesFiltro = document.getElementById('filtroMes').value;
         
-        // Listener para Agendamentos
         database.ref('agendamentos').on('value', (snapshot) => {
             const container = document.getElementById('tabelaContainer');
             
@@ -359,14 +361,12 @@
 
             let cAlugou = 0, cNaoAlugou = 0, cRemarcou = 0;
             let perdasPorLojista = {};
-            let gruposAgendados = { hoje: [], amanha: [], daqui3: [], proximos: [] };
+            let gruposAgendados = { antigos: [], hoje: [], amanha: [], proximos: [] };
             let listaSimples = [];
 
             const hojeStr = new Date().toISOString().split('T')[0];
             const amanhaDate = new Date(); amanhaDate.setDate(amanhaDate.getDate() + 1);
             const amanhaStr = amanhaDate.toISOString().split('T')[0];
-            const daqui3Date = new Date(); daqui3Date.setDate(daqui3Date.getDate() + 3);
-            const daqui3Str = daqui3Date.toISOString().split('T')[0];
 
             snapshot.forEach(c => {
                 let d = c.val(); d.key = c.key;
@@ -381,9 +381,9 @@
                     if (d.status === statusAtual || (statusAtual === 'agendado' && d.status === 'confirmado')) {
                         if (mesAtende) {
                             if (statusAtual === 'agendado') {
-                                if (d.dataISO === hojeStr) gruposAgendados.hoje.push(d);
+                                if (d.dataISO < hojeStr) gruposAgendados.antigos.push(d);
+                                else if (d.dataISO === hojeStr) gruposAgendados.hoje.push(d);
                                 else if (d.dataISO === amanhaStr) gruposAgendados.amanha.push(d);
-                                else if (d.dataISO === daqui3Str) gruposAgendados.daqui3.push(d);
                                 else gruposAgendados.proximos.push(d);
                             } else {
                                 listaSimples.push(d);
@@ -407,25 +407,23 @@
             
             if(statusAtual === 'agendado') {
                 container.innerHTML = "";
+                container.innerHTML += renderBlocoTabela(gruposAgendados.antigos, "⚠️ NÃO COMPARECEU / ANTIGOS");
                 container.innerHTML += renderBlocoTabela(gruposAgendados.hoje, "⭐ HOJE");
                 container.innerHTML += renderBlocoTabela(gruposAgendados.amanha, "📅 AMANHÃ");
-                container.innerHTML += renderBlocoTabela(gruposAgendados.daqui3, "⏳ DAQUI A 3 DIAS");
                 container.innerHTML += renderBlocoTabela(gruposAgendados.proximos, "🚀 PRÓXIMOS DIAS");
             } else if (statusAtual !== 'dashboard' && statusAtual !== 'lojistas') {
                 renderTabela(listaSimples);
             }
         });
 
-        // Carregar Cliques na Aba Dashboard
         if (statusAtual === 'dashboard') {
             database.ref('estatisticas/cliques').once('value', snapshot => {
                 let totalAgenda = 0, totalWhats = 0, totalInsta = 0, totalMaps = 0;
                 const mesDesejado = (parseInt(mesFiltro) + 1).toString().padStart(2, '0');
 
                 snapshot.forEach(dataSnap => {
-                    const dataKey = dataSnap.key; // formato YYYY-MM-DD
+                    const dataKey = dataSnap.key;
                     const mesKey = dataKey.split('-')[1];
-
                     if (mesFiltro === 'todos' || mesKey === mesDesejado) {
                         const v = dataSnap.val();
                         totalAgenda += v.agendar_horario || 0;
@@ -434,7 +432,6 @@
                         totalMaps += v.localizacao || 0;
                     }
                 });
-
                 document.getElementById('clkAgenda').innerText = totalAgenda;
                 document.getElementById('clkWhats').innerText = totalWhats;
                 document.getElementById('clkInsta').innerText = totalInsta;
@@ -446,20 +443,33 @@
     function renderBlocoTabela(lista, titulo) {
         if (lista.length === 0) return "";
         lista.sort((a,b) => a.dataISO.localeCompare(b.dataISO) || a.hora.localeCompare(b.hora));
+        
         let html = `<div class="group-header">${titulo}</div><table><thead><tr><th>Data/Hora</th><th>Noiva</th><th>WhatsApp</th><th>Status</th><th>Ações</th></tr></thead><tbody>`;
+        
+        const hojeISO = new Date().toISOString().split('T')[0];
+
         lista.forEach(d => {
             const lembreteEnviado = d.lembreteEnviado ? '✅' : '';
             const confirmacaoEnviada = d.confirmacaoEnviada ? '✅' : '';
             
-            let botoes = `<button class="btn btn-info" onclick="verDetalhes('${encodeURIComponent(JSON.stringify(d))}')">Info</button>`;
+            // Lógica de destaque do botão Finalizar
+            const isHighlight = d.dataISO <= hojeISO;
+
+            let botoes = `<div class="btn-group">`;
+            botoes += `<button class="btn btn-info" onclick="verDetalhes('${encodeURIComponent(JSON.stringify(d))}')">INFO</button>`;
             botoes += `<button class="btn btn-editar" onclick="abrirEdicao('${d.key}')">EDITAR</button>`;
-            if(d.status === 'agendado') botoes += `<button class="btn btn-confirmar-final" onclick="mudarStatus('${d.key}', 'confirmado')">CONFIRMAR</button>`;
             
-            botoes += `<button class="btn btn-confirm-whatsapp" onclick="enviarConfirmacao3Dias('${d.key}', '${d.tel}', '${d.nome}', '${d.dataISO}', '${d.hora}')">Confirma (3d) ${confirmacaoEnviada}</button>`;
-            botoes += `<button class="btn btn-whatsapp" onclick="enviarLembrete24h('${d.key}', '${d.tel}', '${d.nome}', '${d.dataISO}', '${d.hora}', '${d.beneficio || 'NÃO'}')">Lembrete (24h) ${lembreteEnviado}</button>`;
+            if(d.status === 'agendado') {
+                botoes += `<button class="btn btn-aceitar" onclick="mudarStatus('${d.key}', 'confirmado')">OK</button>`;
+            }
             
-            botoes += `<button class="btn btn-finalizar" onclick="abrirFinalizar('${d.key}')">FINALIZAR</button>`;
-            botoes += `<button class="btn btn-recusar" onclick="mudarStatus('${d.key}', 'recusado')">CANCELAR</button>`;
+            // Agrupamento de Comunicação
+            botoes += `<button class="btn btn-confirm-whatsapp" onclick="enviarConfirmacao3Dias('${d.key}', '${d.tel}', '${d.nome}', '${d.dataISO}', '${d.hora}')">CONF (3D) ${confirmacaoEnviada}</button>`;
+            botoes += `<button class="btn btn-whatsapp" onclick="enviarLembrete24h('${d.key}', '${d.tel}', '${d.nome}', '${d.dataISO}', '${d.hora}', '${d.beneficio || 'NÃO'}')">LEMB (24H) ${lembreteEnviado}</button>`;
+            
+            botoes += `<button class="btn btn-finalizar ${isHighlight ? 'highlight' : ''}" onclick="abrirFinalizar('${d.key}')">ENCERRAR</button>`;
+            botoes += `<button class="btn btn-recusar" onclick="mudarStatus('${d.key}', 'recusado')">X</button>`;
+            botoes += `</div>`;
             
             html += `<tr><td>${d.data} às ${d.hora}</td><td>${d.nome}</td><td>${d.tel}</td><td class="status-${d.status}">${d.status.toUpperCase()}</td><td>${botoes}</td></tr>`;
         });
@@ -501,12 +511,10 @@
         database.ref('configuracoes/lojistas').on('value', snap => {
             const selectFinalizar = document.getElementById('f_concorrente_select');
             const selectEditar = document.getElementById('edit_concorrente_select');
-            
             let html = '<option value="">Não soube informar</option>';
             snap.forEach(l => {
                 html += `<option value="${l.val().nome}">${l.val().nome}</option>`;
             });
-            
             selectFinalizar.innerHTML = html;
             selectEditar.innerHTML = html;
         });
@@ -549,7 +557,8 @@
         lista.sort((a,b) => a.dataISO.localeCompare(b.dataISO) || a.hora.localeCompare(b.hora));
         let html = `<table><thead><tr><th>Data/Hora</th><th>Noiva</th><th>WhatsApp</th><th>Status</th><th>Ações</th></tr></thead><tbody>`;
         lista.forEach(d => {
-            let botoes = `<button class="btn btn-info" onclick="verDetalhes('${encodeURIComponent(JSON.stringify(d))}')">Info</button>`;
+            let botoes = `<div class="btn-group">`;
+            botoes += `<button class="btn btn-info" onclick="verDetalhes('${encodeURIComponent(JSON.stringify(d))}')">INFO</button>`;
             botoes += `<button class="btn btn-editar" onclick="abrirEdicao('${d.key}')">EDITAR</button>`;
 
             if (d.status === 'pendente') {
@@ -559,8 +568,9 @@
                 botoes += `<button class="btn btn-reativar" onclick="mudarStatus('${d.key}', 'pendente')">REATIVAR</button>`;
                 botoes += `<button class="btn btn-excluir" onclick="excluirRegistro('${d.key}')">EXCLUIR</button>`;
             } else if (d.status === 'finalizado') {
-                botoes += `<span style="font-size:10px; margin-left:10px; color:var(--gold); font-weight:bold;">[${d.resultado ? d.resultado.toUpperCase() : 'FINALIZADO'} ${d.concorrente ? '('+d.concorrente+')' : ''}]</span>`;
+                botoes += `<span style="font-size:9px; margin-left:8px; color:var(--gold); font-weight:bold;">[${d.resultado ? d.resultado.toUpperCase() : 'FINALIZADO'} ${d.concorrente ? '('+d.concorrente+')' : ''}]</span>`;
             }
+            botoes += `</div>`;
             html += `<tr><td>${d.data} às ${d.hora}</td><td>${d.nome}</td><td>${d.tel}</td><td class="status-${d.status}">${d.status.toUpperCase()}</td><td>${botoes}</td></tr>`;
         });
         container.innerHTML = html + "</tbody></table>";
@@ -578,7 +588,6 @@
         const diasSemana = ["DOMINGO", "SEGUNDA-FEIRA", "TERÇA-FEIRA", "QUARTA-FEIRA", "QUINTA-FEIRA", "SEXTA-FEIRA", "SÁBADO"];
         const diaSemana = diasSemana[dataObj.getDay()];
         const dataBR = dataISO.split('-').reverse().join('/');
-        
         let msg = `OLÁ, ${nome.toUpperCase()}.%0A%0A`;
         msg += `Gostaria de confirmar seu atendimento exclusivo na *Exclusiva Noivas*:%0A%0A`;
         msg += `DIA: ${dataBR} (${diaSemana})%0A`;
@@ -587,7 +596,6 @@
         msg += `Estamos ansiosas para participar do seu sonho.%0A%0A`;
         msg += `*PODEMOS CONFIRMAR SEU AGENDAMENTO?*%0A`;
         msg += `_Preparamos nossa loja e equipe para receber apenas uma noiva por horário, garantindo que seu momento seja único e totalmente exclusivo._`;
-
         database.ref('agendamentos/' + key).update({ confirmacaoEnviada: true });
         window.open(`https://wa.me/55${fone}?text=${msg}`, '_blank');
     }
@@ -595,7 +603,6 @@
     function enviarLembrete24h(key, tel, nome, dataISO, hora, beneficio) {
         const fone = tel.replace(/\D/g, "");
         const dataBR = dataISO.split('-').reverse().join('/');
-        
         let msg = `*LEMBRETE: Seu momento na Exclusiva Noivas está chegando!*%0A%0A`;
         msg += `OLÁ ${nome.toUpperCase()}, estamos com tudo pronto para receber você no dia ${dataBR} às ${hora}hs.%0A%0A`;
         msg += `Local: Av. Rio Branco, 481 - Marilia.%0A`;
@@ -603,7 +610,6 @@
         msg += `*Benefício de Primeira Visita:* ${beneficio === 'SIM' ? 'ATIVO' : 'Não se aplica'}%0A`;
         msg += `_(Lembrando que este benefício é exclusivo para noivas que tomam a decisão no dia da primeira visita)._%0A%0A`;
         msg += `Estamos ansiosas para ajudar você a encontrar o vestido dos seus sonhos! ✨`;
-
         database.ref('agendamentos/' + key).update({ lembreteEnviado: true });
         window.open(`https://wa.me/55${fone}?text=${msg}`, '_blank');
     }
@@ -648,7 +654,6 @@
             document.getElementById('edit_outras').value = d.outras || "Não";
             document.getElementById('edit_beneficio').value = d.beneficio || "NÃO";
             document.getElementById('edit_obs').value = d.obs || "";
-            
             if(d.status === 'finalizado') {
                 document.getElementById('divEditResultado').style.display = "block";
                 document.getElementById('divEditConcorrente').style.display = "block";
@@ -658,7 +663,6 @@
                 document.getElementById('divEditResultado').style.display = "none";
                 document.getElementById('divEditConcorrente').style.display = "none";
             }
-            
             document.getElementById('modalEditar').style.display = "flex";
         });
     }
@@ -675,12 +679,10 @@
             outras: document.getElementById('edit_outras').value, beneficio: document.getElementById('edit_beneficio').value,
             obs: document.getElementById('edit_obs').value
         };
-
         if(document.getElementById('divEditResultado').style.display === "block") {
             up.resultado = document.getElementById('edit_resultado').value;
             up.concorrente = document.getElementById('edit_concorrente_select').value;
         }
-
         database.ref('agendamentos/' + keySendoEditada).update(up).then(() => fecharModais());
     }
 
