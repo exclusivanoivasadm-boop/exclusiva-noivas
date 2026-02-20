@@ -61,6 +61,7 @@
         .btn-aceitar { background: #10b981; margin-right: 5px; }
         .btn-confirmar-final { background: #059669; margin-right: 5px; }
         .btn-recusar { background: #ef4444; }
+        .btn-excluir { background: #000000; margin-left: 5px; }
         .btn-reativar { background: var(--gold); }
         .btn-novo { background: var(--dark); padding: 12px 20px; font-size: 12px; letter-spacing: 2px; }
         .btn-expediente { background: var(--gold); }
@@ -454,7 +455,6 @@
             botoes += `<button class="btn btn-editar" onclick="abrirEdicao('${d.key}')">EDITAR</button>`;
             if(d.status === 'agendado') botoes += `<button class="btn btn-confirmar-final" onclick="mudarStatus('${d.key}', 'confirmado')">CONFIRMAR</button>`;
             
-            // Novos Botões de Lembrete
             botoes += `<button class="btn btn-confirm-whatsapp" onclick="enviarConfirmacao3Dias('${d.key}', '${d.tel}', '${d.nome}', '${d.dataISO}', '${d.hora}')">Confirma (3d) ${confirmacaoEnviada}</button>`;
             botoes += `<button class="btn btn-whatsapp" onclick="enviarLembrete24h('${d.key}', '${d.tel}', '${d.nome}', '${d.dataISO}', '${d.hora}', '${d.beneficio || 'NÃO'}')">Lembrete (24h) ${lembreteEnviado}</button>`;
             
@@ -557,6 +557,7 @@
                 botoes += `<button class="btn btn-recusar" onclick="mudarStatus('${d.key}', 'recusado')">X</button>`;
             } else if (d.status === 'recusado') {
                 botoes += `<button class="btn btn-reativar" onclick="mudarStatus('${d.key}', 'pendente')">REATIVAR</button>`;
+                botoes += `<button class="btn btn-excluir" onclick="excluirRegistro('${d.key}')">EXCLUIR</button>`;
             } else if (d.status === 'finalizado') {
                 botoes += `<span style="font-size:10px; margin-left:10px; color:var(--gold); font-weight:bold;">[${d.resultado ? d.resultado.toUpperCase() : 'FINALIZADO'} ${d.concorrente ? '('+d.concorrente+')' : ''}]</span>`;
             }
@@ -565,7 +566,12 @@
         container.innerHTML = html + "</tbody></table>";
     }
 
-    // NOVA FUNÇÃO: CONFIRMAÇÃO 3 DIAS ANTES
+    function excluirRegistro(key) {
+        if(confirm("Deseja apagar permanentemente este registro? Esta ação não pode ser desfeita.")) {
+            database.ref('agendamentos/' + key).remove();
+        }
+    }
+
     function enviarConfirmacao3Dias(key, tel, nome, dataISO, hora) {
         const fone = tel.replace(/\D/g, "");
         const dataObj = new Date(dataISO + "T00:00:00");
@@ -586,7 +592,6 @@
         window.open(`https://wa.me/55${fone}?text=${msg}`, '_blank');
     }
 
-    // NOVA FUNÇÃO: LEMBRETE 24H ANTES (Upgrade da anterior)
     function enviarLembrete24h(key, tel, nome, dataISO, hora, beneficio) {
         const fone = tel.replace(/\D/g, "");
         const dataBR = dataISO.split('-').reverse().join('/');
