@@ -608,7 +608,7 @@
         msg += `Local: Av. Rio Branco, 481 - Marilia.%0A`;
         msg += `_Temos estacionamento privativo para sua comodidade._%0A%0A`;
         msg += `*Benefício de Primeira Visita:* ${beneficio === 'SIM' ? 'ATIVO' : 'Não se aplica'}%0A`;
-        msg += `_(Lembrando que este benefício é exclusivo para noivas que tomam a decisão no dia da primeira visita)._%0A%0A`;
+        msg += `_(Lembrando que este benefício é exclusivo para noivas que tomam a decisão no ato da primeira visita)._%0A%0A`;
         msg += `Estamos ansiosas para ajudar você a encontrar o vestido dos seus sonhos! ✨`;
         database.ref('agendamentos/' + key).update({ lembreteEnviado: true });
         window.open(`https://wa.me/55${fone}?text=${msg}`, '_blank');
@@ -775,3 +775,4 @@
 </script>
 </body>
 </html>
+
