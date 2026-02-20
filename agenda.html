@@ -64,6 +64,17 @@
 
         input:focus, select:focus { border-bottom: 2px solid var(--gold); }
 
+        /* Estilo para a instrução do WhatsApp */
+        .input-hint {
+            display: block;
+            text-align: left;
+            font-size: 10px;
+            color: #888;
+            margin-top: 4px;
+            text-transform: none;
+            letter-spacing: 0.5px;
+        }
+
         .beneficio-container {
             text-align: left; margin-top: 30px; padding: 20px;
             background-color: #fcf8f3; border-left: 3px solid var(--gold);
@@ -87,6 +98,7 @@
         }
         .btn-confirm:hover { background-color: var(--gold); }
 
+        /* Modal mantido para compatibilidade, mas não será mais usado no fluxo direto */
         #modalResumo {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(253, 250, 247, 0.98); z-index: 1000; justify-content: center; align-items: center;
@@ -118,17 +130,21 @@
     <div id="formNoiva" style="display:none;">
         <div class="section-title">Sua História</div>
         
-        <label>Nome Completo</label>
-        <input type="text" id="nome">
+        <label>Nome Completo *</label>
+        <input type="text" id="nome" required>
 
         <div class="grid">
-            <div><label>CPF</label><input type="text" id="cpf" maxlength="14" oninput="mascaraCPF(this)"></div>
-            <div><label>WhatsApp</label><input type="text" id="tel" maxlength="15" oninput="mascaraTel(this)"></div>
+            <div><label>CPF *</label><input type="text" id="cpf" maxlength="14" oninput="mascaraCPF(this)" required></div>
+            <div>
+                <label>WhatsApp *</label>
+                <input type="text" id="tel" maxlength="15" oninput="mascaraTel(this)" required>
+                <span class="input-hint">Informe com DDD (ex: 14 99999-9999)</span>
+            </div>
         </div>
 
         <div class="grid">
-            <div><label>Sua Cidade</label><input type="text" id="cidade"></div>
-            <div><label>O Grande Dia (Data)</label><input type="date" id="dataCasamento"></div>
+            <div><label>Sua Cidade *</label><input type="text" id="cidade" required></div>
+            <div><label>O Grande Dia (Data) *</label><input type="date" id="dataCasamento" required></div>
         </div>
 
         <label>Seu Instagram (@noiva)</label>
@@ -170,7 +186,7 @@
             </label>
         </div>
 
-        <button class="btn-confirm" onclick="abrirResumo()">Solicitar Reserva</button>
+        <button class="btn-confirm" onclick="enviarWhatsAppDireto()">Solicitar Reserva</button>
     </div>
 </div>
 
@@ -221,7 +237,6 @@
         const dataSel = document.getElementById('data').value;
         if (!dataSel) return;
 
-        // Busca tanto os agendamentos quanto a configuração de expediente
         Promise.all([
             database.ref('agendamentos').orderByChild('dataISO').equalTo(dataSel).once('value'),
             database.ref('expediente/config/' + dataSel).once('value')
@@ -240,7 +255,6 @@
         const select = document.getElementById('horario');
         select.innerHTML = "";
         
-        // Bloqueio Total se a loja estiver fechada no Admin
         if (configDia && configDia.status === 'fechado') {
             alert("Atelier fechado nesta data específica.");
             document.getElementById('formNoiva').style.display = "none";
@@ -253,9 +267,8 @@
         const diaMes = dataObj.getDate();
         let listaTeorica = [];
 
-        // 1. Definição do Horário de Início e Fim (Obedece ao Horário Especial do Admin)
-        let horaInicio = 9.5; // 09:30 padrão
-        let horaFim = 17;     // 17:00 padrão
+        let horaInicio = 9.5; 
+        let horaFim = 17;     
         let step = 0.5;
 
         if (configDia && configDia.status === 'especial') {
@@ -271,12 +284,10 @@
             step = 1;
         }
 
-        // 2. Montagem da Lista de Horários
         for (let h = horaInicio; h <= horaFim; h += step) {
             listaTeorica.push(formatarHora(h));
         }
 
-        // 3. Aplicação da Lógica de Bloqueio (Regra de 1h30 em dias úteis)
         listaTeorica.forEach(hora => {
             let bloqueado = false;
             ocupados.forEach(horaOcupada => {
@@ -315,6 +326,7 @@
         return `${h.toString().padStart(2, '0')}:${m}`;
     }
 
+    // Função original de resumo mantida por precaução
     function abrirResumo() {
         if(!document.getElementById('nome').value || !document.getElementById('tel').value) {
             alert("Nome e WhatsApp são essenciais.");
@@ -333,16 +345,31 @@
 
     function fecharModal() { document.getElementById('modalResumo').style.display = "none"; }
 
-    function enviarWhatsApp() {
+    // NOVA FUNÇÃO: Gravação Direta e Redirecionamento instantâneo
+    function enviarWhatsAppDireto() {
+        const nome = document.getElementById('nome').value;
+        const cpf = document.getElementById('cpf').value;
+        const tel = document.getElementById('tel').value;
+        const cidade = document.getElementById('cidade').value;
+        const dataCasamento = document.getElementById('dataCasamento').value;
+        const dataAgendamento = document.getElementById('data').value;
+        const horaAgendamento = document.getElementById('horario').value;
+
+        // Validação de campos obrigatórios
+        if(!nome || !cpf || !tel || !cidade || !dataCasamento || !dataAgendamento || !horaAgendamento) {
+            alert("Por favor, preencha todos os campos obrigatórios (marcados com *).");
+            return;
+        }
+
         const d = {
-            data: formatarDataBR(document.getElementById('data').value),
-            dataISO: document.getElementById('data').value,
-            hora: document.getElementById('horario').value,
-            nome: document.getElementById('nome').value,
-            cpf: document.getElementById('cpf').value,
-            tel: document.getElementById('tel').value,
-            cidade: document.getElementById('cidade').value,
-            casamento: formatarDataBR(document.getElementById('dataCasamento').value),
+            data: formatarDataBR(dataAgendamento),
+            dataISO: dataAgendamento,
+            hora: horaAgendamento,
+            nome: nome,
+            cpf: cpf,
+            tel: tel,
+            cidade: cidade,
+            casamento: formatarDataBR(dataCasamento),
             insta: document.getElementById('insta').value,
             finalidade: document.getElementById('finalidade').value,
             refs: document.getElementById('refs').value,
@@ -361,9 +388,16 @@
                         `*Data:* ${d.data}%0A` +
                         `*Hora:* ${d.hora}%0A%0A` +
                         `Olá! Acabei de solicitar minha reserva através do site. Aguardo contato.`;
+            
+            // Abre o WhatsApp e recarrega a página após uma pequena pausa
             window.open(`https://wa.me/5514997105505?text=${msg}`, '_blank');
-            location.reload();
-        }).catch(e => alert("Erro ao conectar. Tente novamente."));
+            setTimeout(() => { location.reload(); }, 500);
+        }).catch(e => alert("Erro ao conectar ao banco de dados."));
+    }
+
+    // Função original enviada mantida para evitar quebra de referências
+    function enviarWhatsApp() {
+        enviarWhatsAppDireto();
     }
 </script>
 </body>
