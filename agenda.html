@@ -64,7 +64,6 @@
 
         input:focus, select:focus { border-bottom: 2px solid var(--gold); }
 
-        /* Estilo para a instrução do WhatsApp */
         .input-hint {
             display: block;
             text-align: left;
@@ -98,7 +97,6 @@
         }
         .btn-confirm:hover { background-color: var(--gold); }
 
-        /* Modal mantido para compatibilidade, mas não será mais usado no fluxo direto */
         #modalResumo {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(253, 250, 247, 0.98); z-index: 1000; justify-content: center; align-items: center;
@@ -119,7 +117,7 @@
     <div class="grid">
         <div>
             <label>Data Escolhida</label>
-            <input type="date" id="data" min="2026-02-01" max="2026-12-31" onchange="buscarOcupacao()">
+            <input type="date" id="data" max="2026-12-31" onchange="buscarOcupacao()">
         </div>
         <div>
             <label>Horário Disponível</label>
@@ -173,7 +171,7 @@
         <label>Cerimonialista Responsável</label>
         <input type="text" id="cerimonialista" placeholder="Nome do profissional (opcional)">
 
-        <label>Quanto planeja investir no sonho do seu vestido ideal?</label>
+        <label>Quanto planeia investir no sonho do seu vestido ideal?</label>
         <input type="text" id="orcamento" oninput="mascaraMoeda(this)" placeholder="R$ 0,00">
 
         <div class="beneficio-container">
@@ -211,6 +209,11 @@
     };
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
+
+    // TRAVA DE DATA: Não permite selecionar dias anteriores a hoje
+    const campoData = document.getElementById('data');
+    const hojeData = new Date().toISOString().split("T")[0];
+    campoData.min = hojeData;
 
     function mascaraCPF(i) {
         let v = i.value.replace(/\D/g, "");
@@ -265,8 +268,13 @@
         const dataObj = new Date(inputData + "T00:00:00");
         const diaSemana = dataObj.getDay();
         const diaMes = dataObj.getDate();
-        let listaTeorica = [];
+        
+        // Obter hora atual se o dia selecionado for HOJE
+        const agora = new Date();
+        const hojeISO = agora.toISOString().split('T')[0];
+        const decimalAgora = agora.getHours() + (agora.getMinutes() >= 30 ? 0.5 : 0);
 
+        let listaTeorica = [];
         let horaInicio = 9.5; 
         let horaFim = 17;     
         let step = 0.5;
@@ -285,7 +293,22 @@
         }
 
         for (let h = horaInicio; h <= horaFim; h += step) {
-            listaTeorica.push(formatarHora(h));
+            // TRAVA DE HORÁRIO: Se for hoje, só mostra horários maiores que a hora atual
+            if (inputData === hojeISO) {
+                if (h > decimalAgora) {
+                    listaTeorica.push(formatarHora(h));
+                }
+            } else {
+                listaTeorica.push(formatarHora(h));
+            }
+        }
+
+        if (listaTeorica.length === 0) {
+            let opt = document.createElement("option");
+            opt.text = "Sem horários para hoje";
+            opt.disabled = true;
+            select.add(opt);
+            return;
         }
 
         listaTeorica.forEach(hora => {
@@ -326,7 +349,6 @@
         return `${h.toString().padStart(2, '0')}:${m}`;
     }
 
-    // Função original de resumo mantida por precaução
     function abrirResumo() {
         if(!document.getElementById('nome').value || !document.getElementById('tel').value) {
             alert("Nome e WhatsApp são essenciais.");
@@ -345,7 +367,6 @@
 
     function fecharModal() { document.getElementById('modalResumo').style.display = "none"; }
 
-    // NOVA FUNÇÃO: Gravação Direta e Redirecionamento instantâneo
     function enviarWhatsAppDireto() {
         const nome = document.getElementById('nome').value;
         const cpf = document.getElementById('cpf').value;
@@ -355,7 +376,6 @@
         const dataAgendamento = document.getElementById('data').value;
         const horaAgendamento = document.getElementById('horario').value;
 
-        // Validação de campos obrigatórios
         if(!nome || !cpf || !tel || !cidade || !dataCasamento || !dataAgendamento || !horaAgendamento) {
             alert("Por favor, preencha todos os campos obrigatórios (marcados com *).");
             return;
@@ -389,17 +409,14 @@
                         `*Hora:* ${d.hora}%0A%0A` +
                         `Olá! Acabei de solicitar minha reserva através do site. Aguardo contato.`;
             
-            // Abre o WhatsApp e recarrega a página após uma pequena pausa
             window.open(`https://wa.me/5514997105505?text=${msg}`, '_blank');
             setTimeout(() => { location.reload(); }, 500);
         }).catch(e => alert("Erro ao conectar ao banco de dados."));
     }
 
-    // Função original enviada mantida para evitar quebra de referências
     function enviarWhatsApp() {
         enviarWhatsAppDireto();
     }
 </script>
 </body>
 </html>
-
