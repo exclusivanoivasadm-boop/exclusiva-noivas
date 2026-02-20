@@ -65,6 +65,7 @@
         .btn-novo { background: var(--dark); padding: 12px 20px; font-size: 12px; letter-spacing: 2px; }
         .btn-expediente { background: var(--gold); }
         .btn-whatsapp { background: #25d366; margin-left: 5px; }
+        .btn-confirm-whatsapp { background: #3b82f6; margin-left: 5px; }
         .btn-finalizar { background: #6366f1; margin-left: 5px; }
         .btn-editar { background: #8b5cf6; margin-right: 5px; }
 
@@ -446,11 +447,17 @@
         lista.sort((a,b) => a.dataISO.localeCompare(b.dataISO) || a.hora.localeCompare(b.hora));
         let html = `<div class="group-header">${titulo}</div><table><thead><tr><th>Data/Hora</th><th>Noiva</th><th>WhatsApp</th><th>Status</th><th>Ações</th></tr></thead><tbody>`;
         lista.forEach(d => {
-            const lembreteIcon = d.lembreteEnviado ? '<span class="badge-lembrete">✅</span>' : '';
+            const lembreteEnviado = d.lembreteEnviado ? '✅' : '';
+            const confirmacaoEnviada = d.confirmacaoEnviada ? '✅' : '';
+            
             let botoes = `<button class="btn btn-info" onclick="verDetalhes('${encodeURIComponent(JSON.stringify(d))}')">Info</button>`;
             botoes += `<button class="btn btn-editar" onclick="abrirEdicao('${d.key}')">EDITAR</button>`;
             if(d.status === 'agendado') botoes += `<button class="btn btn-confirmar-final" onclick="mudarStatus('${d.key}', 'confirmado')">CONFIRMAR</button>`;
-            botoes += `<button class="btn btn-whatsapp" onclick="enviarLembrete('${d.key}', '${d.tel}', '${d.nome}', '${d.dataISO}', '${d.hora}', '${d.beneficio || 'NÃO'}')">Lembrete ${lembreteIcon}</button>`;
+            
+            // Novos Botões de Lembrete
+            botoes += `<button class="btn btn-confirm-whatsapp" onclick="enviarConfirmacao3Dias('${d.key}', '${d.tel}', '${d.nome}', '${d.dataISO}', '${d.hora}')">Confirma (3d) ${confirmacaoEnviada}</button>`;
+            botoes += `<button class="btn btn-whatsapp" onclick="enviarLembrete24h('${d.key}', '${d.tel}', '${d.nome}', '${d.dataISO}', '${d.hora}', '${d.beneficio || 'NÃO'}')">Lembrete (24h) ${lembreteEnviado}</button>`;
+            
             botoes += `<button class="btn btn-finalizar" onclick="abrirFinalizar('${d.key}')">FINALIZAR</button>`;
             botoes += `<button class="btn btn-recusar" onclick="mudarStatus('${d.key}', 'recusado')">CANCELAR</button>`;
             
@@ -542,7 +549,6 @@
         lista.sort((a,b) => a.dataISO.localeCompare(b.dataISO) || a.hora.localeCompare(b.hora));
         let html = `<table><thead><tr><th>Data/Hora</th><th>Noiva</th><th>WhatsApp</th><th>Status</th><th>Ações</th></tr></thead><tbody>`;
         lista.forEach(d => {
-            // INFO E EDITAR AGORA FICAM SEMPRE DISPONÍVEIS
             let botoes = `<button class="btn btn-info" onclick="verDetalhes('${encodeURIComponent(JSON.stringify(d))}')">Info</button>`;
             botoes += `<button class="btn btn-editar" onclick="abrirEdicao('${d.key}')">EDITAR</button>`;
 
@@ -559,21 +565,39 @@
         container.innerHTML = html + "</tbody></table>";
     }
 
-    function enviarLembrete(key, tel, nome, dataISO, hora, beneficio) {
+    // NOVA FUNÇÃO: CONFIRMAÇÃO 3 DIAS ANTES
+    function enviarConfirmacao3Dias(key, tel, nome, dataISO, hora) {
         const fone = tel.replace(/\D/g, "");
         const dataObj = new Date(dataISO + "T00:00:00");
-        const diasSemana = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
+        const diasSemana = ["DOMINGO", "SEGUNDA-FEIRA", "TERÇA-FEIRA", "QUARTA-FEIRA", "QUINTA-FEIRA", "SEXTA-FEIRA", "SÁBADO"];
         const diaSemana = diasSemana[dataObj.getDay()];
         const dataBR = dataISO.split('-').reverse().join('/');
         
-        let msg = `*LEMBRETE DE AGENDAMENTO*%0A*Exclusiva Noivas*%0A%0A`;
-        msg += `👰‍♀️*Noiva:* ${nome}%0A`;
-        msg += `📅*Data do Agendamento:* ${dataBR} (${diaSemana})%0A`;
-        msg += `🕛*Horário:* ${hora}hs%0A%0A`;
-        msg += `*Benefício de Primeira Visita:* ${beneficio === 'SIM' ? '✅ Ativo' : 'Não se aplica'}%0A%0A`;
-        msg += `📍*Endereço:* Avenida Rio Branco, 481 - Marília/SP%0A`;
-        msg += `*Temos estacionamento em frente à loja.*%0A%0A`;
-        msg += `Podemos confirmar seu horário? ✨`;
+        let msg = `OLÁ, ${nome.toUpperCase()}.%0A%0A`;
+        msg += `Gostaria de confirmar seu atendimento exclusivo na *Exclusiva Noivas*:%0A%0A`;
+        msg += `DIA: ${dataBR} (${diaSemana})%0A`;
+        msg += `HORÁRIO: ${hora}HS%0A%0A`;
+        msg += `Local: Av. Rio Branco, 481 - Marilia.%0A`;
+        msg += `Estamos ansiosas para participar do seu sonho.%0A%0A`;
+        msg += `*PODEMOS CONFIRMAR SEU AGENDAMENTO?*%0A`;
+        msg += `_Preparamos nossa loja e equipe para receber apenas uma noiva por horário, garantindo que seu momento seja único e totalmente exclusivo._`;
+
+        database.ref('agendamentos/' + key).update({ confirmacaoEnviada: true });
+        window.open(`https://wa.me/55${fone}?text=${msg}`, '_blank');
+    }
+
+    // NOVA FUNÇÃO: LEMBRETE 24H ANTES (Upgrade da anterior)
+    function enviarLembrete24h(key, tel, nome, dataISO, hora, beneficio) {
+        const fone = tel.replace(/\D/g, "");
+        const dataBR = dataISO.split('-').reverse().join('/');
+        
+        let msg = `*LEMBRETE: Seu momento na Exclusiva Noivas está chegando!*%0A%0A`;
+        msg += `OLÁ ${nome.toUpperCase()}, estamos com tudo pronto para receber você no dia ${dataBR} às ${hora}hs.%0A%0A`;
+        msg += `Local: Av. Rio Branco, 481 - Marilia.%0A`;
+        msg += `_Temos estacionamento privativo para sua comodidade._%0A%0A`;
+        msg += `*Benefício de Primeira Visita:* ${beneficio === 'SIM' ? 'ATIVO' : 'Não se aplica'}%0A`;
+        msg += `_(Lembrando que este benefício é exclusivo para noivas que tomam a decisão no dia da primeira visita)._%0A%0A`;
+        msg += `Estamos ansiosas para ajudar você a encontrar o vestido dos seus sonhos! ✨`;
 
         database.ref('agendamentos/' + key).update({ lembreteEnviado: true });
         window.open(`https://wa.me/55${fone}?text=${msg}`, '_blank');
@@ -620,7 +644,6 @@
             document.getElementById('edit_beneficio').value = d.beneficio || "NÃO";
             document.getElementById('edit_obs').value = d.obs || "";
             
-            // EXIBIR CAMPOS DE RESULTADO SE JÁ ESTIVER FINALIZADO
             if(d.status === 'finalizado') {
                 document.getElementById('divEditResultado').style.display = "block";
                 document.getElementById('divEditConcorrente').style.display = "block";
@@ -648,7 +671,6 @@
             obs: document.getElementById('edit_obs').value
         };
 
-        // SALVAR RESULTADOS SE ESTIVEREM VISÍVEIS
         if(document.getElementById('divEditResultado').style.display === "block") {
             up.resultado = document.getElementById('edit_resultado').value;
             up.concorrente = document.getElementById('edit_concorrente_select').value;
@@ -746,4 +768,3 @@
 </script>
 </body>
 </html>
-
