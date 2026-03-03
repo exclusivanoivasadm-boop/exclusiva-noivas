@@ -313,9 +313,20 @@
 
         listaTeorica.forEach(hora => {
             let bloqueado = false;
+            let isAlmoco = false;
+            let hAtualDec = horaParaDecimal(hora);
+
+            // TRAVA DE ALMOÇO (Segunda a Sexta - 11:30 às 13:00)
+            if (diaSemana >= 1 && diaSemana <= 5 && (!configDia || configDia.status !== 'especial')) {
+                if (hAtualDec === 11.5 || hAtualDec === 12 || hAtualDec === 12.5 || hAtualDec === 13) {
+                    bloqueado = true;
+                    isAlmoco = true;
+                }
+            }
+
+            // TRAVA DE OCUPAÇÃO (Regra de exclusividade de 1:30h)
             ocupados.forEach(horaOcupada => {
                 let hOcupadaDec = horaParaDecimal(horaOcupada);
-                let hAtualDec = horaParaDecimal(hora);
 
                 if (diaSemana >= 1 && diaSemana <= 5 && (!configDia || configDia.status !== 'especial')) {
                     if (Math.abs(hAtualDec - hOcupadaDec) < 1.5) bloqueado = true;
@@ -326,14 +337,17 @@
 
             let opt = document.createElement("option");
             opt.value = hora;
+            
             if (bloqueado) {
-                opt.text = `${hora} — (Reservado)`;
+                // Se for horário de almoço, exibe "RESERVADO". Se for vaga pega, "Reservado".
+                opt.text = isAlmoco ? `${hora} — (Reservado)` : `${hora} — (Reservado)`;
                 opt.disabled = true;
                 opt.style.color = "#bbbbbb";
                 opt.style.textDecoration = "line-through";
             } else {
                 opt.text = hora;
             }
+            
             select.add(opt);
         });
     }
