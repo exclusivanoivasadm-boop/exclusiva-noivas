@@ -480,9 +480,8 @@
         if(u === 'Exclusiva' && p === 'Gael2025') {
             document.getElementById('loginErro').style.display = 'none';
             document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('appWrapper').style.display = 'flex'; // Exibe o sistema com flexbox
+            document.getElementById('appWrapper').style.display = 'flex';
             
-            // Só carrega os dados do Firebase DEPOIS do login correto (Segurança)
             carregarDados();
             carregarLojistasSelect();
             carregarConfiguracoesMensagens();
@@ -492,16 +491,11 @@
     }
 
     window.onload = function() {
-        // Pega o mês atual automaticamente (00 a 11) e seleciona nos filtros (Mesmo antes de logar)
         const mesAtualStr = new Date().getMonth().toString().padStart(2, '0');
-        
         const filtroMesSelect = document.getElementById('filtroMes');
         if(filtroMesSelect) filtroMesSelect.value = mesAtualStr;
-        
         const filtroCalSelect = document.getElementById('filtroMesCalendario');
         if(filtroCalSelect) filtroCalSelect.value = mesAtualStr;
-
-        // Nota: As funções carregarDados, carregarLojistasSelect etc. foram movidas para dentro de fazerLogin()
     };
 
     function hParaDec(s) { if(!s) return 0; let p = s.split(':'); return parseInt(p[0]) + (p[1] === "30" ? 0.5 : 0); }
@@ -540,7 +534,6 @@
         campoFocadoTexto.focus(); campoFocadoTexto.selectionStart = campoFocadoTexto.selectionEnd = start + variavel.length;
     }
 
-    // ====== FUNÇÕES DINÂMICAS DOS FORMULÁRIOS ======
     function atualizarFormularioManual() {
         const cat = document.getElementById('m_categoria').value;
         const bBasico = document.getElementById('blocoDadosBasicos');
@@ -574,7 +567,6 @@
             eCompleto.style.display = 'none';
         }
     }
-    // ================================================
 
     function carregarDados() {
         const mesFiltro = document.getElementById('filtroMes').value;
@@ -610,7 +602,7 @@
         database.ref('agendamentos').on('value', (snapshot) => {
             let cAlugou = 0, cNaoAlugou = 0, cRemarcou = 0; let perdasPorLojista = {};
             let gruposAgendados = { antigos: [], hoje: [], amanha: [], proximos: [] }; let listaSimples = [];
-            let totalPendentes = 0; // Contador Global de Pendentes
+            let totalPendentes = 0; 
             
             const hojeStr = new Date().toISOString().split('T')[0];
             const amanhaDate = new Date(); amanhaDate.setDate(amanhaDate.getDate() + 1);
@@ -621,10 +613,7 @@
                 const mesAgend = d.dataISO ? d.dataISO.split('-')[1] : null;
                 const mesDesejado = (parseInt(mesFiltro) + 1).toString().padStart(2, '0');
 
-                // Conta globalmente para a notificação (independente do filtro de mês)
-                if(d.status === 'pendente') {
-                    totalPendentes++;
-                }
+                if(d.status === 'pendente') { totalPendentes++; }
 
                 if (statusAtual === 'pendente' || mesFiltro === 'todos' || statusAtual === 'inicio') mesAtende = true;
                 else if (mesAgend === mesDesejado) mesAtende = true;
@@ -651,14 +640,10 @@
                 }
             });
 
-            // Atualiza o Badge de Pendentes
             const badgePendente = document.getElementById('badgePendente');
             if (totalPendentes > 0) {
-                badgePendente.innerText = totalPendentes;
-                badgePendente.style.display = 'inline-block';
-            } else {
-                badgePendente.style.display = 'none';
-            }
+                badgePendente.innerText = totalPendentes; badgePendente.style.display = 'inline-block';
+            } else { badgePendente.style.display = 'none'; }
 
             atualizarDashboardVisual(cAlugou, cNaoAlugou, cRemarcou, perdasPorLojista);
             
@@ -726,7 +711,6 @@
                 botoes += `<button class="btn btn-aceitar" onclick="mudarStatus('${d.key}', 'confirmado')">OK</button>`;
             }
             
-            // Só exibe botões do WhatsApp se não for um bloqueio de horário e se o telefone existir
             if (d.categoria !== 'bloqueio' && d.tel && d.tel !== "-") {
                 botoes += `<button class="btn btn-confirm-whatsapp" onclick="enviarConfirmacao3Dias('${d.key}', '${d.tel}', '${d.nome}', '${d.dataISO}', '${d.hora}')">CONF (3D) ${confirmacaoEnviada}</button>`;
                 botoes += `<button class="btn btn-whatsapp" onclick="enviarLembrete24h('${d.key}', '${d.tel}', '${d.nome}', '${d.dataISO}', '${d.hora}', '${d.beneficio || 'NÃO'}')">LEMB (24H) ${lembreteEnviado}</button>`;
@@ -849,7 +833,7 @@
         database.ref('agendamentos/' + key).once('value', snap => {
             const d = snap.val();
             document.getElementById('edit_categoria').value = d.categoria || "atendimento";
-            atualizarFormularioEdicao(); // ATUALIZA O VISUAL DO FORMULÁRIO DE ACORDO COM A CATEGORIA
+            atualizarFormularioEdicao(); 
             document.getElementById('edit_nome').value = d.nome || ""; document.getElementById('edit_tel').value = d.tel || "";
             document.getElementById('edit_dataISO').value = d.dataISO || ""; document.getElementById('edit_hora').value = d.hora || "";
             document.getElementById('edit_insta').value = d.insta || ""; document.getElementById('edit_cidade').value = d.cidade || "";
@@ -877,14 +861,12 @@
             obs: document.getElementById('edit_obs').value
         };
         
-        // Só salva nome e whats se não for bloqueio
         if(cat !== 'bloqueio') {
             up.nome = document.getElementById('edit_nome').value; up.tel = document.getElementById('edit_tel').value;
         } else {
             up.nome = "🔒 HORÁRIO BLOQUEADO"; up.tel = "-";
         }
         
-        // Só salva os completos se for atendimento
         if(cat === 'atendimento') {
             up.insta = document.getElementById('edit_insta').value; up.cidade = document.getElementById('edit_cidade').value;
             up.casamento = document.getElementById('edit_casamento').value; up.orcamento = document.getElementById('edit_orcamento').value;
@@ -933,7 +915,7 @@
             outras: cat === 'atendimento' ? document.getElementById('m_outras').value : "-", 
             beneficio: cat === 'atendimento' ? document.getElementById('m_beneficio').value : "-",
             obs: document.getElementById('m_obs').value,
-            status: cat === 'bloqueio' ? "confirmado" : "agendado", // Bloqueios não precisam de confirmação, já ocupam a vaga
+            status: cat === 'bloqueio' ? "confirmado" : "agendado",
             timestamp: new Date().toISOString() 
         };
         database.ref('agendamentos').push().set(d).then(() => { 
@@ -942,6 +924,7 @@
         });
     }
 
+    // AQUI OCORREU O NOVO UPGRADE VISUAL NO ADMIN (Apenas Aviso, sem bloquear o click)
     function buscarOcupacaoManual() {
         const dataSel = document.getElementById('m_data').value;
         if(!dataSel) return;
@@ -953,8 +936,21 @@
             if(ds === 6) fim = 16;
             if(ds === 0) { select.innerHTML = "<option>Domingo Fechado</option>"; return; }
             for (let h = inicio; h <= fim; h += 0.5) {
-                let horaStr = formatarHora(h); let opt = document.createElement("option"); opt.value = horaStr; opt.text = ocup.includes(horaStr) ? horaStr + " (OCUPADO)" : horaStr;
-                if(ocup.includes(horaStr)) opt.disabled = true; select.add(opt);
+                let horaStr = formatarHora(h); 
+                
+                // Lógica visual do Almoço (Segunda a Sexta, das 11:30 às 13:00)
+                let isAlmoco = (ds >= 1 && ds <= 5) && (h === 11.5 || h === 12 || h === 12.5 || h === 13);
+                let textoOption = horaStr;
+                
+                if(ocup.includes(horaStr)) {
+                    textoOption += " (OCUPADO)";
+                } else if (isAlmoco) {
+                    textoOption += " ⏸️ (ALMOÇO)"; // Apenas aviso visual
+                }
+                
+                let opt = document.createElement("option"); opt.value = horaStr; opt.text = textoOption;
+                if(ocup.includes(horaStr)) opt.disabled = true; 
+                select.add(opt);
             }
         });
     }
@@ -970,8 +966,20 @@
             if(ds === 6) fim = 16;
             if(ds === 0) { select.innerHTML = "<option>Domingo Fechado</option>"; return; }
             for (let h = inicio; h <= fim; h += 0.5) {
-                let horaStr = formatarHora(h); let opt = document.createElement("option"); opt.value = horaStr; opt.text = ocup.includes(horaStr) ? horaStr + " (OCUPADO)" : horaStr;
-                if(ocup.includes(horaStr)) opt.disabled = true; select.add(opt);
+                let horaStr = formatarHora(h); 
+                
+                let isAlmoco = (ds >= 1 && ds <= 5) && (h === 11.5 || h === 12 || h === 12.5 || h === 13);
+                let textoOption = horaStr;
+                
+                if(ocup.includes(horaStr)) {
+                    textoOption += " (OCUPADO)";
+                } else if (isAlmoco) {
+                    textoOption += " ⏸️ (ALMOÇO)";
+                }
+
+                let opt = document.createElement("option"); opt.value = horaStr; opt.text = textoOption;
+                if(ocup.includes(horaStr)) opt.disabled = true; 
+                select.add(opt);
             }
         });
     }
@@ -1029,7 +1037,7 @@
     function abrirModalCadastro() { 
         document.getElementById('formManual').reset(); 
         document.getElementById('m_hora').innerHTML = "<option value=''>Selecione a data primeiro...</option>"; 
-        atualizarFormularioManual(); // Reseta as divisões visuais de acordo com o padrão
+        atualizarFormularioManual(); 
         document.getElementById('modalCadastro').style.display = "flex"; 
     }
 </script>
