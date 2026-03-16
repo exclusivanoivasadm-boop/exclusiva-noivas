@@ -5,18 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Exclusiva Noivas | Solicitação de Reserva</title>
     
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 
     <style>
         :root { 
-            --gold: #b89754; 
-            --dark: #1a1a1a; 
-            --off-white: #fdfaf7; 
+            --gold: #C5A059; /* Dourado mais elegante */
+            --dark: #121212; 
+            --off-white: #faf9f7; /* Fundo mais suave e sofisticado */
+            --gray-light: #e0e0e0;
         }
         
         body { 
-            font-family: 'Garamond', serif; 
+            font-family: 'Montserrat', sans-serif; 
             background-color: var(--off-white); 
             color: var(--dark); 
             margin: 0; 
@@ -24,84 +29,204 @@
         }
         
         .container { 
-            max-width: 550px; margin: auto; 
-            background: #ffffff; padding: 45px; 
-            border-radius: 2px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.04);
+            max-width: 600px; 
+            margin: auto; 
+            background: #ffffff; 
+            padding: 50px 45px; 
+            border-radius: 4px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.05);
             text-align: center;
         }
 
-        .logo-container { margin-bottom: 25px; }
+        .logo-container { margin-bottom: 20px; }
         .logo-container img { max-width: 220px; height: auto; }
 
         .subtitle { 
-            font-style: italic; color: #444; 
-            margin-bottom: 50px; font-size: 15px; 
-            letter-spacing: 1.2px; line-height: 1.6;
-            border-top: 1px solid #eee; padding-top: 15px;
+            font-family: 'Playfair Display', serif;
+            font-style: italic; 
+            color: #555; 
+            margin-bottom: 50px; 
+            font-size: 16px; 
+            letter-spacing: 1px; 
+            line-height: 1.6;
+            border-top: 1px solid #f0f0f0; 
+            padding-top: 20px;
         }
 
         .section-title { 
-            text-align: left; font-size: 11px; text-transform: uppercase; 
-            letter-spacing: 2.5px; color: var(--gold); 
-            margin-top: 40px; margin-bottom: 10px;
-            font-weight: bold;
+            font-family: 'Playfair Display', serif;
+            text-align: left; 
+            font-size: 18px; 
+            color: var(--gold); 
+            margin-top: 40px; 
+            margin-bottom: 15px;
+            font-weight: 600;
+            border-bottom: 1px solid var(--gray-light);
+            padding-bottom: 5px;
         }
 
         label { 
-            display: block; text-align: left; margin-top: 25px; 
-            font-size: 11px; text-transform: uppercase; 
-            letter-spacing: 1.2px; color: #222;
+            display: block; 
+            text-align: left; 
+            margin-top: 25px; 
+            font-size: 11px; 
+            text-transform: uppercase; 
+            letter-spacing: 1.5px; 
+            color: #333;
             font-weight: 600;
         }
         
         input, select { 
-            width: 100%; padding: 12px 0; margin-top: 5px; 
-            border: none; border-bottom: 1px solid #ccc; 
-            background: transparent; font-size: 16px; outline: none;
+            width: 100%; 
+            padding: 12px 0; 
+            margin-top: 5px; 
+            border: none; 
+            border-bottom: 1px solid var(--gray-light); 
+            background: transparent; 
+            font-size: 15px; 
+            font-family: 'Montserrat', sans-serif;
+            outline: none;
             color: var(--dark);
+            transition: 0.3s ease;
         }
 
-        input:focus, select:focus { border-bottom: 2px solid var(--gold); }
+        input:focus, select:focus { 
+            border-bottom: 2px solid var(--gold); 
+        }
 
         .input-hint {
             display: block;
             text-align: left;
-            font-size: 10px;
+            font-size: 11px;
             color: #888;
-            margin-top: 4px;
+            margin-top: 6px;
             text-transform: none;
             letter-spacing: 0.5px;
+            font-style: italic;
         }
 
+        /* NOVO DESIGN DO BENEFÍCIO (ESTILO VIP) */
         .beneficio-container {
-            text-align: left; margin-top: 30px; padding: 20px;
-            background-color: #fcf8f3; border-left: 3px solid var(--gold);
+            background-color: var(--dark);
+            color: var(--off-white);
+            padding: 35px 30px;
+            border-radius: 6px;
+            margin-top: 50px;
+            border: 1px solid var(--gold);
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(197, 160, 89, 0.15);
+        }
+
+        .beneficio-titulo {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            color: var(--gold);
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .beneficio-sub {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: #aaa;
+            display: block;
+            margin-bottom: 25px;
+        }
+
+        .beneficio-texto p {
+            font-size: 13px;
+            line-height: 1.7;
+            margin-bottom: 15px;
+            text-align: justify;
+            text-align-last: center;
+            color: #ddd;
+        }
+
+        .beneficio-texto p b {
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        .beneficio-assinatura {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            color: var(--gold) !important;
+            margin-top: 25px;
+            font-size: 16px !important;
         }
         
-        .beneficio-flex { display: flex; align-items: flex-start; gap: 12px; cursor: pointer; }
-        .beneficio-flex input { width: auto; margin-top: 3px; cursor: pointer; }
+        .beneficio-flex { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            gap: 15px; 
+            cursor: pointer; 
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 1px solid rgba(197, 160, 89, 0.3);
+            text-align: left;
+        }
         
-        .beneficio-texto { font-size: 13px; line-height: 1.5; color: #333; }
-        .beneficio-titulo { font-weight: bold; color: var(--gold); display: block; margin-bottom: 5px; text-transform: uppercase; font-size: 11px; }
+        .beneficio-flex input { 
+            width: 22px; 
+            height: 22px;
+            accent-color: var(--gold);
+            cursor: pointer; 
+            margin: 0;
+        }
+        
+        .beneficio-checkbox-text { 
+            font-size: 11px; 
+            text-transform: uppercase; 
+            letter-spacing: 1.5px; 
+            color: var(--gold); 
+            font-weight: 600;
+            line-height: 1.4;
+        }
 
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
 
         .btn-confirm { 
-            background-color: var(--dark); color: #fff; 
-            border: none; padding: 22px; width: 100%; 
-            text-transform: uppercase; letter-spacing: 4px; 
-            cursor: pointer; margin-top: 50px;
-            font-size: 13px; font-weight: bold;
-            transition: 0.3s;
+            background-color: var(--dark); 
+            color: #fff; 
+            border: none; 
+            padding: 22px; 
+            width: 100%; 
+            text-transform: uppercase; 
+            letter-spacing: 3px; 
+            cursor: pointer; 
+            margin-top: 50px;
+            font-size: 12px; 
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            transition: all 0.3s ease;
         }
-        .btn-confirm:hover { background-color: var(--gold); }
+        
+        .btn-confirm:hover { 
+            background-color: var(--gold); 
+            box-shadow: 0 5px 15px rgba(197, 160, 89, 0.4);
+        }
 
         #modalResumo {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(253, 250, 247, 0.98); z-index: 1000; justify-content: center; align-items: center;
+            background: rgba(250, 249, 247, 0.95); z-index: 1000; justify-content: center; align-items: center;
         }
-        .modal-content { background: white; padding: 40px; max-width: 450px; width: 85%; border: 1px solid #eee; text-align: left; }
+        .modal-content { 
+            background: white; 
+            padding: 40px; 
+            max-width: 450px; 
+            width: 85%; 
+            border: 1px solid var(--gold); 
+            text-align: left;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+        }
+
+        /* Responsividade para o Grid em celulares */
+        @media (max-width: 600px) {
+            .grid { grid-template-columns: 1fr; gap: 10px; }
+            .beneficio-container { padding: 25px 20px; }
+        }
     </style>
 </head>
 <body>
@@ -110,9 +235,9 @@
     <div class="logo-container">
         <img src="logo.png" alt="Exclusiva Noivas">
     </div>
-    <p class="subtitle">Referência em Aluguel de Vestidos de Noiva em Marília e Região<br><b>Seja Exclusiva</b></p>
+    <p class="subtitle">Referência em Aluguel de Vestidos de Noiva em Marília e Região<br><b style="font-family: 'Montserrat', sans-serif; font-size: 12px; text-transform: uppercase; letter-spacing: 3px; color: var(--gold);">Seja Exclusiva</b></p>
 
-    <div class="section-title">Dados do Agendamento</div>
+    <div class="section-title">O Seu Agendamento</div>
     
     <div class="grid">
         <div>
@@ -136,7 +261,7 @@
             <div>
                 <label>WhatsApp *</label>
                 <input type="text" id="tel" maxlength="15" oninput="mascaraTel(this)" required>
-                <span class="input-hint">Informe com DDD (ex: 14 99999-9999)</span>
+                <span class="input-hint">Ex: (14) 99999-9999</span>
             </div>
         </div>
 
@@ -152,7 +277,7 @@
 
         <label>Tipo de Vestido</label>
         <select id="finalidade">
-            <option value="Cerimonial">Vestido para Cerimonial </option>
+            <option value="Cerimonial">Vestido para Cerimonial</option>
             <option value="Civil">Vestido para Casamento Civil</option>
             <option value="Ambos">Ambos os momentos</option>
         </select>
@@ -171,29 +296,37 @@
         <label>Cerimonialista Responsável</label>
         <input type="text" id="cerimonialista" placeholder="Nome do profissional (opcional)">
 
-        <label>Quanto planeia investir no sonho do seu vestido ideal?</label>
+        <label>Investimento Planejado</label>
         <input type="text" id="orcamento" oninput="mascaraMoeda(this)" placeholder="R$ 0,00">
+        <span class="input-hint">Quanto planeja investir no sonho do seu vestido ideal?</span>
 
         <div class="beneficio-container">
+            <span class="beneficio-titulo">💎 A Assinatura da Noiva Decidida</span>
+            <span class="beneficio-sub">Um Privilégio Exclusiva</span>
+            
+            <div class="beneficio-texto">
+                <p>Acreditamos que a escolha do vestido ideal é um encontro de almas. Como o espaço que introduziu e consolidou o método de benefícios de primeira visita em Marília e Região, nosso foco é 100% voltado para a jornada de quem busca o extraordinário.</p>
+                <p>Hoje, esse movimento que criamos inspira muitos, mas apenas aqui ele é vivido como uma <b>Experiência de Celebração Completa</b>. Para as noivas que reconhecem a autenticidade e oficializam o contrato na primeira consultoria, liberamos um acesso restrito.</p>
+                <p><b>O que compõe essa Experiência?</b> Os detalhes são mantidos em sigilo e revelados apenas no seu atendimento, garantindo um momento único e inimitável.</p>
+                <p class="beneficio-assinatura">"Onde a inovação nasceu, a excelência permanece."</p>
+            </div>
+
             <label class="beneficio-flex">
                 <input type="checkbox" id="querBeneficio">
-                <span class="beneficio-texto">
-                    <span class="beneficio-titulo">🎁 Benefício de Primeira Visita</span>
-                    Desejo solicitar o benefício exclusivo, válido apenas para noivas que realizam o contrato no ato da primeira visita ao atelier.
-                </span>
+                <span class="beneficio-checkbox-text">Reconheço a autenticidade e desejo habilitar minha Experiência na primeira visita.</span>
             </label>
         </div>
 
-        <button class="btn-confirm" onclick="enviarWhatsAppDireto()">Solicitar Reserva</button>
+        <button class="btn-confirm" onclick="enviarWhatsAppDireto()">Solicitar Reserva VIP</button>
     </div>
 </div>
 
 <div id="modalResumo">
     <div class="modal-content">
-        <p style="text-transform:uppercase; letter-spacing:2px; font-weight:bold; color:var(--gold);">Conferir Solicitação</p>
+        <p style="font-family: 'Playfair Display', serif; font-size: 20px; color:var(--gold); margin-top:0;">Conferir Solicitação</p>
         <div id="conteudoResumo" style="margin-top:20px; font-size:14px; line-height:1.8;"></div>
         <button class="btn-confirm" onclick="enviarWhatsApp()">Confirmar e Enviar</button>
-        <button onclick="fecharModal()" style="background:none; border:none; width:100%; margin-top:20px; cursor:pointer; color:#999; text-decoration:underline; text-transform:uppercase; font-size:10px; letter-spacing:1px;">Ajustar</button>
+        <button onclick="fecharModal()" style="background:none; border:none; width:100%; margin-top:20px; cursor:pointer; color:#999; text-decoration:underline; text-transform:uppercase; font-size:10px; letter-spacing:1px;">Ajustar Dados</button>
     </div>
 </div>
 
@@ -373,7 +506,7 @@
             <b>Data:</b> ${formatarDataBR(document.getElementById('data').value)} às ${document.getElementById('horario').value}<br>
             <b>Instagram:</b> ${document.getElementById('insta').value || "Não informado"}<br>
             <b>Finalidade:</b> ${document.getElementById('finalidade').value}<br>
-            <b>Benefício 1ª Visita:</b> ${document.getElementById('querBeneficio').checked ? "Solicitado" : "Não"}
+            <b>Privilégio 1ª Visita:</b> ${document.getElementById('querBeneficio').checked ? "Habilitado 💎" : "Não"}
         `;
         document.getElementById('conteudoResumo').innerHTML = resumo;
         document.getElementById('modalResumo').style.display = "flex";
