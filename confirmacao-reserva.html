@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sua solicitação de horário na Exclusiva Noivas foi recebida. Nossa equipe entrará em contato pelo WhatsApp informado.">
+    <title>Reserva recebida | Exclusiva Noivas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #C5A059;
+            --dark: #121212;
+            --off-white: #faf9f7;
+            --gray-light: #e0e0e0;
+        }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--off-white);
+            color: var(--dark);
+            margin: 0;
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 16px;
+            padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+            padding-left: calc(16px + env(safe-area-inset-left, 0px));
+            padding-right: calc(16px + env(safe-area-inset-right, 0px));
+            box-sizing: border-box;
+        }
+        .box {
+            max-width: 520px;
+            width: 100%;
+            background: #fff;
+            padding: clamp(28px, 6vw, 48px) clamp(20px, 5vw, 40px);
+            border-radius: 4px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.06);
+            text-align: center;
+            border: 1px solid var(--gray-light);
+            box-sizing: border-box;
+            overflow-wrap: break-word;
+        }
+        .box img { max-width: min(200px, 55vw); height: auto; margin-bottom: 24px; }
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(22px, 5.5vw, 28px);
+            font-weight: 600;
+            color: var(--gold);
+            margin: 0 0 16px;
+            line-height: 1.25;
+        }
+        p {
+            font-size: clamp(13px, 3.5vw, 15px);
+            line-height: 1.75;
+            color: #444;
+            margin: 0 0 18px;
+        }
+        .texto-secundario {
+            font-size: clamp(11px, 3vw, 12px);
+            color: #888;
+            margin-bottom: 0;
+        }
+        .actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 24px;
+            width: 100%;
+            max-width: 320px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            min-height: 48px;
+            box-sizing: border-box;
+            padding: 14px 16px;
+            text-align: center;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-size: clamp(10px, 2.8vw, 11px);
+            font-weight: 600;
+            transition: background 0.3s ease, filter 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .btn-whatsapp {
+            background: #25d366;
+            color: #fff;
+        }
+        .btn-whatsapp:hover { filter: brightness(1.08); }
+        .btn-inicio {
+            background: var(--dark);
+            color: #fff;
+        }
+        .btn-inicio:hover { background: var(--gold); }
+
+        @media (min-width: 600px) {
+            body { padding: 40px 24px; }
+        }
+    </style>
+</head>
+<body>
+    <main class="box">
+        <img src="logo.png" alt="Exclusiva Noivas" width="200" decoding="async">
+        <h1>Sua solicitação foi recebida</h1>
+        <p>Obrigada pelo carinho em escolher a Exclusiva Noivas. Nossa equipe analisará sua reserva e entrará em contato pelo WhatsApp informado para confirmar os detalhes.</p>
+        <p class="texto-secundario">Enquanto isso, se preferir falar conosco agora, você pode usar os canais da nossa página inicial.</p>
+        <nav class="actions" aria-label="Próximos passos">
+            <a href="https://wa.me/5514997105505?text=Olá%20Gostaria%20de%20Conversar%20com%20uma%20Consultora" class="btn btn-whatsapp" target="_blank" rel="noopener noreferrer">Falar com uma consultora</a>
+            <a href="index.html" class="btn btn-inicio">Voltar ao início</a>
+        </nav>
+    </main>
+</body>
+</html>

@@ -104,6 +104,13 @@
             letter-spacing: 0.5px;
             font-style: italic;
         }
+        .input-hint.input-hint-longo {
+            font-size: 12px;
+            line-height: 1.65;
+            margin-top: 12px;
+            color: #666;
+            font-style: normal;
+        }
 
         /* NOVO DESIGN DO BENEFÍCIO (ESTILO VIP) */
         .beneficio-container {
@@ -156,33 +163,95 @@
             font-size: 16px !important;
         }
         
-        .beneficio-flex { 
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            gap: 15px; 
-            cursor: pointer; 
-            margin-top: 30px;
-            padding-top: 25px;
-            border-top: 1px solid rgba(197, 160, 89, 0.3);
-            text-align: left;
-        }
-        
-        .beneficio-flex input { 
-            width: 22px; 
-            height: 22px;
-            accent-color: var(--gold);
-            cursor: pointer; 
+        .beneficio-fieldset {
+            border: none;
             margin: 0;
+            padding: 28px 0 0;
+            margin-top: 24px;
+            border-top: 1px solid rgba(197, 160, 89, 0.35);
         }
-        
-        .beneficio-checkbox-text { 
-            font-size: 11px; 
-            text-transform: uppercase; 
-            letter-spacing: 1.5px; 
-            color: var(--gold); 
+        .beneficio-fieldset legend {
+            padding: 0;
+            float: unset;
+            width: 100%;
+        }
+        .beneficio-pergunta {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.6px;
+            color: var(--gold);
             font-weight: 600;
-            line-height: 1.4;
+            text-align: center;
+            line-height: 1.55;
+            margin: 0 auto 18px;
+            max-width: 420px;
+            display: block;
+        }
+        .beneficio-obr-mark {
+            color: #f0d78c;
+            font-weight: 700;
+            margin-left: 3px;
+        }
+        .beneficio-obr-hint {
+            display: block;
+            font-size: 9px;
+            letter-spacing: 2px;
+            color: #9a9a9a;
+            margin-top: 10px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+        .beneficio-sim-nao {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            max-width: 360px;
+            margin: 0 auto;
+        }
+        .beneficio-card-opcao {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 54px;
+            padding: 10px 16px;
+            border: 2px solid rgba(197, 160, 89, 0.45);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+            background: rgba(255, 255, 255, 0.05);
+            box-sizing: border-box;
+        }
+        .beneficio-card-opcao input {
+            position: absolute;
+            opacity: 0;
+            width: 1px;
+            height: 1px;
+            margin: 0;
+            pointer-events: none;
+        }
+        .beneficio-card-opcao span {
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            color: var(--gold);
+            text-transform: uppercase;
+        }
+        .beneficio-card-opcao:hover {
+            border-color: rgba(197, 160, 89, 0.85);
+            background: rgba(197, 160, 89, 0.08);
+        }
+        .beneficio-card-opcao:has(input:checked) {
+            border-color: var(--gold);
+            background: rgba(197, 160, 89, 0.18);
+            box-shadow: 0 0 0 1px var(--gold), 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+        .beneficio-marca {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: none;
         }
 
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
@@ -207,6 +276,13 @@
             background-color: var(--gold); 
             box-shadow: 0 5px 15px rgba(197, 160, 89, 0.4);
         }
+        .btn-confirm.btn-confirm--prosa {
+            text-transform: none;
+            letter-spacing: 0.5px;
+            line-height: 1.4;
+            font-size: 12px;
+            font-weight: 500;
+        }
 
         #modalResumo {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -226,6 +302,7 @@
         @media (max-width: 600px) {
             .grid { grid-template-columns: 1fr; gap: 10px; }
             .beneficio-container { padding: 25px 20px; }
+            .beneficio-sim-nao { max-width: none; }
         }
     </style>
 </head>
@@ -298,26 +375,39 @@
 
         <label>Investimento Planejado</label>
         <input type="text" id="orcamento" oninput="mascaraMoeda(this)" placeholder="R$ 0,00">
-        <span class="input-hint">Quanto planeja investir no sonho do seu vestido ideal?</span>
+        <span class="input-hint input-hint-longo">Na Exclusiva, cada proposta respeita uma tabela clara de valores. Este campo nos permite honrar a importância do seu sonho e preparar uma curadoria de modelos alinhada ao investimento que você reserva a este capítulo da sua história como noiva — sempre com a delicadeza que o seu momento merece.</span>
 
         <div class="beneficio-container">
-            <span class="beneficio-titulo">💎 A Assinatura da Noiva Decidida</span>
-            <span class="beneficio-sub">Um Privilégio Exclusiva</span>
+            <span class="beneficio-titulo">💎 <span class="beneficio-marca">The White Box</span></span>
+            <span class="beneficio-sub">Benefício exclusivo de primeira visita</span>
             
             <div class="beneficio-texto">
-                <p>Acreditamos que a escolha do vestido ideal é um encontro de almas. Como o espaço que introduziu e consolidou o método de benefícios de primeira visita em Marília e Região, nosso foco é 100% voltado para a jornada de quem busca o extraordinário.</p>
-                <p>Hoje, esse movimento que criamos inspira muitos, mas apenas aqui ele é vivido como uma <b>Experiência de Celebração Completa</b>. Para as noivas que reconhecem a autenticidade e oficializam o contrato na primeira consultoria, liberamos um acesso restrito.</p>
-                <p><b>O que compõe essa Experiência?</b> Os detalhes são mantidos em sigilo e revelados apenas no seu atendimento, garantindo um momento único e inimitável.</p>
+                <p>Hoje oferecemos <b>The White Box</b> como benefício de primeira visita na Exclusiva Noivas: um gesto reservado para quem deseja viver a escolha do vestido com intensidade, cuidado e um toque de celebração.</p>
+                <p>Fomos <b>os primeiros a inovar</b> ao introduzir e consolidar, em Marília e região, o método de benefício de primeira visita no mercado de noivas — movimento que inspirou o mercado e que aqui encontra na <b>The White Box</b> sua expressão mais cuidadosa e atual.</p>
+                <p>O conteúdo desta experiência é revelado apenas no seu atendimento — preservando a emoção e o privilégio da descoberta.</p>
                 <p class="beneficio-assinatura">"Onde a inovação nasceu, a excelência permanece."</p>
             </div>
 
-            <label class="beneficio-flex">
-                <input type="checkbox" id="querBeneficio">
-                <span class="beneficio-checkbox-text">Desejo garantir minha Experiência Completa caso eu escolha meu vestido na primeira visita.</span>
-            </label>
+            <fieldset class="beneficio-fieldset" aria-required="true">
+                <legend class="beneficio-pergunta">
+                    Deseja registrar interesse na The White Box caso escolha seu vestido nesta primeira consultoria?
+                    <span class="beneficio-obr-mark" aria-hidden="true">*</span>
+                    <span class="beneficio-obr-hint">Resposta obrigatória — escolha Sim ou Não</span>
+                </legend>
+                <div class="beneficio-sim-nao">
+                    <label class="beneficio-card-opcao">
+                        <input type="radio" name="beneficioWhiteBox" value="sim" required>
+                        <span>Sim</span>
+                    </label>
+                    <label class="beneficio-card-opcao">
+                        <input type="radio" name="beneficioWhiteBox" value="nao">
+                        <span>Não</span>
+                    </label>
+                </div>
+            </fieldset>
         </div>
 
-        <button class="btn-confirm" onclick="enviarWhatsAppDireto()">Solicitar Reserva VIP</button>
+        <button class="btn-confirm btn-confirm--prosa" onclick="enviarWhatsAppDireto()">Solicitar Consultoria de Imagem para Noiva</button>
     </div>
 </div>
 
@@ -325,7 +415,7 @@
     <div class="modal-content">
         <p style="font-family: 'Playfair Display', serif; font-size: 20px; color:var(--gold); margin-top:0;">Conferir Solicitação</p>
         <div id="conteudoResumo" style="margin-top:20px; font-size:14px; line-height:1.8;"></div>
-        <button class="btn-confirm" onclick="enviarWhatsApp()">Confirmar e Enviar</button>
+        <button class="btn-confirm" onclick="enviarWhatsApp()">Confirmar reserva</button>
         <button onclick="fecharModal()" style="background:none; border:none; width:100%; margin-top:20px; cursor:pointer; color:#999; text-decoration:underline; text-transform:uppercase; font-size:10px; letter-spacing:1px;">Ajustar Dados</button>
     </div>
 </div>
@@ -342,6 +432,9 @@
     };
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
+
+    /** Página aberta após salvar a reserva no Firebase (caminho relativo ou URL completa). */
+    const URL_APOS_AGENDAMENTO = 'confirmacao-reserva.html';
 
     // TRAVA DE DATA: Não permite selecionar dias anteriores a hoje
     const campoData = document.getElementById('data');
@@ -496,9 +589,18 @@
         return `${h.toString().padStart(2, '0')}:${m}`;
     }
 
+    function beneficioWhiteBoxEscolha() {
+        const el = document.querySelector('input[name="beneficioWhiteBox"]:checked');
+        return el ? el.value : null;
+    }
+
     function abrirResumo() {
         if(!document.getElementById('nome').value || !document.getElementById('tel').value) {
             alert("Nome e WhatsApp são essenciais.");
+            return;
+        }
+        if (!beneficioWhiteBoxEscolha()) {
+            alert("Por favor, escolha Sim ou Não sobre a The White Box — é obrigatório para continuar.");
             return;
         }
         const resumo = `
@@ -506,7 +608,7 @@
             <b>Data:</b> ${formatarDataBR(document.getElementById('data').value)} às ${document.getElementById('horario').value}<br>
             <b>Instagram:</b> ${document.getElementById('insta').value || "Não informado"}<br>
             <b>Finalidade:</b> ${document.getElementById('finalidade').value}<br>
-            <b>Privilégio 1ª Visita:</b> ${document.getElementById('querBeneficio').checked ? "Habilitado 💎" : "Não"}
+            <b>The White Box:</b> ${beneficioWhiteBoxEscolha() === 'sim' ? "Sim — interesse registrado" : beneficioWhiteBoxEscolha() === 'nao' ? "Não" : "—"}
         `;
         document.getElementById('conteudoResumo').innerHTML = resumo;
         document.getElementById('modalResumo').style.display = "flex";
@@ -528,6 +630,12 @@
             return;
         }
 
+        const escolhaBeneficio = beneficioWhiteBoxEscolha();
+        if (!escolhaBeneficio) {
+            alert("É obrigatório responder Sim ou Não sobre a The White Box antes de enviar sua solicitação.");
+            return;
+        }
+
         const d = {
             data: formatarDataBR(dataAgendamento),
             dataISO: dataAgendamento,
@@ -543,21 +651,14 @@
             outras: document.getElementById('outras').value,
             cerimonialista: document.getElementById('cerimonialista').value || "Não informado",
             orcamento: document.getElementById('orcamento').value,
-            beneficio: document.getElementById('querBeneficio').checked ? "SIM" : "NÃO",
+            beneficio: escolhaBeneficio === 'sim' ? "SIM" : "NÃO",
             status: "pendente",
             timestamp: new Date().toISOString()
         };
 
         const ref = database.ref('agendamentos').push();
         ref.set(d).then(() => {
-            const msg = `*SOLICITAÇÃO DE RESERVA - EXCLUSIVA NOIVAS*%0A%0A` +
-                        `*Noiva:* ${d.nome}%0A` +
-                        `*Data:* ${d.data}%0A` +
-                        `*Hora:* ${d.hora}%0A%0A` +
-                        `Olá! Acabei de solicitar minha reserva através do site. Aguardo contato.`;
-            
-            window.open(`https://wa.me/5514997105505?text=${msg}`, '_blank');
-            setTimeout(() => { location.reload(); }, 500);
+            window.location.href = URL_APOS_AGENDAMENTO;
         }).catch(e => alert("Erro ao conectar ao banco de dados."));
     }
 
