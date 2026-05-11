@@ -5,14 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Sua solicitação de horário na Exclusiva Noivas foi recebida. Nossa equipe entrará em contato pelo WhatsApp informado.">
     <title>Reserva recebida | Exclusiva Noivas</title>
-    <!-- Google tag (gtag.js) — evento na confirmação para conversão / relatórios -->
+    <!-- Google tag (gtag.js) — evento de conversão após carregar a página -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-REJTYH6LZE"></script>
+    <script src="js/gtag-init.js"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-REJTYH6LZE');
-      gtag('event', 'generate_lead', { method: 'confirmacao_reserva' });
+      window.addEventListener('load', function () {
+        if (typeof gtag === 'function') {
+          gtag('event', 'generate_lead', { method: 'confirmacao_reserva' });
+        }
+      });
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
