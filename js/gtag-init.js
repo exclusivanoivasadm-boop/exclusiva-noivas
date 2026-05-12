@@ -3,6 +3,4 @@ window.dataLayer = window.dataLayer || [];
 function gtag() { dataLayer.push(arguments); }
 gtag('js', new Date());
 gtag('config', 'G-REJTYH6LZE');
-/* Se o Google Ads pedir tag de conversão (ID começa com AW-), descomente e cole o ID:
-gtag('config', 'AW-XXXXXXXXXX');
-*/
+/* Conversão Google Ads (AW-…): preencha js/ads-conversion-config.js — disparo em confirmacao-reserva. */
