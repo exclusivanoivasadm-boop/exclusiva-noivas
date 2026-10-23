@@ -14,8 +14,6 @@
     <link rel="stylesheet" href="/public-design.css">
 <script async src="https://www.googletagmanager.com/gtag/js?id=AW-11113682948"></script>
 <script src="js/gtag-init.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
@@ -45,30 +43,16 @@
   </section>
   <section class="space" id="encontre" aria-labelledby="space-title"><div class="space-inner wrap">
     <div><p class="eyebrow">ESPERAMOS VOCÊ</p><h2 id="space-title">Conheça nosso espaço</h2><a class="button primary" href="/agenda.html" onclick="registrarClique('agendar_horario')">Agendar uma visita <span aria-hidden="true">↗</span></a></div>
-    <div class="location-details"><h3>Exclusiva Noivas</h3><address>Avenida Rio Branco, 481<br>Marília · São Paulo</address><p>Segunda a sexta · 09:30 às 17:00<br>Sábado · 09:00 às 16:00</p><a class="inline-link" href="https://www.google.com/maps/dir/?api=1&amp;destination=Avenida+Rio+Branco+481+Marilia+SP" target="_blank" rel="noopener noreferrer" onclick="registrarClique('localizacao')">Como chegar <span aria-hidden="true">↗</span></a></div>
+    <div class="location-details"><h3>Exclusiva Noivas</h3><address>Avenida Rio Branco, 481<br>Marília · São Paulo</address><p>Segunda a sexta · 09:00 às 18:00<br>1º e 2º sábados do mês · 09:00 às 17:00<br>Demais sábados · 09:00 às 13:00<br>Fechado aos domingos e feriados</p><a class="inline-link" href="https://www.google.com/maps/dir/?api=1&amp;destination=Avenida+Rio+Branco+481+Marilia+SP" target="_blank" rel="noopener noreferrer" onclick="registrarClique('localizacao')">Como chegar <span aria-hidden="true">↗</span></a></div>
   </div></section>
 </main>
 <footer class="site-footer wrap"><div><a class="brand" href="/" aria-label="Exclusiva Noivas — início"><img src="/logo.png" width="1426" height="450" alt="Exclusiva Noivas" loading="lazy"></a><div class="brand-logos"><img class="pronovias-logo" src="/brands/pronovias-official.svg" alt="Pronovias" width="180" height="30" loading="lazy"><img class="st-patrick-logo" src="/brands/st-patrick-official.svg" alt="House of St. Patrick" width="657" height="595" loading="lazy"></div></div><nav aria-label="Contato e redes sociais"><a href="https://wa.me/5514997105505?text=Olá%20Gostaria%20de%20Conversar%20com%20uma%20Consultora" target="_blank" rel="noopener noreferrer" onclick="registrarClique('falar_consultora')">WhatsApp ↗</a><a href="https://www.instagram.com/exclusivanoivas.marilia/" target="_blank" rel="noopener noreferrer" onclick="registrarClique('instagram')">Instagram ↗</a></nav><p class="business-id">CNPJ: 24.508-035/0001-02</p></footer>
     
 <script>
-        const firebaseConfig = { 
-            apiKey: "AIzaSyC8MacELfK0_avvpWIWBHZpJO_WYqhjOaE", 
-            authDomain: "exclusiva-noivas---agendamento.firebaseapp.com", 
-            databaseURL: "https://exclusiva-noivas---agendamento-default-rtdb.firebaseio.com", 
-            projectId: "exclusiva-noivas---agendamento", 
-            storageBucket: "exclusiva-noivas---agendamento.firebasestorage.app", 
-            messagingSenderId: "891467475836", 
-            appId: "1:891467475836:web:9565af78e44e9d6d53d2f9" 
-        };
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-
         function registrarClique(botao) {
-            const dataHoje = new Date().toISOString().split('T')[0];
-            const ref = database.ref('estatisticas/cliques/' + dataHoje + '/' + botao);
-            ref.transaction((valorAtual) => {
-                return (valorAtual || 0) + 1;
-            });
+            const permitidos = ['agendar_horario', 'falar_consultora', 'localizacao', 'instagram'];
+            if (!permitidos.includes(botao) || typeof window.gtag !== 'function') return;
+            window.gtag('event', 'interacao_site', { elemento: botao });
         }
     </script>
 </body>
