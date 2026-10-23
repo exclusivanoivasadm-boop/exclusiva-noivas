@@ -6,6 +6,8 @@
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-check-compat.js"></script>
     <style>
         :root { --gold: #b89754; --dark: #1a1a1a; --off-white: #fdfaf7; --red: #ff4d4d; --green: #2ecc71; --blue: #3b82f6; --yellow: #f1c40f; }
         
@@ -130,45 +132,51 @@
         .obs-box { grid-column: span 2; background: #fffdf9; border: 1px dashed var(--gold); padding: 10px; margin-top: 10px; font-style: italic; font-size: 13px; }
         .tag-categoria { font-size: 9px; padding: 2px 5px; border-radius: 3px; background: #eee; margin-left: 5px; vertical-align: middle; }
     </style>
-</head>
+<script src="/checklist/admin/booking-alerts.js"></script><script src="/checklist/admin/integration-config.js"></script><script src="/checklist/admin/bridge.js"></script></head>
 <body>
 
 <div id="loginScreen">
     <div class="login-box">
         <h1>Exclusiva</h1>
         <span>Noivas Gestão</span>
-        <input type="text" id="loginUser" placeholder="Usuário">
-        <input type="password" id="loginPass" placeholder="Senha" onkeypress="if(event.key === 'Enter') fazerLogin()">
-        <button class="btn btn-novo" style="width:100%; margin-top:10px; padding: 12px;" onclick="fazerLogin()">Acessar Painel</button>
-        <p id="loginErro" style="color: var(--red); font-size: 12px; display: none; margin-top: 15px; font-weight: bold;">Credenciais incorretas. Tente novamente.</p>
+        <form id="adminLoginForm">
+            <label for="loginAlias">Usuário</label><input id="loginAlias" name="username" autocomplete="username" value="exclusiva" required>
+            <label for="loginPassword">Senha</label><input id="loginPassword" name="password" type="password" autocomplete="current-password" required>
+            <button id="loginSubmit" type="submit" class="btn btn-novo" style="width:100%;margin-top:10px;padding:12px;">Entrar</button>
+        </form>
+        <button id="resetPasswordButton" type="button" class="btn">Definir minha senha / recuperar acesso</button>
+        <button id="verifyEmailButton" type="button" class="btn" hidden>Reenviar verificação do e-mail</button>
+        <p style="font-size:12px">No primeiro acesso, defina sua senha e verifique seu e-mail. O painel só será liberado após autorização administrativa.</p>
+        <p id="loginErro" style="color: var(--red); font-size: 12px; display: none; margin-top: 15px; font-weight: bold;">Entre com o usuário e a senha autorizados.</p>
     </div>
 </div>
 
 <div id="appWrapper">
     <aside class="sidebar">
+        <button class="btn" id="logoutButton">Sair</button>
         <div class="sidebar-logo">
             <h1>Exclusiva</h1>
             <span>Noivas Gestão</span>
         </div>
         
         <div class="tabs">
-            <button class="tab-btn active" onclick="filtrarStatus('inicio', this)">🏠 Início (Hoje)</button>
-            <button class="tab-btn" onclick="filtrarStatus('pendente', this)">
+            <button class="tab-btn active" data-event-click="legacyEvent0">🏠 Início (Hoje)</button>
+            <button class="tab-btn" data-event-click="legacyEvent1">
                 ⏳ Pendentes 
                 <span id="badgePendente" style="background: var(--red); color: white; border-radius: 10px; padding: 2px 6px; font-size: 10px; font-weight: bold; margin-left: 5px; display: none; animation: pulseRed 1.5s infinite;">0</span>
             </button>
-            <button class="tab-btn" onclick="filtrarStatus('agendado', this)">📅 Agendados (Todos)</button>
-            <button class="tab-btn" onclick="filtrarStatus('finalizado', this)">✅ Finalizadas</button>
-            <button class="tab-btn" onclick="filtrarStatus('recusado', this)">❌ Recusados</button>
+            <button class="tab-btn" data-event-click="legacyEvent2">📅 Agendados (Todos)</button>
+            <button class="tab-btn" data-event-click="legacyEvent3">✅ Finalizadas</button>
+            <button class="tab-btn" data-event-click="legacyEvent4">❌ Recusados</button>
             
             <hr style="border:0; border-bottom:1px solid #eee; width:100%; margin: 10px 0;">
             
-            <button class="tab-btn" onclick="filtrarStatus('dashboard', this)">📊 Dashboard Geral</button>
-            <button class="tab-btn" onclick="filtrarStatus('lojistas', this)">🏪 Concorrentes</button>
+            <button class="tab-btn" data-event-click="legacyEvent5">📊 Dashboard Geral</button>
+            <button class="tab-btn" data-event-click="legacyEvent6">🏪 Concorrentes</button>
             
             <hr style="border:0; border-bottom:1px solid #eee; width:100%; margin: 10px 0;">
             
-            <button class="tab-btn" onclick="filtrarStatus('configuracoes', this)">⚙️ Configurações</button>
+            <button class="tab-btn" data-event-click="legacyEvent7">⚙️ Configurações</button>
             <a href="crm-github.html" class="tab-btn" style="text-decoration:none;color:inherit;display:block;">📋 CRM fichas (GitHub Pages)</a>
         </div>
     </aside>
@@ -178,15 +186,15 @@
         <div class="header-admin">
             <h2 class="header-title" id="tituloPagina">Início - Resumo Diário</h2>
             <div style="display:flex; gap:10px;">
-                <button class="btn btn-expediente" onclick="abrirModalExpediente()">🗓️ Calendário</button>
-                <button class="btn btn-novo" onclick="abrirModalCadastro()">+ Nova Reserva</button>
+                <button class="btn btn-expediente" data-event-click="legacyEvent8">🗓️ Calendário</button>
+                <button class="btn btn-novo" data-event-click="legacyEvent9">+ Nova Reserva</button>
             </div>
         </div>
 
         <div class="filter-bar" id="filtroDataContainer" style="display: none;">
             <div class="filter-group">
                 <label style="margin:0">Mês de Referência:</label>
-                <select id="filtroMes" class="month-select" onchange="carregarDados();">
+                <select id="filtroMes" class="month-select" data-event-change="legacyEvent10">
                     <option value="todos">Todos</option>
                     <option value="00">Janeiro</option>
                     <option value="01">Fevereiro</option>
@@ -215,11 +223,11 @@
                 <h3>📖 Como configurar as mensagens automáticas?</h3>
                 <p style="font-size:13px; margin-bottom: 10px;">Personalize os textos enviados via WhatsApp. Para que o sistema preencha os dados da noiva de forma automática, basta clicar nas variáveis abaixo (ou digitá-las) no meio do seu texto.</p>
                 <div>
-                    <span class="var-badge" onclick="inserirVariavel('[NOME]')">[NOME]</span>
-                    <span class="var-badge" onclick="inserirVariavel('[DATA]')">[DATA]</span>
-                    <span class="var-badge" onclick="inserirVariavel('[DIA_SEMANA]')">[DIA_SEMANA]</span>
-                    <span class="var-badge" onclick="inserirVariavel('[HORA]')">[HORA]</span>
-                    <span class="var-badge" onclick="inserirVariavel('[BENEFICIO]')">[BENEFICIO]</span>
+                    <span class="var-badge" data-event-click="legacyEvent11">[NOME]</span>
+                    <span class="var-badge" data-event-click="legacyEvent12">[DATA]</span>
+                    <span class="var-badge" data-event-click="legacyEvent13">[DIA_SEMANA]</span>
+                    <span class="var-badge" data-event-click="legacyEvent14">[HORA]</span>
+                    <span class="var-badge" data-event-click="legacyEvent15">[BENEFICIO]</span>
                 </div>
                 <p style="font-size:11px; color:#666; margin-top:5px;"><i>Dica: Clique primeiro na caixa de texto abaixo onde deseja escrever, e depois clique no botão da variável para inseri-la.</i></p>
             </div>
@@ -227,17 +235,17 @@
             <div class="grid-form">
                 <div>
                     <label>💬 Confirmação (Enviada 3 Dias Antes)</label>
-                    <textarea id="configMsgConfirmacao" rows="15" onfocus="campoFocadoTexto = this;"></textarea>
+                    <textarea id="configMsgConfirmacao" rows="15" data-event-focus="legacyEvent16"></textarea>
                 </div>
                 <div>
                     <label>💬 Lembrete (Enviado 24 Horas Antes)</label>
-                    <textarea id="configMsgLembrete" rows="15" onfocus="campoFocadoTexto = this;"></textarea>
+                    <textarea id="configMsgLembrete" rows="15" data-event-focus="legacyEvent17"></textarea>
                 </div>
             </div>
-            <button class="btn btn-novo" style="width:100%; margin-top:20px; font-size:14px; padding:15px;" onclick="salvarConfigMensagens()">💾 Salvar Modelos de Mensagem</button>
+            <button class="btn btn-novo" style="width:100%; margin-top:20px; font-size:14px; padding:15px;" data-event-click="legacyEvent18">💾 Salvar Modelos de Mensagem</button>
         </div>
 
-        <div id="abaDashboardVisual">
+        <section id="durationSettingsPanel"><label for="defaultDurationMinutes">Duração do atendimento</label><select id="defaultDurationMinutes" disabled><option value="15">15 minutos</option><option value="30">30 minutos</option><option value="45">45 minutos</option><option value="60">60 minutos</option><option value="75">75 minutos</option><option value="90">90 minutos</option><option value="105">105 minutos</option><option value="120">120 minutos</option><option value="135">135 minutos</option><option value="150">150 minutos</option><option value="165">165 minutos</option><option value="180">180 minutos</option><option value="195">195 minutos</option><option value="210">210 minutos</option><option value="225">225 minutos</option><option value="240">240 minutos</option></select><p>Padrão para segunda a sexta.</p><label for="saturdayDurationMinutes">Duração do atendimento</label><select id="saturdayDurationMinutes" disabled><option value="15">15 minutos</option><option value="30">30 minutos</option><option value="45">45 minutos</option><option value="60">60 minutos</option><option value="75">75 minutos</option><option value="90">90 minutos</option><option value="105">105 minutos</option><option value="120">120 minutos</option><option value="135">135 minutos</option><option value="150">150 minutos</option><option value="165">165 minutos</option><option value="180">180 minutos</option><option value="195">195 minutos</option><option value="210">210 minutos</option><option value="225">225 minutos</option><option value="240">240 minutos</option></select><p>Padrão para sábados.</p><button id="saveSaturdayDuration" type="button" class="btn" disabled>Salvar duração de sábado</button><p>Política informada: segunda a sexta 09h–18h; dois primeiros sábados 09h–17h, demais 09h–13h; sem almoço; domingos e feriados fechados. A política efetiva e os feriados ainda precisam estar configurados e validados no servidor antes da ativação.</p><p>O padrão vale apenas para novas reservas. As existentes mantêm sua duração.</p><button id="saveDefaultDuration" class="btn" type="button" disabled>Salvar duração padrão</button><p id="durationSettingsStatus" role="status"></p></section><div id="abaDashboardVisual">
             <div class="group-header">Interatividade no Portal (Mês Ref)</div>
             <div class="cliques-grid">
                 <div class="clique-card"><span class="clique-val" id="clkAgenda">0</span><span class="clique-label">Cliques Agenda</span></div>
@@ -264,9 +272,9 @@
 
 <div id="modalExpediente" class="modal">
     <div class="modal-content">
-        <span class="close-modal" onclick="fecharModais()">×</span>
+        <span class="close-modal" data-event-click="legacyEvent19">×</span>
         <h2 style="text-transform: uppercase;">Calendário de Trabalho</h2>
-        <select id="filtroMesCalendario" class="month-select" onchange="gerarCalendarioVisivel()">
+        <select id="filtroMesCalendario" class="month-select" data-event-change="legacyEvent20">
             <option value="00">Janeiro</option>
             <option value="01">Fevereiro</option>
             <option value="02">Março</option>
@@ -287,9 +295,9 @@
 
 <div id="modalDiaEspecial" class="modal">
     <div class="modal-content" style="max-width: 400px;">
-        <span class="close-modal" onclick="fecharModais()">×</span>
+        <span class="close-modal" data-event-click="legacyEvent21">×</span>
         <h3 id="tituloDiaEspecial">-</h3>
-        <select id="e_status" onchange="toggleInputsEspecial()">
+        <select id="e_status" data-event-change="legacyEvent22">
             <option value="padrao">Padrão</option>
             <option value="fechado">Bloquear</option>
             <option value="especial">Especial</option>
@@ -298,28 +306,28 @@
             <input type="text" id="e_inicio" placeholder="09:30">
             <input type="text" id="e_fim" placeholder="18:00">
         </div>
-        <button class="btn btn-novo" style="width:100%; margin-top:20px;" onclick="salvarConfigDia()">Salvar</button>
+        <button class="btn btn-novo" style="width:100%; margin-top:20px;" data-event-click="legacyEvent23">Salvar</button>
     </div>
 </div>
 
 <div id="modalDetalhes" class="modal">
     <div class="modal-content" style="max-width: 750px;">
-        <span class="close-modal" onclick="fecharModais()">×</span>
+        <span class="close-modal" data-event-click="legacyEvent24">×</span>
         <div class="header-perfil"><h2 id="detalheNome">-</h2><p id="detalheData">-</p></div>
         <div id="detalhesNoiva" class="info-card-grid"></div>
-        <button class="btn btn-novo" style="width:100%; margin-top:30px;" onclick="fecharModais()">Fechar</button>
+        <button class="btn btn-novo" style="width:100%; margin-top:30px;" data-event-click="legacyEvent25">Fechar</button>
     </div>
 </div>
 
 <div id="modalEditar" class="modal">
     <div class="modal-content" style="max-width: 800px;">
-        <span class="close-modal" onclick="fecharModais()">×</span>
-        <h3>Editar Informações e Observações</h3>
+        <span class="close-modal" data-event-click="legacyEvent26">×</span>
+        <h3>Editar Informações e Observações</h3><div><label for="edit_durationMinutes">Duração do atendimento</label><select id="edit_durationMinutes" disabled><option value="15">15 minutos</option><option value="30">30 minutos</option><option value="45">45 minutos</option><option value="60">60 minutos</option><option value="75">75 minutos</option><option value="90">90 minutos</option><option value="105">105 minutos</option><option value="120">120 minutos</option><option value="135">135 minutos</option><option value="150">150 minutos</option><option value="165">165 minutos</option><option value="180">180 minutos</option><option value="195">195 minutos</option><option value="210">210 minutos</option><option value="225">225 minutos</option><option value="240">240 minutos</option></select><p>Alterar a duração pode gerar conflito; a reserva só muda após confirmação.</p></div>
         <div class="grid-form">
             
             <div style="grid-column: span 2;">
                 <label>Tipo de Reserva</label>
-                <select id="edit_categoria" onchange="atualizarFormularioEdicao()" style="font-weight: bold; padding: 8px;">
+                <select id="edit_categoria" data-event-change="legacyEvent27" style="font-weight: bold; padding: 8px;">
                     <option value="atendimento">Atendimento de Venda</option>
                     <option value="pre_escolha">Escolha de Pré</option>
                     <option value="prova">Prova de Vestido</option>
@@ -368,16 +376,16 @@
                 <textarea id="edit_obs" rows="4" placeholder="Detalhes ou motivos..."></textarea>
             </div>
         </div>
-        <button class="btn btn-novo" style="width:100%; margin-top:20px;" onclick="salvarEdicao()">Salvar Alterações</button>
+        <button class="btn btn-novo" style="width:100%; margin-top:20px;" data-event-click="legacyEvent28">Salvar Alterações</button>
     </div>
 </div>
 
 <div id="modalFinalizar" class="modal">
     <div class="modal-content" style="max-width: 450px;">
-        <span class="close-modal" onclick="fecharModais()">×</span>
+        <span class="close-modal" data-event-click="legacyEvent29">×</span>
         <h3>Encerrar Atendimento</h3>
         <label>Resultado</label>
-        <select id="f_resultado" onchange="toggleFinalizarCampos()">
+        <select id="f_resultado" data-event-change="legacyEvent30">
             <option value="alugou">Alugou Conosco</option>
             <option value="nao_alugou">Não Alugou / Alugou no Concorrente</option>
             <option value="remarcou">Irá Remarcar</option>
@@ -390,25 +398,25 @@
 
         <div id="divRemarcar" style="display:none; margin-top:15px; background: #fdfaf7; padding: 15px; border: 1px dashed var(--gold);">
             <label>Nova Data para Reagendamento</label>
-            <input type="date" id="f_nova_data" onchange="buscarOcupacaoRemarcar()">
+            <input type="date" id="f_nova_data" data-event-change="legacyEvent31">
             <label>Novo Horário</label>
-            <select id="f_nova_hora"><option value="">Selecione a data...</option></select>
+            <select id="f_nova_hora"><option value="">Selecione a data...</option></select><p id="f_horario_aviso" role="status" aria-live="polite"></p>
         </div>
 
-        <button class="btn btn-novo" style="width:100%; margin-top:20px;" onclick="confirmarFinalizacao()">Confirmar</button>
+        <button class="btn btn-novo" style="width:100%; margin-top:20px;" data-event-click="legacyEvent32">Confirmar</button>
     </div>
 </div>
 
 <div id="modalCadastro" class="modal">
     <div class="modal-content" style="max-width: 800px;">
-        <span class="close-modal" onclick="fecharModais()">×</span>
+        <span class="close-modal" data-event-click="legacyEvent33">×</span>
         <h2 style="text-transform: uppercase; letter-spacing: 2px;">Nova Reserva Manual</h2>
-        <form id="formManual">
+        <form id="formManual"><div><label for="m_durationMinutes">Duração do atendimento</label><select id="m_durationMinutes" disabled><option value="15">15 minutos</option><option value="30">30 minutos</option><option value="45">45 minutos</option><option value="60">60 minutos</option><option value="75">75 minutos</option><option value="90">90 minutos</option><option value="105">105 minutos</option><option value="120">120 minutos</option><option value="135">135 minutos</option><option value="150">150 minutos</option><option value="165">165 minutos</option><option value="180">180 minutos</option><option value="195">195 minutos</option><option value="210">210 minutos</option><option value="225">225 minutos</option><option value="240">240 minutos</option></select><p>Conflitos e expediente são validados ao salvar.</p></div>
             
             <div class="grid-form" style="margin-bottom: 20px;">
                 <div style="grid-column: span 2; background: #fdfaf7; padding: 15px; border: 2px solid var(--gold); border-radius: 4px;">
                     <label style="font-size: 13px; color: var(--gold); margin-top:0;">1. Selecione o Tipo da Reserva</label>
-                    <select id="m_categoria" required onchange="atualizarFormularioManual()" style="font-size: 16px; padding: 10px; font-weight:bold;">
+                    <select id="m_categoria" required data-event-change="legacyEvent34" style="font-size: 16px; padding: 10px; font-weight:bold;">
                         <option value="atendimento">Atendimento de Venda (Completo)</option>
                         <option value="pre_escolha">Escolha de Pré (Básico)</option>
                         <option value="prova">Prova de Vestido (Básico)</option>
@@ -420,14 +428,14 @@
 
             <div class="section-title">Logística do Atendimento</div>
             <div class="grid-form">
-                <div><label>Data do Agendamento</label><input type="date" id="m_data" required onchange="buscarOcupacaoManual()"></div>
+                <div><label>Data do Agendamento</label><input type="date" id="m_data" required data-event-change="legacyEvent35"></div>
                 <div><label>Hora</label><select id="m_hora" required><option value="">Selecione a data primeiro...</option></select></div>
             </div>
 
             <div id="blocoDadosBasicos" style="display: contents;">
                 <div class="section-title" style="grid-column: span 2;">Dados da Noiva</div>
                 <div><label>Nome Completo</label><input type="text" id="m_nome"></div>
-                <div><label>WhatsApp</label><input type="text" id="m_tel" oninput="mascaraTel(this)"></div>
+                <div><label>WhatsApp</label><input type="text" id="m_tel" data-event-input="legacyEvent36"></div>
             </div>
 
             <div id="blocoDadosCompletos" style="display: contents;">
@@ -450,7 +458,7 @@
                 <div style="grid-column: span 2;"><textarea id="m_obs" rows="3" placeholder="Digite aqui os detalhes ou o motivo do bloqueio..."></textarea></div>
             </div>
 
-            <button type="button" class="btn btn-novo" style="width:100%; margin-top:30px; padding:15px; font-size:14px;" onclick="salvarManual()">Confirmar Reserva</button>
+            <button type="button" class="btn btn-novo" style="width:100%; margin-top:30px; padding:15px; font-size:14px;" data-event-click="legacyEvent37">Confirmar Reserva</button>
         </form>
     </div>
 </div>
@@ -458,7 +466,7 @@
 <script>
     const firebaseConfig = { apiKey: "AIzaSyC8MacELfK0_avvpWIWBHZpJO_WYqhjOaE", authDomain: "exclusiva-noivas---agendamento.firebaseapp.com", databaseURL: "https://exclusiva-noivas---agendamento-default-rtdb.firebaseio.com", projectId: "exclusiva-noivas---agendamento", storageBucket: "exclusiva-noivas---agendamento.firebasestorage.app", messagingSenderId: "891467475836", appId: "1:891467475836:web:9565af78e44e9d6d53d2f9" };
     firebase.initializeApp(firebaseConfig); 
-    const database = firebase.database();
+    const database = { ref(path) { if (!adminAuthorized) throw new Error('Acesso não autorizado'); const bridge = window.ExclusivaBookingBridge; const base = /^agendamentos(?:\/|$)/.test(path) && bridge && typeof bridge.legacyRef === 'function' ? bridge.legacyRef(path) : firebase.database().ref(path); return guardRef(base); } };
 
     let statusAtual = 'inicio';
     let dataSelecionadaExpediente = "";
@@ -473,22 +481,243 @@
     const textoPadraoConf = "OLÁ, [NOME].\n\nGostaria de confirmar seu atendimento exclusivo na *Exclusiva Noivas*:\n\nDIA: [DATA] ([DIA_SEMANA])\nHORÁRIO: [HORA]HS\n\nLocal: Av. Rio Branco, 481 - Marilia.\nEstamos ansiosas para participar do seu sonho.\n\n*PODEMOS CONFIRMAR SEU AGENDAMENTO?*\n_Preparamos nossa loja e equipe para receber apenas uma noiva por horário, garantindo que seu momento seja único e totalmente exclusivo._";
     const textoPadraoLemb = "*LEMBRETE: Seu momento na Exclusiva Noivas está chegando!*\n\nOLÁ [NOME], estamos com tudo pronto para receber você no dia [DATA] às [HORA]hs.\n\nLocal: Av. Rio Branco, 481 - Marilia.\n_Temos estacionamento privativo para sua comodidade._\n\n*Benefício de Primeira Visita:* [BENEFICIO]\n_(Lembrando que este benefício é exclusivo para noivas que tomam a decisão no ato da primeira visita)._\n\nEstamos ansiosas para ajudar você a encontrar o vestido dos seus sonhos! ✨";
 
-    // ====== FUNÇÃO DE LOGIN ======
-    function fazerLogin() {
-        const u = document.getElementById('loginUser').value;
-        const p = document.getElementById('loginPass').value;
-        
-        if(u === 'Exclusiva' && p === 'Gael2025') {
-            document.getElementById('loginErro').style.display = 'none';
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('appWrapper').style.display = 'flex';
-            
-            carregarDados();
-            carregarLojistasSelect();
-            carregarConfiguracoesMensagens();
-        } else {
-            document.getElementById('loginErro').style.display = 'block';
+    // Same Firebase app, no debug provider and no unprotected fallback.
+    // Public site key is configuration, never a credential or an authorization grant.
+    window.ExclusivaAdminAppCheck = (() => {
+        let instance = null;
+        function validToken(result) {
+            if (!result || typeof result.token !== 'string' || !result.token.trim()) throw new Error('Proteção de acesso indisponível.');
+            return result;
         }
+        const ready = (async () => {
+            if (window.FIREBASE_APPCHECK_DEBUG_TOKEN) throw new Error('Modo de depuração não permitido.');
+            const response = await fetch('/checklist/config.json', {cache:'no-store',credentials:'same-origin',redirect:'error'});
+            if (!response.ok) throw new Error('Configuração de proteção indisponível.');
+            const config = await response.json();
+            const app = firebase.app(), actual = app.options;
+            const expected = {projectId:'exclusiva-noivas---agendamento',appId:'1:891467475836:web:9565af78e44e9d6d53d2f9',databaseURL:'https://exclusiva-noivas---agendamento-default-rtdb.firebaseio.com'};
+            for (const [key,value] of Object.entries(expected)) {
+                if (actual?.[key] !== value || config?.firebase?.[key] !== value) throw new Error('Projeto de proteção inválido.');
+            }
+            if (config?.appCheckProvider !== 'recaptcha-enterprise') throw new Error('Provedor de proteção inválido.');
+            const siteKey = config?.appCheckSiteKey;
+            if (typeof siteKey !== 'string' || !/^[A-Za-z0-9_-]{20,200}$/.test(siteKey)) throw new Error('Proteção de acesso ainda não configurada.');
+            if (typeof firebase.appCheck !== 'function' || typeof firebase.appCheck.ReCaptchaEnterpriseProvider !== 'function') throw new Error('Proteção de acesso indisponível.');
+            instance = firebase.appCheck(app);
+            instance.activate(new firebase.appCheck.ReCaptchaEnterpriseProvider(siteKey), true);
+            validToken(await instance.getToken(false));
+            return true;
+        })();
+        // Keep the rejection available to callers without a boot-time unhandled rejection.
+        ready.catch(() => {});
+        return Object.freeze({ready, async getToken(forceRefresh=false) {
+            await ready;
+            return validToken(await instance.getToken(forceRefresh === true));
+        }});
+    })();
+    let adminAppCheckReady = false;
+    window.ExclusivaAdminAppCheck.ready.then(() => { adminAppCheckReady = true; }, () => {});
+
+    let saturdayDurationMinutes = 60, durationSettingsLoaded = new Set();
+    let defaultDurationMinutes = 90, durationSettingsReady = false, durationSettingsBusy = false;
+    function durationValue(value) {
+        const number = Number(value);
+        if (!Number.isInteger(number) || number < 15 || number > 240 || number % 15 !== 0) throw new Error('Selecione uma duração de 15 a 240 minutos, em intervalos de 15.');
+        return number;
+    }
+    function durationForDate(date) { return /^\d{4}-\d{2}-\d{2}$/.test(date || '') && new Date(date+'T12:00:00').getDay() === 6 ? saturdayDurationMinutes : defaultDurationMinutes; }
+    function durationForRow(row) { return row.durationMinutes == null ? (/^\d{4}-\d{2}-\d{2}$/.test(row.dataISO || '') && new Date(row.dataISO+'T12:00:00').getDay()===6 ? 60 : 90) : durationValue(row.durationMinutes); }
+    function clearDurationState() {
+        defaultDurationMinutes = 90; saturdayDurationMinutes = 60; durationSettingsLoaded.clear(); durationSettingsReady = false; durationSettingsBusy = false;
+        for (const id of ['defaultDurationMinutes','saturdayDurationMinutes','m_durationMinutes','edit_durationMinutes']) { const el=document.getElementById(id); if(el) { el.value=''; el.disabled=true; } }
+        const status=document.getElementById('durationSettingsStatus'); if(status) status.textContent='';
+        for(const id of ['saveDefaultDuration','saveSaturdayDuration']) { const button=document.getElementById(id); if(button) button.disabled=true; }
+    }
+    function carregarDuracaoPadrao() {
+        for(const setting of ['defaultDurationMinutes','saturdayDurationMinutes']) database.ref('bookingV1/settings/'+setting).on('value', snap => {
+            try {
+                const value=snap.val(), parsed=value == null ? (setting==='saturdayDurationMinutes'?60:90) : durationValue(value);
+                if(setting==='saturdayDurationMinutes')saturdayDurationMinutes=parsed;else defaultDurationMinutes=parsed;
+                durationSettingsLoaded.add(setting);durationSettingsReady=durationSettingsLoaded.size===2;
+                document.getElementById(setting).value=String(parsed);
+                for(const id of ['defaultDurationMinutes','saturdayDurationMinutes','m_durationMinutes','edit_durationMinutes'])document.getElementById(id).disabled=!durationSettingsReady;
+                for(const id of ['saveDefaultDuration','saveSaturdayDuration'])document.getElementById(id).disabled=!durationSettingsReady||durationSettingsBusy;
+            } catch (_) { clearDurationState(); document.getElementById('durationSettingsStatus').textContent='Configuração de duração inválida. Alterações bloqueadas.'; }
+        });
+    }
+    async function salvarDuracaoPadrao(setting='defaultDurationMinutes') {
+        if(!['defaultDurationMinutes','saturdayDurationMinutes'].includes(setting))return;
+        if (!adminAuthorized || !adminAppCheckReady || !durationSettingsReady || durationSettingsBusy) return;
+        const generation=authGeneration, status=document.getElementById('durationSettingsStatus'), button=document.getElementById(setting==='saturdayDurationMinutes'?'saveSaturdayDuration':'saveDefaultDuration');
+        durationSettingsBusy=true;button.disabled=true;
+        try {
+            const value=durationValue(document.getElementById(setting).value);
+            await database.ref('bookingV1/settings/'+setting).set(value);
+            if(generation!==authGeneration || !adminAuthorized)return;
+            status.textContent='Duração padrão confirmada. Reservas existentes não foram alteradas.';
+        } catch (_) { if(generation===authGeneration && adminAuthorized)status.textContent='Não foi possível confirmar a duração. Verifique o estado antes de tentar novamente.'; }
+        finally { if(generation===authGeneration && adminAuthorized){durationSettingsBusy=false;button.disabled=!durationSettingsReady;} }
+    }
+    document.getElementById('saveDefaultDuration').addEventListener('click', () => salvarDuracaoPadrao());
+    document.getElementById('saveSaturdayDuration').addEventListener('click', () => salvarDuracaoPadrao('saturdayDurationMinutes'));
+    document.getElementById('m_data').addEventListener('change', () => { if(adminAuthorized && durationSettingsReady)document.getElementById('m_durationMinutes').value=String(durationForDate(document.getElementById('m_data').value)); });
+
+    const auth = firebase.auth();
+    const rawDatabase = firebase.database();
+if(window.EXCLUSIVA_BOOKING_INTEGRATION?.enabled===true){if(!window.ExclusivaBridgeModule)throw new Error('Integração segura indisponível');if(!window.ExclusivaAdminAppCheck)throw new Error('Proteção do administrador indisponível');const checkedFetch=window.ExclusivaBridgeModule.createAppCheckFetch({getToken:()=>window.ExclusivaAdminAppCheck.getToken()});window.ExclusivaBookingBridge=window.ExclusivaBridgeModule.createAdminBridge({database:rawDatabase,auth,enabled:true,storage:window.sessionStorage,fetchImpl:checkedFetch});}
+    const OWNER_LOGIN_EMAIL = 'exclusivanoivas.adm@gmail.com';
+    let adminAuthorized = false, authGeneration = 0, loginBusy = false;
+    let pendingManual = null, manualBusy = false, stopOwnerWatch = null;
+    const privateListeners = new Set(), subscriptionSlots = new Map(), pendingPopups = new Set();
+// Included inside the authenticated admin script, after its guard declarations.
+let bookingAlerts = null, bookingAlertRows = {}, bookingSeen = {}, bookingAlertBusy = false;
+function clearBookingAlertState() {
+    bookingAlerts?.stop(); bookingAlerts = null; bookingAlertRows = {}; bookingSeen = {}; bookingAlertBusy = false;
+    document.getElementById('bookingAlertsBanner')?.remove?.();
+}
+function carregarAvisosAgendamento() {
+    if (!adminAuthorized || !auth.currentUser || typeof window.createBookingAlerts !== 'function') return;
+    clearBookingAlertState();
+    const uid = auth.currentUser.uid, generation = authGeneration;
+    const active = () => adminAuthorized && authGeneration === generation && auth.currentUser?.uid === uid;
+    const banner = document.createElement('section'); banner.id='bookingAlertsBanner'; banner.hidden=true;
+    banner.setAttribute('aria-live','polite'); banner.setAttribute('role','status');
+    banner.style.cssText='margin:0 0 22px;padding:20px;border:2px solid #977b44;border-radius:12px;background:#fff8e8;color:#29231a';
+    const title=document.createElement('strong'),count=document.createElement('p'),button=document.createElement('button');
+    title.textContent='Novos agendamentos'; button.type='button';button.textContent='Marcar estes avisos como vistos';
+    banner.append(title,count,button);document.querySelector('.main-content')?.prepend(banner);
+    bookingAlerts=window.createBookingAlerts({onChange:state=>{if(!active())return;count.textContent=state.message;banner.hidden=state.count===0;},onAlert:()=>{}});
+    const seenRef=database.ref('bookingV1/adminSeen/'+uid);
+    button.addEventListener('click',async()=>{if(!active()||bookingAlertBusy)return;const captured=bookingAlerts.pendingIds();if(!captured.length)return;bookingAlertBusy=true;button.disabled=true;try{const patch=Object.fromEntries(captured.map(id=>[id.slice(8),true]));await seenRef.update(patch);if(!active())return;captured.forEach(id=>bookingSeen[id.slice(8)]=true);bookingAlerts.acknowledge(captured);}catch{if(active())count.textContent='Não foi possível confirmar a leitura. Os avisos continuam disponíveis.';}finally{if(active()){bookingAlertBusy=false;button.disabled=false;}}});
+    seenRef.once('value').then(snap=>{if(!active())return;bookingSeen=snap.val()||{};bookingAlerts.start();database.ref('bookingV1/requests').on('value',snapshot=>{if(!active())return;bookingAlertRows=snapshot.val()||{};const ids=Object.entries(bookingAlertRows).filter(([,r])=>r.status==='pendente').map(([id])=>'request:'+id);bookingAlerts.acceptSnapshot(ids,{unreadIds:ids.filter(id=>bookingSeen[id.slice(8)]!==true)});},()=>{if(active()){clearBookingAlertState();authError('Não foi possível atualizar os avisos com segurança.');}});},()=>{if(active()){clearBookingAlertState();authError('Não foi possível consultar os avisos privados.');}});
+}
+
+    function clearPrivateState() {
+        adminAuthorized = false; authGeneration++;
+        clearDurationState(); clearBookingAlertState();
+        document.getElementById('loginPassword').value = '';
+        document.getElementById('verifyEmailButton').hidden = true;
+        pendingPopups.forEach(popup => { try { popup.close(); } catch (_) {} }); pendingPopups.clear();
+        if (pendingManual) pendingManual = { path: pendingManual.path, payload: null };
+        manualBusy = false;
+        privateListeners.forEach(stop => stop()); privateListeners.clear(); subscriptionSlots.clear();
+        if (stopOwnerWatch) { stopOwnerWatch(); stopOwnerWatch = null; }
+        fecharModais();
+        ['tabelaContainer','detalhesNoiva','detalheNome','detalheData','corpoCalendario','statTotal','statAluguel','statConv','clkAgenda','clkWhats','clkInsta','clkMaps','badgePendente'].forEach(id => document.getElementById(id)?.replaceChildren());
+        document.querySelectorAll('#appWrapper input, #appWrapper textarea, .modal input, .modal textarea').forEach(el => el.value = '');
+        ['f_concorrente_select','edit_concorrente_select'].forEach(id => document.getElementById(id)?.replaceChildren());
+        if (chartConv) { chartConv.destroy(); chartConv = null; }
+        if (chartRank) { chartRank.destroy(); chartRank = null; }
+        msgConfirmacaoTemplate = ''; msgLembreteTemplate = ''; keySendoEditada = ''; campoFocadoTexto = null;
+        document.getElementById('appWrapper').style.display = 'none';
+        document.getElementById('loginScreen').style.display = 'flex';
+    }
+    function authError(message) { const el = document.getElementById('loginErro'); el.textContent = message; el.style.display = 'block'; }
+    // UI guards supplement, never replace, owner-only rules and the atomic bridge.
+    function guardRef(ref) {
+        return new Proxy(ref, { get(target, prop) {
+            if (prop === 'on') return (event, callback, error) => {
+                if (!adminAuthorized) throw new Error('Acesso não autorizado');
+                const generation = authGeneration;
+                const wrapped = snap => { if (adminAuthorized && generation === authGeneration) callback(snap); };
+                const slot = target.toString() + ':' + event + ':' + callback.toString();
+                if (subscriptionSlots.has(slot)) subscriptionSlots.get(slot)();
+                const stop = () => { target.off(event, wrapped); privateListeners.delete(stop); if (subscriptionSlots.get(slot) === stop) subscriptionSlots.delete(slot); };
+                subscriptionSlots.set(slot, stop); privateListeners.add(stop);
+                target.on(event, wrapped, failure => { if (!adminAuthorized || generation !== authGeneration) return; if (error) error(failure); else { clearPrivateState(); authError('Acesso interrompido. Entre novamente.'); } });
+                return wrapped;
+            };
+            if (prop === 'once') return (event, callback) => {
+                if (!adminAuthorized) return Promise.reject(new Error('Acesso não autorizado'));
+                const generation = authGeneration;
+                return target.once(event).then(snap => { if (!adminAuthorized || generation !== authGeneration) throw new Error('Sessão encerrada'); if (callback) callback(snap); return snap; });
+            };
+            if (['set','update','remove','transaction'].includes(prop)) return (...args) => {
+                if (!adminAuthorized) return Promise.reject(new Error('Acesso não autorizado'));
+                const generation = authGeneration;
+                const ensureCurrent = result => { if (!adminAuthorized || generation !== authGeneration) throw new Error('Sessão encerrada; verifique o estado antes de repetir.'); return result; };
+                const path = new URL(target.toString()).pathname;
+                if (/^\/(agendamentos|expediente)(\/|$)/.test(path) || /^\/bookingV1\/settings\/(defaultDurationMinutes|saturdayDurationMinutes)$/.test(path)) {
+                    const bridge = window.ExclusivaBookingBridge;
+                    if (!bridge || typeof bridge.mutate !== 'function') return Promise.reject(new Error('Alterações indisponíveis: integração segura de agenda pendente.'));
+                    return Promise.resolve(bridge.mutate({ path: path.replace(/^\//, ''), operation: prop, value: args[0] })).then(result => { ensureCurrent(result); if (!result || result.committed !== true) throw new Error('Alteração não confirmada'); return result; });
+                }
+                return Promise.resolve(target[prop](...args)).then(ensureCurrent);
+            };
+            if (['child','orderByChild','equalTo','push'].includes(prop)) return (...args) => { if (!adminAuthorized) throw new Error('Acesso não autorizado'); return guardRef(target[prop](...args)); };
+            const value = target[prop]; return typeof value === 'function' ? value.bind(target) : value;
+        }});
+    }
+    async function fazerLogin() {
+        if (loginBusy) return;
+        const alias = document.getElementById('loginAlias').value.trim().toLowerCase();
+        let password = document.getElementById('loginPassword').value;
+        document.getElementById('loginPassword').value = '';
+        if (alias !== 'exclusiva' || !password) { authError('Não foi possível entrar. Confira os dados ou recupere sua senha.'); return; }
+        loginBusy = true; document.getElementById('loginSubmit').disabled = true;
+        try { await auth.setPersistence(firebase.auth.Auth.Persistence.SESSION); await auth.signInWithEmailAndPassword(OWNER_LOGIN_EMAIL, password); }
+        catch (_) { authError('Não foi possível entrar. Confira os dados ou recupere sua senha.'); }
+        finally { password = ''; loginBusy = false; document.getElementById('loginSubmit').disabled = false; }
+    }
+    document.getElementById('adminLoginForm').addEventListener('submit', event => { event.preventDefault(); fazerLogin(); });
+    document.getElementById('resetPasswordButton').addEventListener('click', async event => {
+        const button = event.currentTarget; button.disabled = true;
+        try { await auth.sendPasswordResetEmail(OWNER_LOGIN_EMAIL); } catch (_) {}
+        finally { button.disabled = false; authError('Se a conta estiver disponível, as instruções serão enviadas ao e-mail administrativo.'); }
+    });
+    document.getElementById('verifyEmailButton').addEventListener('click', async event => {
+        const user = auth.currentUser; if (!user || user.emailVerified) return;
+        const generation = authGeneration, button = event.currentTarget; button.disabled = true;
+        try { await user.sendEmailVerification(); } catch (_) {}
+        finally { button.disabled = false; if (generation === authGeneration) authError('Verifique o e-mail administrativo. Após concluir a verificação, saia e entre novamente.'); }
+    });
+    auth.onAuthStateChanged(user => {
+        clearPrivateState(); if (!user) return;
+        const generation = authGeneration;
+        if (!user.providerData.some(provider => provider.providerId === 'password')) { authError('Entre com o usuário e senha autorizados.'); return; }
+        if (!user.emailVerified) { document.getElementById('verifyEmailButton').hidden = false; authError('Verifique o e-mail e conclua a definição da senha antes da liberação administrativa.'); return; }
+        const beginOwnerWatch = () => {
+            if (generation !== authGeneration || !auth.currentUser || auth.currentUser.uid !== user.uid) return;
+        const ownerRef = rawDatabase.ref('checklistV1/admins/' + user.uid);
+        const ownerCallback = snap => {
+            if (generation !== authGeneration) return;
+            if (snap.val() !== true) { clearPrivateState(); authError('Esta conta não está autorizada.'); return; }
+            if (adminAuthorized) return;
+            adminAuthorized = true;
+            document.getElementById('loginErro').style.display = 'none'; document.getElementById('loginScreen').style.display = 'none'; document.getElementById('appWrapper').style.display = 'flex';
+            carregarDados(); carregarLojistasSelect(); carregarConfiguracoesMensagens(); carregarDuracaoPadrao(); carregarAvisosAgendamento();
+        };
+        stopOwnerWatch = () => ownerRef.off('value', ownerCallback);
+        ownerRef.on('value', ownerCallback, () => { if (generation !== authGeneration) return; clearPrivateState(); authError('Não foi possível verificar a autorização.'); });
+        };
+        if (adminAppCheckReady) beginOwnerWatch();
+        else window.ExclusivaAdminAppCheck.ready.then(beginOwnerWatch, () => {
+            if (generation !== authGeneration) return;
+            clearPrivateState(); authError('Proteção de acesso indisponível. O painel permanece bloqueado.');
+        });
+    });
+    document.getElementById('logoutButton').addEventListener('click', () => { clearPrivateState(); auth.signOut().catch(() => authError('Sessão local bloqueada. Recarregue para tentar sair novamente.')); });
+    function escapeHtml(value) { return String(value == null ? '' : value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char])); }
+    function action(name, ...args) { return 'data-action="' + name + '" data-args="' + escapeHtml(JSON.stringify(args)) + '"'; }
+    async function abrirWhatsAppRegistrado(key, flag, url) {
+        if (!adminAuthorized) throw new Error('Acesso não autorizado');
+        const generation = authGeneration, popup = window.open('about:blank', '_blank');
+        if (!popup) { alert('Permita a abertura do WhatsApp neste navegador. Nenhuma marcação foi solicitada.'); return; }
+        popup.opener = null; pendingPopups.add(popup);
+        try { await database.ref('agendamentos/' + key).update({ [flag]: true }); if (!adminAuthorized || generation !== authGeneration || popup.closed) throw new Error('Abertura interrompida; verifique a marcação no painel.'); popup.location.replace(url); }
+        catch (error) { try { popup.close(); } catch (_) {} throw error; }
+        finally { pendingPopups.delete(popup); }
+    }
+    async function gravarManualPendente() {
+        if (manualBusy || !pendingManual || !pendingManual.payload) return;
+        const request = pendingManual, generation = authGeneration; manualBusy = true;
+        try {
+            await database.ref(request.path).set(request.payload);
+            if (!adminAuthorized || generation !== authGeneration) return;
+            pendingManual = null; alert(request.payload.categoria === 'bloqueio' ? 'Horário bloqueado com sucesso!' : 'Agendamento Manual Realizado!');
+            fecharModais(); document.getElementById('formManual').reset(); atualizarFormularioManual();
+        } catch (error) { if (generation === authGeneration && error?.definitelyRejected === true) pendingManual = null; throw error; }
+        finally { if (generation === authGeneration) manualBusy = false; }
     }
 
     window.onload = function() {
@@ -691,7 +920,7 @@
         if (lista.length === 0) return "";
         lista.sort((a,b) => a.dataISO.localeCompare(b.dataISO) || a.hora.localeCompare(b.hora));
         
-        let html = `<div class="group-header">${titulo}</div><table><thead><tr><th>Data/Hora</th><th>Noiva</th><th>WhatsApp</th><th>Status</th><th>Ações</th></tr></thead><tbody>`;
+        let html = `<div class="group-header">${escapeHtml(titulo)}</div><table><thead><tr><th>Data/Hora</th><th>Noiva</th><th>WhatsApp</th><th>Status</th><th>Ações</th></tr></thead><tbody>`;
         const hojeISO = new Date().toISOString().split('T')[0];
 
         lista.forEach(d => {
@@ -705,23 +934,23 @@
             else if(d.categoria === 'bloqueio') labelCat = '🔒 BLOQUEIO';
 
             let botoes = `<div class="btn-group">`;
-            botoes += `<button class="btn btn-info" onclick="verDetalhes('${encodeURIComponent(JSON.stringify(d))}')">INFO</button>`;
-            botoes += `<button class="btn btn-editar" onclick="abrirEdicao('${d.key}')">EDITAR</button>`;
+            botoes += `<button class="btn btn-info" ${action("verDetalhes", encodeURIComponent(JSON.stringify(d)))}>INFO</button>`;
+            botoes += `<button class="btn btn-editar" ${action("abrirEdicao", d.key)}>EDITAR</button>`;
             
             if(d.status === 'agendado') {
-                botoes += `<button class="btn btn-aceitar" onclick="mudarStatus('${d.key}', 'confirmado')">OK</button>`;
+                botoes += `<button class="btn btn-aceitar" ${action("mudarStatus", d.key, 'confirmado')}>OK</button>`;
             }
             
             if (d.categoria !== 'bloqueio' && d.tel && d.tel !== "-") {
-                botoes += `<button class="btn btn-confirm-whatsapp" onclick="enviarConfirmacao3Dias('${d.key}', '${d.tel}', '${d.nome}', '${d.dataISO}', '${d.hora}')">CONF (3D) ${confirmacaoEnviada}</button>`;
-                botoes += `<button class="btn btn-whatsapp" onclick="enviarLembrete24h('${d.key}', '${d.tel}', '${d.nome}', '${d.dataISO}', '${d.hora}', '${d.beneficio || 'NÃO'}')">LEMB (24H) ${lembreteEnviado}</button>`;
+                botoes += `<button class="btn btn-confirm-whatsapp" ${action("enviarConfirmacao3Dias", d.key, d.tel, d.nome, d.dataISO, d.hora)}>CONF (3D) ${confirmacaoEnviada}</button>`;
+                botoes += `<button class="btn btn-whatsapp" ${action("enviarLembrete24h", d.key, d.tel, d.nome, d.dataISO, d.hora, d.beneficio || 'NÃO')}>LEMB (24H) ${lembreteEnviado}</button>`;
             }
             
-            botoes += `<button class="btn btn-finalizar ${isHighlight ? 'highlight' : ''}" onclick="abrirFinalizar('${d.key}')">ENCERRAR</button>`;
-            botoes += `<button class="btn btn-recusar" onclick="mudarStatus('${d.key}', 'recusado')">X</button>`;
+            botoes += `<button class="btn btn-finalizar ${isHighlight ? 'highlight' : ''}" ${action("abrirFinalizar", d.key)}>ENCERRAR</button>`;
+            botoes += `<button class="btn btn-recusar" ${action("mudarStatus", d.key, 'recusado')}>X</button>`;
             botoes += `</div>`;
             
-            html += `<tr><td>${d.data} às ${d.hora} ${labelCat ? `<span class="tag-categoria">${labelCat}</span>` : ''}</td><td>${d.nome}</td><td>${d.tel}</td><td class="status-${d.status}">${d.status.toUpperCase()}</td><td>${botoes}</td></tr>`;
+            html += `<tr><td>${escapeHtml(d.data)} às ${escapeHtml(d.hora)} ${labelCat ? `<span class="tag-categoria">${labelCat}</span>` : ''}</td><td>${escapeHtml(d.nome)}</td><td>${escapeHtml(d.tel)}</td><td class="status-${escapeHtml(d.status)}">${escapeHtml(d.status.toUpperCase())}</td><td>${botoes}</td></tr>`;
         });
         return html + "</tbody></table>";
     }
@@ -745,17 +974,17 @@
         database.ref('configuracoes/lojistas').on('value', snap => {
             const selectFinalizar = document.getElementById('f_concorrente_select'); const selectEditar = document.getElementById('edit_concorrente_select');
             let html = '<option value="">Não soube informar</option>';
-            snap.forEach(l => { html += `<option value="${l.val().nome}">${l.val().nome}</option>`; });
+            snap.forEach(l => { html += `<option value="${escapeHtml(l.val().nome)}">${escapeHtml(l.val().nome)}</option>`; });
             selectFinalizar.innerHTML = html; selectEditar.innerHTML = html;
         });
     }
 
     function renderLojistasAdmin() {
         const container = document.getElementById('tabelaContainer');
-        container.innerHTML = `<div class="group-header">Gerenciar Concorrentes</div><div style="background:#fff; padding:20px; border:1px solid #eee; margin-bottom:20px; text-align:left;"><label>Cadastrar Novo Lojista Concorrente</label><div style="display:flex; gap:10px;"><input type="text" id="novo_lojista" placeholder="Ex: Loja das Noivas" style="flex:1;"><button class="btn btn-novo" onclick="salvarLojista()" style="margin:0;">Cadastrar</button></div></div><div id="listaLojistas"></div>`;
+        container.innerHTML = `<div class="group-header">Gerenciar Concorrentes</div><div style="background:#fff; padding:20px; border:1px solid #eee; margin-bottom:20px; text-align:left;"><label>Cadastrar Novo Lojista Concorrente</label><div style="display:flex; gap:10px;"><input type="text" id="novo_lojista" placeholder="Ex: Loja das Noivas" style="flex:1;"><button class="btn btn-novo" data-event-click="legacyEvent38" style="margin:0;">Cadastrar</button></div></div><div id="listaLojistas"></div>`;
         database.ref('configuracoes/lojistas').on('value', snap => {
             const lista = document.getElementById('listaLojistas'); lista.innerHTML = "";
-            snap.forEach(l => { lista.innerHTML += `<div class="lojista-item" style="background:white; margin-bottom:5px;"><span>${l.val().nome}</span><button class="btn btn-recusar" onclick="removerLojista('${l.key}')">Excluir</button></div>`; });
+            snap.forEach(l => { lista.innerHTML += `<div class="lojista-item" style="background:white; margin-bottom:5px;"><span>${escapeHtml(l.val().nome)}</span><button class="btn btn-recusar" ${action("removerLojista", l.key)}>Excluir</button></div>`; });
         });
     }
 
@@ -769,62 +998,60 @@
         let html = `<table><thead><tr><th>Data/Hora</th><th>Noiva</th><th>WhatsApp</th><th>Status</th><th>Ações</th></tr></thead><tbody>`;
         lista.forEach(d => {
             let botoes = `<div class="btn-group">`;
-            botoes += `<button class="btn btn-info" onclick="verDetalhes('${encodeURIComponent(JSON.stringify(d))}')">INFO</button>`;
-            botoes += `<button class="btn btn-editar" onclick="abrirEdicao('${d.key}')">EDITAR</button>`;
+            botoes += `<button class="btn btn-info" ${action("verDetalhes", encodeURIComponent(JSON.stringify(d)))}>INFO</button>`;
+            botoes += `<button class="btn btn-editar" ${action("abrirEdicao", d.key)}>EDITAR</button>`;
             if (d.status === 'pendente') {
-                botoes += `<button class="btn btn-aceitar" onclick="mudarStatus('${d.key}', 'agendado')">ACEITAR</button>`;
-                botoes += `<button class="btn btn-recusar" onclick="mudarStatus('${d.key}', 'recusado')">X</button>`;
+                botoes += `<button class="btn btn-aceitar" ${action("mudarStatus", d.key, 'agendado')}>ACEITAR</button>`;
+                botoes += `<button class="btn btn-recusar" ${action("mudarStatus", d.key, 'recusado')}>X</button>`;
             } else if (d.status === 'recusado') {
-                botoes += `<button class="btn btn-reativar" onclick="mudarStatus('${d.key}', 'pendente')">REATIVAR</button>`;
-                botoes += `<button class="btn btn-excluir" onclick="excluirRegistro('${d.key}')">EXCLUIR</button>`;
+                botoes += `<button class="btn btn-reativar" ${action("mudarStatus", d.key, 'pendente')}>REATIVAR</button>`;
+                botoes += `<button class="btn btn-excluir" ${action("excluirRegistro", d.key)}>EXCLUIR</button>`;
             } else if (d.status === 'finalizado') {
-                botoes += `<span style="font-size:9px; margin-left:8px; color:var(--gold); font-weight:bold;">[${d.resultado ? d.resultado.toUpperCase() : 'FINALIZADO'} ${d.concorrente ? '('+d.concorrente+')' : ''}]</span>`;
+                botoes += `<span style="font-size:9px; margin-left:8px; color:var(--gold); font-weight:bold;">[${escapeHtml(d.resultado ? d.resultado.toUpperCase() : 'FINALIZADO')} ${escapeHtml(d.concorrente ? '('+d.concorrente+')' : '')}]</span>`;
             }
             botoes += `</div>`;
-            html += `<tr><td>${d.data} às ${d.hora}</td><td>${d.nome}</td><td>${d.tel}</td><td class="status-${d.status}">${d.status.toUpperCase()}</td><td>${botoes}</td></tr>`;
+            html += `<tr><td>${escapeHtml(d.data)} às ${escapeHtml(d.hora)}</td><td>${escapeHtml(d.nome)}</td><td>${escapeHtml(d.tel)}</td><td class="status-${escapeHtml(d.status)}">${escapeHtml(d.status.toUpperCase())}</td><td>${botoes}</td></tr>`;
         });
         container.innerHTML = html + "</tbody></table>";
     }
 
     function excluirRegistro(key) { if(confirm("Deseja apagar permanentemente este registro? Esta ação não pode ser desfeita.")) { database.ref('agendamentos/' + key).remove(); } }
 
-    function enviarConfirmacao3Dias(key, tel, nome, dataISO, hora) {
+    async function enviarConfirmacao3Dias(key, tel, nome, dataISO, hora) {
         const fone = tel.replace(/\D/g, ""); const dataObj = new Date(dataISO + "T00:00:00"); const diasSemana = ["DOMINGO", "SEGUNDA-FEIRA", "TERÇA-FEIRA", "QUARTA-FEIRA", "QUINTA-FEIRA", "SEXTA-FEIRA", "SÁBADO"];
         const diaSemana = diasSemana[dataObj.getDay()]; const dataBR = dataISO.split('-').reverse().join('/');
         let msg = msgConfirmacaoTemplate;
         msg = msg.replace(/\[NOME\]/g, nome.toUpperCase()).replace(/\[DATA\]/g, dataBR).replace(/\[DIA_SEMANA\]/g, diaSemana).replace(/\[HORA\]/g, hora).replace(/\[BENEFICIO\]/g, "Verificado");
         const msgEncoded = encodeURIComponent(msg);
-        database.ref('agendamentos/' + key).update({ confirmacaoEnviada: true });
-        window.open(`https://wa.me/55${fone}?text=${msgEncoded}`, '_blank');
+        await abrirWhatsAppRegistrado(key, 'confirmacaoEnviada', `https://wa.me/55${fone}?text=${msgEncoded}`);
     }
 
-    function enviarLembrete24h(key, tel, nome, dataISO, hora, beneficio) {
+    async function enviarLembrete24h(key, tel, nome, dataISO, hora, beneficio) {
         const fone = tel.replace(/\D/g, ""); const dataObj = new Date(dataISO + "T00:00:00"); const diasSemana = ["DOMINGO", "SEGUNDA-FEIRA", "TERÇA-FEIRA", "QUARTA-FEIRA", "QUINTA-FEIRA", "SEXTA-FEIRA", "SÁBADO"];
         const diaSemana = diasSemana[dataObj.getDay()]; const dataBR = dataISO.split('-').reverse().join('/');
         let msg = msgLembreteTemplate;
         msg = msg.replace(/\[NOME\]/g, nome.toUpperCase()).replace(/\[DATA\]/g, dataBR).replace(/\[DIA_SEMANA\]/g, diaSemana).replace(/\[HORA\]/g, hora).replace(/\[BENEFICIO\]/g, beneficio === 'SIM' ? 'ATIVO' : 'Não se aplica');
         const msgEncoded = encodeURIComponent(msg);
-        database.ref('agendamentos/' + key).update({ lembreteEnviado: true });
-        window.open(`https://wa.me/55${fone}?text=${msgEncoded}`, '_blank');
+        await abrirWhatsAppRegistrado(key, 'lembreteEnviado', `https://wa.me/55${fone}?text=${msgEncoded}`);
     }
 
     function verDetalhes(jsonStr) {
         const d = JSON.parse(decodeURIComponent(jsonStr));
         document.getElementById('detalheNome').innerText = d.nome; document.getElementById('detalheData').innerText = `${d.data} às ${d.hora}`;
         document.getElementById('detalhesNoiva').innerHTML = `
-            <div class="info-card-item"><span class="info-card-label">WhatsApp</span>${d.tel}</div>
-            <div class="info-card-item"><span class="info-card-label">Categoria</span>${d.categoria || 'atendimento'}</div>
-            <div class="info-card-item"><span class="info-card-label">CPF</span>${d.cpf || '-'}</div>
-            <div class="info-card-item"><span class="info-card-label">Cidade</span>${d.cidade || '-'}</div>
-            <div class="info-card-item"><span class="info-card-label">Casamento</span>${d.casamento || '-'}</div>
-            <div class="info-card-item"><span class="info-card-label">Instagram</span>${d.insta || '-'}</div>
-            <div class="info-card-item"><span class="info-card-label">Estilo</span>${d.finalidade || '-'}</div>
-            <div class="info-card-item"><span class="info-card-label">Orçamento</span>${d.orcamento || '-'}</div>
-            <div class="info-card-item"><span class="info-card-label">Cerimonialista</span>${d.cerimonialista || '-'}</div>
-            <div class="info-card-item"><span class="info-card-label">Referências</span>${d.refs || '-'}</div>
-            <div class="info-card-item"><span class="info-card-label">Outras Lojas</span>${d.outras || '-'}</div>
-            <div class="info-card-item"><span class="info-card-label">Benefício</span>${d.beneficio || '-'}</div>
-            <div class="obs-box" style="${d.obs ? '' : 'display:none'}"><span class="info-card-label">Observações Internas:</span>${d.obs || ''}</div>
+            <div class="info-card-item"><span class="info-card-label">WhatsApp</span>${escapeHtml(d.tel)}</div>
+            <div class="info-card-item"><span class="info-card-label">Duração</span>${escapeHtml(durationForRow(d))} minutos</div><div class="info-card-item"><span class="info-card-label">Categoria</span>${escapeHtml(d.categoria || 'atendimento')}</div>
+            <div class="info-card-item"><span class="info-card-label">CPF</span>${escapeHtml(d.cpf || '-')}</div>
+            <div class="info-card-item"><span class="info-card-label">Cidade</span>${escapeHtml(d.cidade || '-')}</div>
+            <div class="info-card-item"><span class="info-card-label">Casamento</span>${escapeHtml(d.casamento || '-')}</div>
+            <div class="info-card-item"><span class="info-card-label">Instagram</span>${escapeHtml(d.insta || '-')}</div>
+            <div class="info-card-item"><span class="info-card-label">Estilo</span>${escapeHtml(d.finalidade || '-')}</div>
+            <div class="info-card-item"><span class="info-card-label">Orçamento</span>${escapeHtml(d.orcamento || '-')}</div>
+            <div class="info-card-item"><span class="info-card-label">Cerimonialista</span>${escapeHtml(d.cerimonialista || '-')}</div>
+            <div class="info-card-item"><span class="info-card-label">Referências</span>${escapeHtml(d.refs || '-')}</div>
+            <div class="info-card-item"><span class="info-card-label">Outras Lojas</span>${escapeHtml(d.outras || '-')}</div>
+            <div class="info-card-item"><span class="info-card-label">Benefício</span>${escapeHtml(d.beneficio || '-')}</div>
+            <div class="obs-box" style="${escapeHtml(d.obs ? '' : 'display:none')}"><span class="info-card-label">Observações Internas:</span>${escapeHtml(d.obs || '')}</div>
         `;
         document.getElementById('modalDetalhes').style.display = "flex";
     }
@@ -833,6 +1060,7 @@
         keySendoEditada = key;
         database.ref('agendamentos/' + key).once('value', snap => {
             const d = snap.val();
+            document.getElementById('edit_durationMinutes').value = String(durationForRow(d));
             document.getElementById('edit_categoria').value = d.categoria || "atendimento";
             atualizarFormularioEdicao(); 
             document.getElementById('edit_nome').value = d.nome || ""; document.getElementById('edit_tel').value = d.tel || "";
@@ -854,11 +1082,12 @@
         });
     }
 
-    function salvarEdicao() {
+    function salvarEdicao() { if (!adminAuthorized || !durationSettingsReady) return;
+        const durationMinutes = durationValue(document.getElementById('edit_durationMinutes').value);
         const cat = document.getElementById('edit_categoria').value;
         const dISO = document.getElementById('edit_dataISO').value;
         const up = {
-            categoria: cat, dataISO: dISO, data: dISO.split('-').reverse().join('/'), hora: document.getElementById('edit_hora').value,
+            durationMinutes, categoria: cat, dataISO: dISO, data: dISO.split('-').reverse().join('/'), hora: document.getElementById('edit_hora').value,
             obs: document.getElementById('edit_obs').value
         };
         
@@ -886,6 +1115,13 @@
     }
 
     function salvarManual() {
+        if (manualBusy || !adminAuthorized || !durationSettingsReady) return;
+        if (pendingManual) {
+            if (!pendingManual.payload) { alert('Há uma reserva anterior com resultado incerto. Verifique o registro ' + pendingManual.path.split('/').pop() + ' antes de criar outra.'); return; }
+            if (!confirm('Retomar a mesma solicitação anterior com os dados originais? Verifique a agenda antes de repetir.')) return;
+            return gravarManualPendente();
+        }
+        const durationMinutes = durationValue(document.getElementById('m_durationMinutes').value);
         const cat = document.getElementById('m_categoria').value;
         const dISO = document.getElementById('m_data').value;
         const horaStr = document.getElementById('m_hora').value;
@@ -903,7 +1139,7 @@
 
         const cISO = document.getElementById('m_casamento').value;
         const d = { 
-            data: dISO.split('-').reverse().join('/'), dataISO: dISO, hora: horaStr, categoria: cat,
+            durationMinutes, data: dISO.split('-').reverse().join('/'), dataISO: dISO, hora: horaStr, categoria: cat,
             nome: nome, tel: tel, 
             cpf: cat === 'atendimento' ? document.getElementById('m_cpf').value : "-", 
             insta: cat === 'atendimento' ? document.getElementById('m_insta').value : "-",
@@ -919,82 +1155,117 @@
             status: cat === 'bloqueio' ? "confirmado" : "agendado",
             timestamp: new Date().toISOString() 
         };
-        database.ref('agendamentos').push().set(d).then(() => { 
-            alert(cat === 'bloqueio' ? "Horário bloqueado com sucesso!" : "Agendamento Manual Realizado!"); 
-            fecharModais(); document.getElementById('formManual').reset(); atualizarFormularioManual();
-        });
+        const ref = database.ref('agendamentos').push();
+        pendingManual = { path: new URL(ref.toString()).pathname.replace(/^\//, ''), payload: d };
+        return gravarManualPendente();
     }
 
-    // AQUI OCORREU O NOVO UPGRADE VISUAL NO ADMIN (Apenas Aviso, sem bloquear o click)
-    function buscarOcupacaoManual() {
-        const dataSel = document.getElementById('m_data').value;
-        if(!dataSel) return;
-        database.ref('agendamentos').orderByChild('dataISO').equalTo(dataSel).once('value', snap => {
-            let ocup = []; snap.forEach(c => { if(c.val().status !== 'recusado') ocup.push(c.val().hora); });
-            const select = document.getElementById('m_hora'); select.innerHTML = "";
-            const ds = new Date(dataSel + "T00:00:00").getDay();
-            let inicio = 9, fim = 18;
-            if(ds === 6) fim = 16;
-            if(ds === 0) { select.innerHTML = "<option>Domingo Fechado</option>"; return; }
-            for (let h = inicio; h <= fim; h += 0.5) {
-                let horaStr = formatarHora(h); 
-                
-                // Lógica visual do Almoço (Segunda a Sexta, das 11:30 às 13:00)
-                let isAlmoco = (ds >= 1 && ds <= 5) && (h === 11.5 || h === 12 || h === 12.5 || h === 13);
-                let textoOption = horaStr;
-                
-                if(ocup.includes(horaStr)) {
-                    textoOption += " (OCUPADO)";
-                } else if (isAlmoco) {
-                    textoOption += " ⏸️ (ALMOÇO)"; // Apenas aviso visual
-                }
-                
-                let opt = document.createElement("option"); opt.value = horaStr; opt.text = textoOption;
-                if(ocup.includes(horaStr)) opt.disabled = true; 
-                select.add(opt);
+    let manualAvailabilityQuery = 0;
+    async function buscarOcupacaoManual() {
+        const query=++manualAvailabilityQuery, generation=authGeneration;
+        const dataSel=document.getElementById('m_data').value;
+        const select=document.getElementById('m_hora');
+        const previous=select.value, selectedDuration=document.getElementById('m_durationMinutes').value;
+        function placeholder(text){select.replaceChildren();const option=document.createElement('option');option.value='';option.textContent=text;select.add(option);select.disabled=true;}
+        placeholder(dataSel?'Consultando expediente e ocupação…':'Selecione a data primeiro…');
+        if(!dataSel || !adminAuthorized || !durationSettingsReady)return;
+        const current=()=>query===manualAvailabilityQuery && generation===authGeneration && adminAuthorized && durationSettingsReady && document.getElementById('m_data').value===dataSel && document.getElementById('m_durationMinutes').value===selectedDuration;
+        try {
+            const durationMinutes=durationValue(selectedDuration), helper=window.ExclusivaBookingBridge?.projectManualSlots;
+            if(typeof helper!=='function')throw Error('Expediente confirmado indisponível');
+            let snapshot=null;
+            for(let attempt=0;attempt<3;attempt++){
+                const r1=(await database.ref('bookingV1/revision').once('value')).val();
+                if(!current())return;
+                if(!Number.isSafeInteger(r1)||r1<0)throw Error('Revisão indisponível');
+                const paths=['bookingV1/settings/schedulePolicy','bookingV1/calendar','expediente/config/'+dataSel,'bookingV1/occupancy/'+dataSel];
+                const values=await Promise.all(paths.map(path=>database.ref(path).once('value').then(s=>s.val())));
+                if(!current())return;
+                const r2=(await database.ref('bookingV1/revision').once('value')).val();
+                if(!current())return;
+                if(r1===r2){snapshot=values;break;}
             }
-        });
+            if(!snapshot)throw Error('Agenda em atualização');
+            const [policy,calendar,config,occupancy]=snapshot;
+            const result=helper({date:dataSel,durationMinutes,policy,calendar,config,occupancy,nowMs:Date.now()});
+            if(!current())return;
+            if(!result.slots.length){placeholder(result.status==='closed'?'Não há atendimento nesta data.':'Não há horários disponíveis para esta duração.');return;}
+            placeholder(result.status==='available'?'Selecione um horário…':'Não há horários disponíveis para esta duração.');
+            for(const slot of result.slots){const option=document.createElement('option');option.value=slot.time;option.textContent=slot.time+(slot.available?'':' (OCUPADO)');option.disabled=!slot.available;select.add(option);}
+            select.disabled=result.status!=='available';
+            if(result.slots.some(slot=>slot.time===previous&&slot.available))select.value=previous;
+        } catch (_) {if(current())placeholder('Não foi possível confirmar os horários. Selecione a data novamente.');}
     }
+    document.getElementById('m_durationMinutes').addEventListener('change',buscarOcupacaoManual);
 
-    function buscarOcupacaoRemarcar() {
-        const dataSel = document.getElementById('f_nova_data').value;
-        if(!dataSel) return;
-        database.ref('agendamentos').orderByChild('dataISO').equalTo(dataSel).once('value', snap => {
-            let ocup = []; snap.forEach(c => { if(c.val().status !== 'recusado') ocup.push(c.val().hora); });
-            const select = document.getElementById('f_nova_hora'); select.innerHTML = "";
-            const ds = new Date(dataSel + "T00:00:00").getDay();
-            let inicio = 9, fim = 18;
-            if(ds === 6) fim = 16;
-            if(ds === 0) { select.innerHTML = "<option>Domingo Fechado</option>"; return; }
-            for (let h = inicio; h <= fim; h += 0.5) {
-                let horaStr = formatarHora(h); 
-                
-                let isAlmoco = (ds >= 1 && ds <= 5) && (h === 11.5 || h === 12 || h === 12.5 || h === 13);
-                let textoOption = horaStr;
-                
-                if(ocup.includes(horaStr)) {
-                    textoOption += " (OCUPADO)";
-                } else if (isAlmoco) {
-                    textoOption += " ⏸️ (ALMOÇO)";
+    let rescheduleAvailabilityQuery=0;
+    async function buscarOcupacaoRemarcar() {
+        const query=++rescheduleAvailabilityQuery,generation=authGeneration,key=keySendoEditada;
+        const dataSel=document.getElementById('f_nova_data').value,select=document.getElementById('f_nova_hora'),warning=document.getElementById('f_horario_aviso');
+        const previous=select.value,selectedDuration=document.getElementById('edit_durationMinutes').value;
+        function placeholder(text){select.replaceChildren();const option=document.createElement('option');option.value='';option.textContent=text;select.add(option);select.disabled=true;}
+        warning.textContent='';placeholder(dataSel?'Consultando expediente e ocupação…':'Selecione a data…');
+        if(!dataSel||!key||!adminAuthorized||!durationSettingsReady)return;
+        let ownOriginal=null;
+        const current=()=>query===rescheduleAvailabilityQuery&&generation===authGeneration&&adminAuthorized&&durationSettingsReady&&keySendoEditada===key&&document.getElementById('f_nova_data').value===dataSel&&document.getElementById('edit_durationMinutes').value===selectedDuration;
+        try {
+            const durationMinutes=durationValue(selectedDuration),helper=window.ExclusivaBookingBridge?.projectManualSlots;
+            if(typeof helper!=='function')throw Error('Expediente indisponível');
+            let snapshot=null;
+            for(let attempt=0;attempt<3;attempt++){
+                const r1=(await database.ref('bookingV1/revision').once('value')).val();if(!current())return;if(!Number.isSafeInteger(r1)||r1<0)throw Error('Revisão indisponível');
+                const paths=['bookingV1/settings/schedulePolicy','bookingV1/calendar','expediente/config/'+dataSel,'bookingV1/occupancy/'+dataSel,'agendamentos/'+key];
+                const values=await Promise.all(paths.map(path=>database.ref(path).once('value').then(s=>s.val())));if(!current())return;
+                const row=values[4];if(!row)throw Error('Reserva indisponível');ownOriginal=row;
+                const sourceKind=key.startsWith('request:')?'request':'legacy',sourceId=sourceKind==='request'?key.slice(8):key;
+                const claim=sourceKind==='request'?sourceId:row._bookingClaimId;let excludeClaim=null;
+                if(row.status!=='recusado'){
+                    if(typeof claim!=='string'||! /^[a-f0-9-]{36}$/.test(claim))throw Error('Identificação indisponível');
+                    const iv=(await database.ref('bookingV1/intervals/'+claim).once('value')).val();if(!current())return;
+                    if(!iv||iv.sourceKind!==sourceKind||iv.sourceId!==sourceId||iv.date!==row.dataISO||iv.time!==row.hora)throw Error('Intervalo inconsistente');excludeClaim=claim;
                 }
-
-                let opt = document.createElement("option"); opt.value = horaStr; opt.text = textoOption;
-                if(ocup.includes(horaStr)) opt.disabled = true; 
-                select.add(opt);
+                const r2=(await database.ref('bookingV1/revision').once('value')).val();if(!current())return;
+                if(r1===r2){snapshot={values,excludeClaim};break;}
             }
-        });
+            if(!snapshot)throw Error('Agenda em atualização');
+            const [policy,calendar,config,occupancy,row]=snapshot.values;
+            const result=helper({date:dataSel,durationMinutes,policy,calendar,config,occupancy,excludeClaim:snapshot.excludeClaim,nowMs:Date.now()});if(!current())return;
+            placeholder(result.status==='closed'?'Não há atendimento nesta data.':result.status==='available'?'Selecione um horário…':'Não há horários disponíveis para esta duração.');
+            for(const slot of result.slots){const option=document.createElement('option');option.value=slot.time;option.textContent=slot.time+(slot.available?'':' (OCUPADO)');option.disabled=!slot.available;select.add(option);}
+            const validPrevious=result.slots.some(slot=>slot.time===previous&&slot.available);
+            if(validPrevious)select.value=previous;
+            else if(row.dataISO===dataSel&&previous===row.hora){
+                let original=Array.from(select.options).find(option=>option.value===row.hora);
+                if(!original){original=document.createElement('option');original.value=row.hora;select.add(original);}
+                original.textContent=row.hora+' (HORÁRIO ORIGINAL — REVISAR)';original.disabled=true;original.selected=true;
+                warning.textContent='A reserva original foi preservada. Este horário não está disponível nas regras atuais ou há outro atendimento sobreposto. Para remarcar, escolha uma opção válida; nenhum horário será alterado automaticamente.';
+            }
+            select.disabled=result.status!=='available';
+        }catch(_){if(current()){placeholder('Não foi possível confirmar os horários. Selecione a data novamente.');if(ownOriginal?.dataISO===dataSel&&ownOriginal.hora===previous){const option=document.createElement('option');option.value=previous;option.textContent=previous+' (HORÁRIO ORIGINAL — NÃO CONFIRMADO)';option.disabled=true;option.selected=true;select.add(option);warning.textContent='O horário original foi preservado. Não foi possível confirmar novas opções; nenhuma alteração foi realizada.';}}}
     }
+    document.getElementById('edit_durationMinutes').addEventListener('change',()=>{if(document.getElementById('modalFinalizar').style.display==='flex')buscarOcupacaoRemarcar();});
 
     function mudarStatus(key, status) { database.ref('agendamentos/' + key).update({ status: status }); }
     
-    function abrirFinalizar(key) { keySendoEditada = key; document.getElementById('f_resultado').value = 'alugou'; toggleFinalizarCampos(); document.getElementById('modalFinalizar').style.display = "flex"; }
+    async function abrirFinalizar(key) {
+        if(!adminAuthorized||!durationSettingsReady)return;
+        keySendoEditada=key;const generation=authGeneration;
+        document.getElementById('f_resultado').value='alugou';toggleFinalizarCampos();document.getElementById('modalFinalizar').style.display='flex';
+        document.getElementById('f_nova_data').value='';document.getElementById('f_horario_aviso').textContent='';
+        document.getElementById('edit_durationMinutes').value='';buscarOcupacaoRemarcar();
+        try{const snap=await database.ref('agendamentos/'+key).once('value');if(!adminAuthorized||authGeneration!==generation||keySendoEditada!==key)return;const row=snap.val();if(!row)throw Error('Reserva indisponível');
+            document.getElementById('edit_durationMinutes').value=String(durationForRow(row));document.getElementById('f_nova_data').value=row.dataISO;
+            const select=document.getElementById('f_nova_hora');select.replaceChildren();const option=document.createElement('option');option.value=row.hora;option.textContent=row.hora;option.selected=true;select.add(option);await buscarOcupacaoRemarcar();
+        }catch(_){if(adminAuthorized&&generation===authGeneration&&keySendoEditada===key)document.getElementById('f_horario_aviso').textContent='Não foi possível consultar a reserva original. Feche e tente novamente.';}
+    }
 
     function confirmarFinalizacao() {
         const res = document.getElementById('f_resultado').value; const conc = document.getElementById('f_concorrente_select').value;
         if (res === 'remarcou') {
             const novaData = document.getElementById('f_nova_data').value; const novaHora = document.getElementById('f_nova_hora').value;
-            if (!novaData || !novaHora) { alert("Selecione data e hora para o reagendamento!"); return; }
-            database.ref('agendamentos/' + keySendoEditada).update({ status: 'agendado', dataISO: novaData, data: novaData.split('-').reverse().join('/'), hora: novaHora, resultado: null, concorrente: null, lembreteEnviado: false, confirmacaoEnviada: false }).then(() => fecharModais());
+            if (!novaData || !novaHora || document.getElementById('f_nova_hora').disabled || document.getElementById('f_nova_hora').selectedOptions[0]?.disabled) { alert("Selecione uma data e um horário disponível para o reagendamento."); return; }
+            const durationMinutes=durationValue(document.getElementById('edit_durationMinutes').value);
+            database.ref('agendamentos/' + keySendoEditada).update({ durationMinutes, status: 'agendado', dataISO: novaData, data: novaData.split('-').reverse().join('/'), hora: novaHora, resultado: null, concorrente: null, lembreteEnviado: false, confirmacaoEnviada: false }).then(() => fecharModais());
         } else {
             database.ref('agendamentos/' + keySendoEditada).update({ status: 'finalizado', resultado: res, concorrente: conc }).then(() => fecharModais());
         }
@@ -1017,7 +1288,7 @@
                 if (conf.status === 'fechado' || ds === 0) { classe = "dia-fechado"; labelHora = "FECHADO"; }
                 else if (conf.status === 'especial') { classe = "dia-longo"; labelHora = conf.inicio + "-" + conf.fim; }
                 else if (ds === 6) { classe = (dia <= 14) ? "dia-longo" : "dia-curto"; labelHora = (dia <= 14) ? "09:00-16:00" : "09:00-12:00"; }
-                corpo.innerHTML += `<div class="cal-day ${classe}" onclick="ajustarDia('${dISO}')"><b>${dia}</b><span style="font-size:8px;">${labelHora}</span><span class="agendamento-count">${qtd}</span></div>`;
+                corpo.innerHTML += `<div class="cal-day ${classe}" ${action("ajustarDia", dISO)}><b>${dia}</b><span style="font-size:8px;">${escapeHtml(labelHora)}</span><span class="agendamento-count">${qtd}</span></div>`;
             }
         });
     }
@@ -1035,12 +1306,64 @@
         carregarDados();
     }
 
-    function abrirModalCadastro() { 
-        document.getElementById('formManual').reset(); 
-        document.getElementById('m_hora').innerHTML = "<option value=''>Selecione a data primeiro...</option>"; 
+    function abrirModalCadastro() { if (!adminAuthorized || !durationSettingsReady) return; 
+        document.getElementById('formManual').reset();
+        document.getElementById('m_durationMinutes').value = String(defaultDurationMinutes); 
+        buscarOcupacaoManual(); 
         atualizarFormularioManual(); 
         document.getElementById('modalCadastro').style.display = "flex"; 
     }
+
+window.addEventListener('unhandledrejection', event => { event.preventDefault(); alert('Não foi possível confirmar a operação. Verifique o estado antes de tentar novamente.'); });
+const adminActions = { abrirEdicao, abrirFinalizar, ajustarDia, enviarConfirmacao3Dias, enviarLembrete24h, excluirRegistro, mudarStatus, removerLojista, verDetalhes };
+document.addEventListener("click", event => { const el = event.target.closest("[data-action]"); if (!el || !adminAuthorized) return; const fn = adminActions[el.dataset.action]; if (fn) fn(...JSON.parse(el.dataset.args)); });
+document.addEventListener("change", event => { const el = event.target.closest("[data-event-change]"); if (!el) return; const id = el.getAttribute("data-event-change");
+if (id === "legacyEvent10") { carregarDados();; }
+if (id === "legacyEvent20") { gerarCalendarioVisivel(); }
+if (id === "legacyEvent22") { toggleInputsEspecial(); }
+if (id === "legacyEvent27") { atualizarFormularioEdicao(); }
+if (id === "legacyEvent30") { toggleFinalizarCampos(); }
+if (id === "legacyEvent31") { buscarOcupacaoRemarcar(); }
+if (id === "legacyEvent34") { atualizarFormularioManual(); }
+if (id === "legacyEvent35") { buscarOcupacaoManual(); }
+}, true);
+document.addEventListener("click", event => { const el = event.target.closest("[data-event-click]"); if (!el) return; const id = el.getAttribute("data-event-click");
+if (id === "legacyEvent0") { filtrarStatus('inicio', el); }
+if (id === "legacyEvent1") { filtrarStatus('pendente', el); }
+if (id === "legacyEvent2") { filtrarStatus('agendado', el); }
+if (id === "legacyEvent3") { filtrarStatus('finalizado', el); }
+if (id === "legacyEvent4") { filtrarStatus('recusado', el); }
+if (id === "legacyEvent5") { filtrarStatus('dashboard', el); }
+if (id === "legacyEvent6") { filtrarStatus('lojistas', el); }
+if (id === "legacyEvent7") { filtrarStatus('configuracoes', el); }
+if (id === "legacyEvent8") { abrirModalExpediente(); }
+if (id === "legacyEvent9") { abrirModalCadastro(); }
+if (id === "legacyEvent11") { inserirVariavel('[NOME]'); }
+if (id === "legacyEvent12") { inserirVariavel('[DATA]'); }
+if (id === "legacyEvent13") { inserirVariavel('[DIA_SEMANA]'); }
+if (id === "legacyEvent14") { inserirVariavel('[HORA]'); }
+if (id === "legacyEvent15") { inserirVariavel('[BENEFICIO]'); }
+if (id === "legacyEvent18") { salvarConfigMensagens(); }
+if (id === "legacyEvent19") { fecharModais(); }
+if (id === "legacyEvent21") { fecharModais(); }
+if (id === "legacyEvent23") { salvarConfigDia(); }
+if (id === "legacyEvent24") { fecharModais(); }
+if (id === "legacyEvent25") { fecharModais(); }
+if (id === "legacyEvent26") { fecharModais(); }
+if (id === "legacyEvent28") { salvarEdicao(); }
+if (id === "legacyEvent29") { fecharModais(); }
+if (id === "legacyEvent32") { confirmarFinalizacao(); }
+if (id === "legacyEvent33") { fecharModais(); }
+if (id === "legacyEvent37") { salvarManual(); }
+if (id === "legacyEvent38") { salvarLojista(); }
+}, true);
+document.addEventListener("focus", event => { const el = event.target.closest("[data-event-focus]"); if (!el) return; const id = el.getAttribute("data-event-focus");
+if (id === "legacyEvent16") { campoFocadoTexto = el;; }
+if (id === "legacyEvent17") { campoFocadoTexto = el;; }
+}, true);
+document.addEventListener("input", event => { const el = event.target.closest("[data-event-input]"); if (!el) return; const id = el.getAttribute("data-event-input");
+if (id === "legacyEvent36") { mascaraTel(el); }
+}, true);
 </script>
 </body>
 </html>
