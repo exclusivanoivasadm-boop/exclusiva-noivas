@@ -618,6 +618,23 @@ function carregarAvisosAgendamento() {
     }
     function authError(message) { const el = document.getElementById('loginErro'); el.textContent = message; el.style.display = 'block'; }
     // UI guards supplement, never replace, owner-only rules and the atomic bridge.
+    // Firebase Ref.toString percent-encodes path segments (including request: IDs).
+    // Decode exactly once; never let encoded separators change the logical path.
+    function guardedReferencePath(referenceUrl) {
+        const url = new URL(referenceUrl);
+        const match = /^https?:\/\/[^/?#]+(\/[^?#]*)?(?:[?#]|$)/.exec(referenceUrl);
+        const rawPath = match && (match[1] || '/');
+        if (!rawPath || rawPath !== url.pathname) throw new Error('Caminho de referência inválido.');
+        if (rawPath === '/') return rawPath;
+        const segments = rawPath.slice(1).split('/').map(segment => {
+            let decoded;
+            try { decoded = decodeURIComponent(segment); } catch (_) { throw new Error('Caminho de referência inválido.'); }
+            // Remaining % rejects double-encoding rather than decoding it again.
+            if (!decoded || /[\/\\.#$\[\]%\u0000-\u001f\u007f]/.test(decoded)) throw new Error('Caminho de referência inválido.');
+            return decoded;
+        });
+        return '/' + segments.join('/');
+    }
     function guardRef(ref) {
         return new Proxy(ref, { get(target, prop) {
             if (prop === 'on') return (event, callback, error) => {
@@ -640,7 +657,7 @@ function carregarAvisosAgendamento() {
                 if (!adminAuthorized) return Promise.reject(new Error('Acesso não autorizado'));
                 const generation = authGeneration;
                 const ensureCurrent = result => { if (!adminAuthorized || generation !== authGeneration) throw new Error('Sessão encerrada; verifique o estado antes de repetir.'); return result; };
-                const path = new URL(target.toString()).pathname;
+                const path = guardedReferencePath(target.toString());
                 if (/^\/(agendamentos|expediente)(\/|$)/.test(path) || /^\/bookingV1\/settings\/(defaultDurationMinutes|saturdayDurationMinutes)$/.test(path)) {
                     const bridge = window.ExclusivaBookingBridge;
                     if (!bridge || typeof bridge.mutate !== 'function') return Promise.reject(new Error('Alterações indisponíveis: integração segura de agenda pendente.'));
