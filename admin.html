@@ -1,8 +1,6 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
+<!DOCTYPE html><html lang="pt-br"><head>
     <meta charset="UTF-8">
-    <title>Gestão Exclusiva Noivas | Painel V2.0</title>
+    <title>Agenda e atendimento | Exclusiva Noivas</title>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -132,22 +130,28 @@
         .obs-box { grid-column: span 2; background: #fffdf9; border: 1px dashed var(--gold); padding: 10px; margin-top: 10px; font-style: italic; font-size: 13px; }
         .tag-categoria { font-size: 9px; padding: 2px 5px; border-radius: 3px; background: #eee; margin-left: 5px; vertical-align: middle; }
     </style>
-<script src="/checklist/admin/booking-alerts.js"></script><script src="/checklist/admin/integration-config.js"></script><script src="/checklist/admin/bridge.js"></script></head>
-<body>
+<script src="/checklist/admin/booking-alerts.js"></script><script src="/checklist/admin/integration-config.js"></script><script src="/checklist/admin/bridge.js"></script><meta name="viewport" content="width=device-width, initial-scale=1"><style id="responsive-panel-review">/* Isolated UI patch; no security, network or business policy changes. */
+:root{--gold:#806332;--red:#b42318;--green:#167443;--blue:#245bbe}
+*{box-sizing:border-box}body{font-family:Arial,sans-serif;line-height:1.5}h1,h2,h3,.header-title{font-family:Georgia,serif}.main-content{min-width:0}.sidebar{flex:0 0 240px}.login-box{width:min(400px,calc(100% - 32px));padding:32px}#loginScreen{min-height:100dvh;height:auto;padding:24px 0}input,select,textarea{font-size:16px;max-width:100%}.btn,.tab-btn,button{min-height:44px}.btn{font-size:11px}.btn:not([class*="btn-"]){background:var(--dark)}#saveDefaultDuration,#saveSaturdayDuration,#logoutButton{background:var(--dark);color:white}.dash-label,.clique-label{color:#626262}.header-admin>div{flex-wrap:wrap}.filter-group{flex-wrap:wrap}#tabelaContainer{overflow:auto;max-width:100%}#tabelaContainer table{min-width:710px}.btn-group{flex-wrap:wrap;gap:6px}.grid-form,.info-card-grid{min-width:0}.grid-form>div{min-width:0}.modal-content{padding:48px 28px 28px;max-height:92dvh}.close-modal{background:transparent;border:0;min-width:44px;min-height:44px;color:#383838;top:6px;right:8px;font-size:28px}.cal-day{font:inherit;color:inherit;min-width:0}.calendar-scroll{overflow:auto}.calendar-scroll .calendar-grid{min-width:600px}.calendar-controls{display:flex;gap:12px;flex-wrap:wrap;align-items:end}.calendar-controls label{display:block;font-size:13px}.calendar-status{font-size:13px;color:#5b5349}#durationSettingsPanel{background:white;border:1px solid #ded7cc;padding:22px;margin:20px 0;border-radius:6px}#durationSettingsPanel select{min-height:44px}#durationSettingsPanel p{font-size:13px;max-width:80ch}.skip-link{position:absolute;top:-100px;left:12px;padding:12px;background:#222;color:#fff;z-index:20000}.skip-link:focus{top:12px}:focus-visible{outline:3px solid #806332;outline-offset:3px}
+@media(max-width:800px){body{height:auto;min-height:100dvh;overflow:auto}#appWrapper{height:auto;min-height:100dvh;flex-direction:column}.sidebar{flex:none;width:100%;padding:12px 16px;border-right:0;border-bottom:1px solid #d8d0c2}.sidebar-logo{margin:0 0 10px;padding:0 0 10px}.tabs{display:flex;flex-direction:row;overflow:auto;gap:6px;max-width:100%;padding-bottom:6px}.tabs hr{display:none}.tab-btn{white-space:nowrap;flex:none;font-size:12px;border-left:0;border-bottom:3px solid transparent}.tab-btn.active{border-bottom-color:var(--gold)}#logoutButton{align-self:flex-end}.main-content{width:100%;overflow:visible;padding:18px 14px}.header-admin{padding:16px;gap:14px;align-items:flex-start;flex-direction:column}.header-title{font-size:20px;letter-spacing:.5px}.dashboard-bar{gap:8px;margin-bottom:20px}.dash-card{padding:14px 6px}.dash-val{font-size:23px}.dash-label{font-size:10px;letter-spacing:0}.charts-container,.cliques-grid{grid-template-columns:1fr 1fr;padding:10px;gap:10px}.chart-box{height:280px}.modal{padding:10px}.modal-content{width:100%;padding:48px 18px 22px;max-height:94dvh}.grid-form,.info-card-grid{grid-template-columns:1fr}.grid-form>div[style*="grid-column"]{grid-column:auto!important}.modal-content h2{font-size:24px}.filter-bar{justify-content:flex-start}.section-title{font-size:12px}}
+@media(max-width:420px){.charts-container,.cliques-grid{grid-template-columns:1fr}.dashboard-bar{grid-template-columns:1fr}.dash-card{display:flex;align-items:center;justify-content:space-between;padding:12px 16px}.dash-val{order:2}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style></head>
+<body><a href="#conteudoPrincipal" class="skip-link">Ir para o conteúdo</a>
 
 <div id="loginScreen">
     <div class="login-box">
         <h1>Exclusiva</h1>
         <span>Noivas Gestão</span>
         <form id="adminLoginForm">
-            <label for="loginAlias">Usuário</label><input id="loginAlias" name="username" autocomplete="username" value="exclusiva" required>
-            <label for="loginPassword">Senha</label><input id="loginPassword" name="password" type="password" autocomplete="current-password" required>
+            <label for="loginAlias">Usuário</label><input id="loginAlias" name="username" autocomplete="username" value="Exclusiva" required="">
+            <label for="loginPassword">Senha</label><input id="loginPassword" name="password" type="password" autocomplete="current-password" required="">
             <button id="loginSubmit" type="submit" class="btn btn-novo" style="width:100%;margin-top:10px;padding:12px;">Entrar</button>
         </form>
         <button id="resetPasswordButton" type="button" class="btn">Definir minha senha / recuperar acesso</button>
-        <button id="verifyEmailButton" type="button" class="btn" hidden>Reenviar verificação do e-mail</button>
+        <button id="verifyEmailButton" type="button" class="btn" hidden="">Reenviar verificação do e-mail</button>
         <p style="font-size:12px">No primeiro acesso, defina sua senha e verifique seu e-mail. O painel só será liberado após autorização administrativa.</p>
-        <p id="loginErro" style="color: var(--red); font-size: 12px; display: none; margin-top: 15px; font-weight: bold;">Entre com o usuário e a senha autorizados.</p>
+        <p id="loginErro" style="color: var(--red); font-size: 12px; display: none; margin-top: 15px; font-weight: bold;" role="alert" aria-live="polite">Entre com o usuário e a senha autorizados.</p>
     </div>
 </div>
 
@@ -177,11 +181,11 @@
             <hr style="border:0; border-bottom:1px solid #eee; width:100%; margin: 10px 0;">
             
             <button class="tab-btn" data-event-click="legacyEvent7">⚙️ Configurações</button>
-            <a href="crm-github.html" class="tab-btn" style="text-decoration:none;color:inherit;display:block;">📋 CRM fichas (GitHub Pages)</a>
+            <a href="/checklist/respostas/" class="tab-btn" style="text-decoration:none;color:inherit;display:block;">Respostas do checklist</a>
         </div>
     </aside>
 
-    <main class="main-content">
+    <main class="main-content" id="conteudoPrincipal" tabindex="-1">
         
         <div class="header-admin">
             <h2 class="header-title" id="tituloPagina">Início - Resumo Diário</h2>
@@ -193,7 +197,7 @@
 
         <div class="filter-bar" id="filtroDataContainer" style="display: none;">
             <div class="filter-group">
-                <label style="margin:0">Mês de Referência:</label>
+                <label style="margin:0" for="filtroMes">Mês de Referência:</label>
                 <select id="filtroMes" class="month-select" data-event-change="legacyEvent10">
                     <option value="todos">Todos</option>
                     <option value="00">Janeiro</option>
@@ -234,18 +238,18 @@
 
             <div class="grid-form">
                 <div>
-                    <label>💬 Confirmação (Enviada 3 Dias Antes)</label>
+                    <label for="configMsgConfirmacao">💬 Confirmação (Enviada 3 Dias Antes)</label>
                     <textarea id="configMsgConfirmacao" rows="15" data-event-focus="legacyEvent16"></textarea>
                 </div>
                 <div>
-                    <label>💬 Lembrete (Enviado 24 Horas Antes)</label>
+                    <label for="configMsgLembrete">💬 Lembrete (Enviado 24 Horas Antes)</label>
                     <textarea id="configMsgLembrete" rows="15" data-event-focus="legacyEvent17"></textarea>
                 </div>
             </div>
             <button class="btn btn-novo" style="width:100%; margin-top:20px; font-size:14px; padding:15px;" data-event-click="legacyEvent18">💾 Salvar Modelos de Mensagem</button>
         </div>
 
-        <section id="durationSettingsPanel"><label for="defaultDurationMinutes">Duração do atendimento</label><select id="defaultDurationMinutes" disabled><option value="15">15 minutos</option><option value="30">30 minutos</option><option value="45">45 minutos</option><option value="60">60 minutos</option><option value="75">75 minutos</option><option value="90">90 minutos</option><option value="105">105 minutos</option><option value="120">120 minutos</option><option value="135">135 minutos</option><option value="150">150 minutos</option><option value="165">165 minutos</option><option value="180">180 minutos</option><option value="195">195 minutos</option><option value="210">210 minutos</option><option value="225">225 minutos</option><option value="240">240 minutos</option></select><p>Padrão para segunda a sexta.</p><label for="saturdayDurationMinutes">Duração do atendimento</label><select id="saturdayDurationMinutes" disabled><option value="15">15 minutos</option><option value="30">30 minutos</option><option value="45">45 minutos</option><option value="60">60 minutos</option><option value="75">75 minutos</option><option value="90">90 minutos</option><option value="105">105 minutos</option><option value="120">120 minutos</option><option value="135">135 minutos</option><option value="150">150 minutos</option><option value="165">165 minutos</option><option value="180">180 minutos</option><option value="195">195 minutos</option><option value="210">210 minutos</option><option value="225">225 minutos</option><option value="240">240 minutos</option></select><p>Padrão para sábados.</p><button id="saveSaturdayDuration" type="button" class="btn" disabled>Salvar duração de sábado</button><p>Política informada: segunda a sexta 09h–18h; dois primeiros sábados 09h–17h, demais 09h–13h; sem almoço; domingos e feriados fechados. A política efetiva e os feriados ainda precisam estar configurados e validados no servidor antes da ativação.</p><p>O padrão vale apenas para novas reservas. As existentes mantêm sua duração.</p><button id="saveDefaultDuration" class="btn" type="button" disabled>Salvar duração padrão</button><p id="durationSettingsStatus" role="status"></p></section><div id="abaDashboardVisual">
+        <section id="durationSettingsPanel"><label for="defaultDurationMinutes">Duração do atendimento</label><select id="defaultDurationMinutes" disabled=""><option value="15">15 minutos</option><option value="30">30 minutos</option><option value="45">45 minutos</option><option value="60">60 minutos</option><option value="75">75 minutos</option><option value="90">90 minutos</option><option value="105">105 minutos</option><option value="120">120 minutos</option><option value="135">135 minutos</option><option value="150">150 minutos</option><option value="165">165 minutos</option><option value="180">180 minutos</option><option value="195">195 minutos</option><option value="210">210 minutos</option><option value="225">225 minutos</option><option value="240">240 minutos</option></select><p>Padrão para segunda a sexta.</p><label for="saturdayDurationMinutes">Duração do atendimento</label><select id="saturdayDurationMinutes" disabled=""><option value="15">15 minutos</option><option value="30">30 minutos</option><option value="45">45 minutos</option><option value="60">60 minutos</option><option value="75">75 minutos</option><option value="90">90 minutos</option><option value="105">105 minutos</option><option value="120">120 minutos</option><option value="135">135 minutos</option><option value="150">150 minutos</option><option value="165">165 minutos</option><option value="180">180 minutos</option><option value="195">195 minutos</option><option value="210">210 minutos</option><option value="225">225 minutos</option><option value="240">240 minutos</option></select><p>Padrão para sábados.</p><button id="saveSaturdayDuration" type="button" class="btn" disabled="">Salvar duração de sábado</button><p>Política informada: segunda a sexta 09h–18h; dois primeiros sábados 09h–17h, demais 09h–13h; sem almoço; domingos e feriados fechados. A política efetiva e os feriados ainda precisam estar configurados e validados no servidor antes da ativação.</p><p>O padrão vale apenas para novas reservas. As existentes mantêm sua duração.</p><button id="saveDefaultDuration" class="btn" type="button" disabled="">Salvar duração padrão</button><p id="durationSettingsStatus" role="status"></p></section><div id="abaDashboardVisual">
             <div class="group-header">Interatividade no Portal (Mês Ref)</div>
             <div class="cliques-grid">
                 <div class="clique-card"><span class="clique-val" id="clkAgenda">0</span><span class="clique-label">Cliques Agenda</span></div>
@@ -266,15 +270,15 @@
             </div>
         </div>
 
-        <div id="tabelaContainer"></div>
+        <div id="tabelaContainer" tabindex="0" role="region" aria-label="Lista de agendamentos; deslize para consultar as ações"></div>
     </main>
 </div>
 
-<div id="modalExpediente" class="modal">
+<div id="modalExpediente" class="modal" role="dialog" aria-modal="true" aria-hidden="true" tabindex="-1" aria-labelledby="dialog-title-0">
     <div class="modal-content">
-        <span class="close-modal" data-event-click="legacyEvent19">×</span>
-        <h2 style="text-transform: uppercase;">Calendário de Trabalho</h2>
-        <select id="filtroMesCalendario" class="month-select" data-event-change="legacyEvent20">
+        <button class="close-modal" data-event-click="legacyEvent19" type="button" aria-label="Fechar janela">×</button>
+        <h2 style="text-transform: uppercase;" id="dialog-title-0">Calendário de Trabalho</h2>
+        <select id="filtroMesCalendario" class="month-select" data-event-change="legacyEvent20" aria-label="Mês do calendário">
             <option value="00">Janeiro</option>
             <option value="01">Fevereiro</option>
             <option value="02">Março</option>
@@ -287,46 +291,46 @@
             <option value="09">Outubro</option>
             <option value="10">Novembro</option>
             <option value="11">Dezembro</option>
-        </select>
-        <div class="calendar-grid"><div class="cal-header">DOM</div><div class="cal-header">SEG</div><div class="cal-header">TER</div><div class="cal-header">QUA</div><div class="cal-header">QUI</div><div class="cal-header">SEX</div><div class="cal-header">SÁB</div></div>
-        <div id="corpoCalendario" class="calendar-grid" style="margin-top:0;"></div>
+        </select><label for="filtroAnoCalendario">Ano</label><select id="filtroAnoCalendario" class="month-select" data-event-change="legacyEvent20"><option value="">Consultar calendário</option></select><p id="calendarStatus" class="calendar-status" role="status" aria-live="polite"></p>
+        <div class="calendar-scroll" tabindex="0" role="region" aria-label="Calendário de expediente; deslize para consultar a semana"><div class="calendar-grid"><div class="cal-header">DOM</div><div class="cal-header">SEG</div><div class="cal-header">TER</div><div class="cal-header">QUA</div><div class="cal-header">QUI</div><div class="cal-header">SEX</div><div class="cal-header">SÁB</div></div><div id="corpoCalendario" class="calendar-grid" style="margin-top:0;"></div></div>
+        
     </div>
 </div>
 
-<div id="modalDiaEspecial" class="modal">
+<div id="modalDiaEspecial" class="modal" role="dialog" aria-modal="true" aria-hidden="true" tabindex="-1" aria-labelledby="tituloDiaEspecial">
     <div class="modal-content" style="max-width: 400px;">
-        <span class="close-modal" data-event-click="legacyEvent21">×</span>
-        <h3 id="tituloDiaEspecial">-</h3>
-        <select id="e_status" data-event-change="legacyEvent22">
+        <button class="close-modal" data-event-click="legacyEvent21" type="button" aria-label="Fechar janela">×</button>
+        <h3 id="tituloDiaEspecial">-</h3><p id="specialDayStatus" role="status" aria-live="polite"></p>
+        <select id="e_status" data-event-change="legacyEvent22" aria-label="Funcionamento nesta data">
             <option value="padrao">Padrão</option>
             <option value="fechado">Bloquear</option>
             <option value="especial">Especial</option>
         </select>
         <div id="divHorariosEspeciais" style="display:none;">
-            <input type="text" id="e_inicio" placeholder="09:30">
-            <input type="text" id="e_fim" placeholder="18:00">
+            <input type="text" id="e_inicio" placeholder="09:30" aria-label="Início do expediente">
+            <input type="text" id="e_fim" placeholder="18:00" aria-label="Fim do expediente">
         </div>
         <button class="btn btn-novo" style="width:100%; margin-top:20px;" data-event-click="legacyEvent23">Salvar</button>
     </div>
 </div>
 
-<div id="modalDetalhes" class="modal">
+<div id="modalDetalhes" class="modal" role="dialog" aria-modal="true" aria-hidden="true" tabindex="-1" aria-labelledby="detalheNome">
     <div class="modal-content" style="max-width: 750px;">
-        <span class="close-modal" data-event-click="legacyEvent24">×</span>
+        <button class="close-modal" data-event-click="legacyEvent24" type="button" aria-label="Fechar janela">×</button>
         <div class="header-perfil"><h2 id="detalheNome">-</h2><p id="detalheData">-</p></div>
         <div id="detalhesNoiva" class="info-card-grid"></div>
         <button class="btn btn-novo" style="width:100%; margin-top:30px;" data-event-click="legacyEvent25">Fechar</button>
     </div>
 </div>
 
-<div id="modalEditar" class="modal">
+<div id="modalEditar" class="modal" role="dialog" aria-modal="true" aria-hidden="true" tabindex="-1" aria-labelledby="dialog-title-3">
     <div class="modal-content" style="max-width: 800px;">
-        <span class="close-modal" data-event-click="legacyEvent26">×</span>
-        <h3>Editar Informações e Observações</h3><div><label for="edit_durationMinutes">Duração do atendimento</label><select id="edit_durationMinutes" disabled><option value="15">15 minutos</option><option value="30">30 minutos</option><option value="45">45 minutos</option><option value="60">60 minutos</option><option value="75">75 minutos</option><option value="90">90 minutos</option><option value="105">105 minutos</option><option value="120">120 minutos</option><option value="135">135 minutos</option><option value="150">150 minutos</option><option value="165">165 minutos</option><option value="180">180 minutos</option><option value="195">195 minutos</option><option value="210">210 minutos</option><option value="225">225 minutos</option><option value="240">240 minutos</option></select><p>Alterar a duração pode gerar conflito; a reserva só muda após confirmação.</p></div>
+        <button class="close-modal" data-event-click="legacyEvent26" type="button" aria-label="Fechar janela">×</button>
+        <h3 id="dialog-title-3">Editar Informações e Observações</h3><div><label for="edit_durationMinutes">Duração do atendimento</label><select id="edit_durationMinutes" disabled=""><option value="15">15 minutos</option><option value="30">30 minutos</option><option value="45">45 minutos</option><option value="60">60 minutos</option><option value="75">75 minutos</option><option value="90">90 minutos</option><option value="105">105 minutos</option><option value="120">120 minutos</option><option value="135">135 minutos</option><option value="150">150 minutos</option><option value="165">165 minutos</option><option value="180">180 minutos</option><option value="195">195 minutos</option><option value="210">210 minutos</option><option value="225">225 minutos</option><option value="240">240 minutos</option></select><p>Alterar a duração pode gerar conflito; a reserva só muda após confirmação.</p></div>
         <div class="grid-form">
             
             <div style="grid-column: span 2;">
-                <label>Tipo de Reserva</label>
+                <label for="edit_categoria">Tipo de Reserva</label>
                 <select id="edit_categoria" data-event-change="legacyEvent27" style="font-weight: bold; padding: 8px;">
                     <option value="atendimento">Atendimento de Venda</option>
                     <option value="pre_escolha">Escolha de Pré</option>
@@ -336,29 +340,29 @@
                 </select>
             </div>
 
-            <div><label>Data Agendamento</label><input type="date" id="edit_dataISO"></div>
-            <div><label>Hora</label><input type="text" id="edit_hora"></div>
+            <div><label for="edit_dataISO">Data Agendamento</label><input type="date" id="edit_dataISO"></div>
+            <div><label for="edit_hora">Hora</label><input type="text" id="edit_hora"></div>
 
             <div id="editBlocoBasico" style="display: contents;">
-                <div><label>Nome</label><input type="text" id="edit_nome"></div>
-                <div><label>WhatsApp</label><input type="text" id="edit_tel"></div>
+                <div><label for="edit_nome">Nome</label><input type="text" id="edit_nome"></div>
+                <div><label for="edit_tel">WhatsApp</label><input type="text" id="edit_tel"></div>
             </div>
 
             <div id="editBlocoCompleto" style="display: contents;">
-                <div><label>Instagram</label><input type="text" id="edit_insta"></div>
-                <div><label>Cidade</label><input type="text" id="edit_cidade"></div>
-                <div><label>Data Casamento</label><input type="text" id="edit_casamento"></div>
-                <div><label>Orçamento</label><input type="text" id="edit_orcamento"></div>
-                <div><label>CPF</label><input type="text" id="edit_cpf"></div>
-                <div><label>Cerimonialista</label><input type="text" id="edit_cerimonialista"></div>
-                <div><label>Finalidade</label><select id="edit_finalidade"><option value="Cerimonial">Cerimonial</option><option value="Civil">Civil</option><option value="Ambos">Ambos</option></select></div>
-                <div><label>Referências?</label><select id="edit_refs"><option value="Sim">Sim</option><option value="Não">Não</option></select></div>
-                <div><label>Outras Lojas?</label><select id="edit_outras"><option value="Sim">Sim</option><option value="Não">Não</option></select></div>
-                <div><label>Benefício?</label><select id="edit_beneficio"><option value="SIM">SIM</option><option value="NÃO">NÃO</option></select></div>
+                <div><label for="edit_insta">Instagram</label><input type="text" id="edit_insta"></div>
+                <div><label for="edit_cidade">Cidade</label><input type="text" id="edit_cidade"></div>
+                <div><label for="edit_casamento">Data Casamento</label><input type="text" id="edit_casamento"></div>
+                <div><label for="edit_orcamento">Orçamento</label><input type="text" id="edit_orcamento"></div>
+                <div><label for="edit_cpf">CPF</label><input type="text" id="edit_cpf"></div>
+                <div><label for="edit_cerimonialista">Cerimonialista</label><input type="text" id="edit_cerimonialista"></div>
+                <div><label for="edit_finalidade">Finalidade</label><select id="edit_finalidade"><option value="Cerimonial">Cerimonial</option><option value="Civil">Civil</option><option value="Ambos">Ambos</option></select></div>
+                <div><label for="edit_refs">Referências?</label><select id="edit_refs"><option value="Sim">Sim</option><option value="Não">Não</option></select></div>
+                <div><label for="edit_outras">Outras Lojas?</label><select id="edit_outras"><option value="Sim">Sim</option><option value="Não">Não</option></select></div>
+                <div><label for="edit_beneficio">Benefício?</label><select id="edit_beneficio"><option value="SIM">SIM</option><option value="NÃO">NÃO</option></select></div>
             </div>
 
             <div id="divEditResultado" style="display:none;">
-                <label>Resultado do Atendimento</label>
+                <label for="edit_resultado">Resultado do Atendimento</label>
                 <select id="edit_resultado">
                     <option value="alugou">Alugou Conosco</option>
                     <option value="nao_alugou">Não Alugou / Alugou no Concorrente</option>
@@ -367,12 +371,12 @@
             </div>
             
             <div id="divEditConcorrente" style="display:none;">
-                <label>Onde ela alugou? (Concorrente)</label>
+                <label for="edit_concorrente_select">Onde ela alugou? (Concorrente)</label>
                 <select id="edit_concorrente_select"></select>
             </div>
             
             <div style="grid-column: span 2;">
-                <label>📝 Observações / Descrição do Bloqueio</label>
+                <label for="edit_obs">📝 Observações / Descrição do Bloqueio</label>
                 <textarea id="edit_obs" rows="4" placeholder="Detalhes ou motivos..."></textarea>
             </div>
         </div>
@@ -380,11 +384,11 @@
     </div>
 </div>
 
-<div id="modalFinalizar" class="modal">
+<div id="modalFinalizar" class="modal" role="dialog" aria-modal="true" aria-hidden="true" tabindex="-1" aria-labelledby="dialog-title-4">
     <div class="modal-content" style="max-width: 450px;">
-        <span class="close-modal" data-event-click="legacyEvent29">×</span>
-        <h3>Encerrar Atendimento</h3>
-        <label>Resultado</label>
+        <button class="close-modal" data-event-click="legacyEvent29" type="button" aria-label="Fechar janela">×</button>
+        <h3 id="dialog-title-4">Encerrar Atendimento</h3>
+        <label for="f_resultado">Resultado</label>
         <select id="f_resultado" data-event-change="legacyEvent30">
             <option value="alugou">Alugou Conosco</option>
             <option value="nao_alugou">Não Alugou / Alugou no Concorrente</option>
@@ -392,14 +396,14 @@
         </select>
         
         <div id="divConcorrente" style="display:none; margin-top:15px;">
-            <label>Onde ela alugou? (Concorrente)</label>
+            <label for="f_concorrente_select">Onde ela alugou? (Concorrente)</label>
             <select id="f_concorrente_select"><option value="">Não soube informar</option></select>
         </div>
 
         <div id="divRemarcar" style="display:none; margin-top:15px; background: #fdfaf7; padding: 15px; border: 1px dashed var(--gold);">
-            <label>Nova Data para Reagendamento</label>
+            <label for="f_nova_data">Nova Data para Reagendamento</label>
             <input type="date" id="f_nova_data" data-event-change="legacyEvent31">
-            <label>Novo Horário</label>
+            <label for="f_nova_hora">Novo Horário</label>
             <select id="f_nova_hora"><option value="">Selecione a data...</option></select><p id="f_horario_aviso" role="status" aria-live="polite"></p>
         </div>
 
@@ -407,16 +411,16 @@
     </div>
 </div>
 
-<div id="modalCadastro" class="modal">
+<div id="modalCadastro" class="modal" role="dialog" aria-modal="true" aria-hidden="true" tabindex="-1" aria-labelledby="dialog-title-5">
     <div class="modal-content" style="max-width: 800px;">
-        <span class="close-modal" data-event-click="legacyEvent33">×</span>
-        <h2 style="text-transform: uppercase; letter-spacing: 2px;">Nova Reserva Manual</h2>
-        <form id="formManual"><div><label for="m_durationMinutes">Duração do atendimento</label><select id="m_durationMinutes" disabled><option value="15">15 minutos</option><option value="30">30 minutos</option><option value="45">45 minutos</option><option value="60">60 minutos</option><option value="75">75 minutos</option><option value="90">90 minutos</option><option value="105">105 minutos</option><option value="120">120 minutos</option><option value="135">135 minutos</option><option value="150">150 minutos</option><option value="165">165 minutos</option><option value="180">180 minutos</option><option value="195">195 minutos</option><option value="210">210 minutos</option><option value="225">225 minutos</option><option value="240">240 minutos</option></select><p>Conflitos e expediente são validados ao salvar.</p></div>
+        <button class="close-modal" data-event-click="legacyEvent33" type="button" aria-label="Fechar janela">×</button>
+        <h2 style="text-transform: uppercase; letter-spacing: 2px;" id="dialog-title-5">Nova Reserva Manual</h2>
+        <form id="formManual"><div><label for="m_durationMinutes">Duração do atendimento</label><select id="m_durationMinutes" disabled=""><option value="15">15 minutos</option><option value="30">30 minutos</option><option value="45">45 minutos</option><option value="60">60 minutos</option><option value="75">75 minutos</option><option value="90">90 minutos</option><option value="105">105 minutos</option><option value="120">120 minutos</option><option value="135">135 minutos</option><option value="150">150 minutos</option><option value="165">165 minutos</option><option value="180">180 minutos</option><option value="195">195 minutos</option><option value="210">210 minutos</option><option value="225">225 minutos</option><option value="240">240 minutos</option></select><p>Conflitos e expediente são validados ao salvar.</p></div>
             
             <div class="grid-form" style="margin-bottom: 20px;">
                 <div style="grid-column: span 2; background: #fdfaf7; padding: 15px; border: 2px solid var(--gold); border-radius: 4px;">
-                    <label style="font-size: 13px; color: var(--gold); margin-top:0;">1. Selecione o Tipo da Reserva</label>
-                    <select id="m_categoria" required data-event-change="legacyEvent34" style="font-size: 16px; padding: 10px; font-weight:bold;">
+                    <label style="font-size: 13px; color: var(--gold); margin-top:0;" for="m_categoria">1. Selecione o Tipo da Reserva</label>
+                    <select id="m_categoria" required="" data-event-change="legacyEvent34" style="font-size: 16px; padding: 10px; font-weight:bold;">
                         <option value="atendimento">Atendimento de Venda (Completo)</option>
                         <option value="pre_escolha">Escolha de Pré (Básico)</option>
                         <option value="prova">Prova de Vestido (Básico)</option>
@@ -428,29 +432,29 @@
 
             <div class="section-title">Logística do Atendimento</div>
             <div class="grid-form">
-                <div><label>Data do Agendamento</label><input type="date" id="m_data" required data-event-change="legacyEvent35"></div>
-                <div><label>Hora</label><select id="m_hora" required><option value="">Selecione a data primeiro...</option></select></div>
+                <div><label for="m_data">Data do Agendamento</label><input type="date" id="m_data" required="" data-event-change="legacyEvent35"></div>
+                <div><label for="m_hora">Hora</label><select id="m_hora" required=""><option value="">Selecione a data primeiro...</option></select></div>
             </div>
 
             <div id="blocoDadosBasicos" style="display: contents;">
                 <div class="section-title" style="grid-column: span 2;">Dados da Noiva</div>
-                <div><label>Nome Completo</label><input type="text" id="m_nome"></div>
-                <div><label>WhatsApp</label><input type="text" id="m_tel" data-event-input="legacyEvent36"></div>
+                <div><label for="m_nome">Nome Completo</label><input type="text" id="m_nome"></div>
+                <div><label for="m_tel">WhatsApp</label><input type="text" id="m_tel" data-event-input="legacyEvent36"></div>
             </div>
 
             <div id="blocoDadosCompletos" style="display: contents;">
-                <div><label>CPF</label><input type="text" id="m_cpf"></div>
-                <div><label>Instagram</label><input type="text" id="m_insta" placeholder="@noiva"></div>
-                <div><label>Cidade</label><input type="text" id="m_cidade"></div>
-                <div><label>Data Casamento</label><input type="date" id="m_casamento"></div>
+                <div><label for="m_cpf">CPF</label><input type="text" id="m_cpf"></div>
+                <div><label for="m_insta">Instagram</label><input type="text" id="m_insta" placeholder="@noiva"></div>
+                <div><label for="m_cidade">Cidade</label><input type="text" id="m_cidade"></div>
+                <div><label for="m_casamento">Data Casamento</label><input type="date" id="m_casamento"></div>
                 
                 <div class="section-title" style="grid-column: span 2;">Perfil e Preferências</div>
-                <div><label>Orçamento</label><input type="text" id="m_orcamento" placeholder="Ex: R$ 5.000,00"></div>
-                <div><label>Cerimonialista</label><input type="text" id="m_cerimonialista"></div>
-                <div><label>Finalidade</label><select id="m_finalidade"><option value="Cerimonial">Cerimonial</option><option value="Civil">Civil</option><option value="Ambos">Ambos</option></select></div>
-                <div><label>Trouxe Referências?</label><select id="m_refs"><option value="Sim">Sim</option><option value="Não">Não</option></select></div>
-                <div><label>Visitou Outras Lojas?</label><select id="m_outras"><option value="Não">Não</option><option value="Sim">Sim</option></select></div>
-                <div><label>Benefício 1ª Visita?</label><select id="m_beneficio"><option value="NÃO">NÃO</option><option value="SIM">SIM</option></select></div>
+                <div><label for="m_orcamento">Orçamento</label><input type="text" id="m_orcamento" placeholder="Ex: R$ 5.000,00"></div>
+                <div><label for="m_cerimonialista">Cerimonialista</label><input type="text" id="m_cerimonialista"></div>
+                <div><label for="m_finalidade">Finalidade</label><select id="m_finalidade"><option value="Cerimonial">Cerimonial</option><option value="Civil">Civil</option><option value="Ambos">Ambos</option></select></div>
+                <div><label for="m_refs">Trouxe Referências?</label><select id="m_refs"><option value="Sim">Sim</option><option value="Não">Não</option></select></div>
+                <div><label for="m_outras">Visitou Outras Lojas?</label><select id="m_outras"><option value="Não">Não</option><option value="Sim">Sim</option></select></div>
+                <div><label for="m_beneficio">Benefício 1ª Visita?</label><select id="m_beneficio"><option value="NÃO">NÃO</option><option value="SIM">SIM</option></select></div>
             </div>
 
             <div class="section-title">Observações / Descrição</div>
@@ -1273,29 +1277,85 @@ function carregarAvisosAgendamento() {
 
     function abrirModalExpediente() { document.getElementById('modalExpediente').style.display = "flex"; gerarCalendarioVisivel(); }
     
+    let calendarQueryVersion = 0;
+    function calendarWindowText(value) {
+        if (value == null) return 'Fechado';
+        if (typeof value !== 'object') throw new Error('Janela inválida');
+        const windows = Object.values(value);
+        if (!windows.length) return 'Fechado';
+        const fmt = n => String(Math.floor(n / 60)).padStart(2, '0') + ':' + String(n % 60).padStart(2, '0');
+        return windows.map(w => {
+            if (!w || !Number.isInteger(w.startMinute) || !Number.isInteger(w.endMinute) || w.startMinute < 0 || w.endMinute > 1440 || w.endMinute <= w.startMinute || w.startMinute % 15 || w.endMinute % 15) throw new Error('Janela inválida');
+            return fmt(w.startMinute) + '–' + fmt(w.endMinute);
+        }).join(' / ');
+    }
     function gerarCalendarioVisivel() {
-        const mes = parseInt(document.getElementById('filtroMesCalendario')?.value || new Date().getMonth()); const ano = 2026;
-        const primeiroDia = new Date(ano, mes, 1).getDay(); const diasNoMes = new Date(ano, mes + 1, 0).getDate();
-        const corpo = document.getElementById('corpoCalendario'); corpo.innerHTML = "";
-        Promise.all([database.ref('expediente/config').once('value'), database.ref('agendamentos').once('value')]).then(([snapConfig, snapAgend]) => {
-            const configs = snapConfig.val() || {}; const agendamentos = snapAgend.val() || {}; let contagem = {};
-            Object.values(agendamentos).forEach(a => { if(a.status === 'agendado' || a.status === 'confirmado') contagem[a.dataISO] = (contagem[a.dataISO] || 0) + 1; });
-            for (let i = 0; i < primeiroDia; i++) corpo.innerHTML += `<div></div>`;
-            for (let dia = 1; dia <= diasNoMes; dia++) {
-                const dISO = `${ano}-${(mes + 1).toString().padStart(2, '0')}-${dia.toString().padStart(2, '0')}`;
-                const conf = configs[dISO] || { status: 'padrao' }; const qtd = contagem[dISO] || 0;
-                let classe = "dia-padrao"; let labelHora = "09:30-17:00"; const ds = new Date(dISO + "T00:00:00").getDay();
-                if (conf.status === 'fechado' || ds === 0) { classe = "dia-fechado"; labelHora = "FECHADO"; }
-                else if (conf.status === 'especial') { classe = "dia-longo"; labelHora = conf.inicio + "-" + conf.fim; }
-                else if (ds === 6) { classe = (dia <= 14) ? "dia-longo" : "dia-curto"; labelHora = (dia <= 14) ? "09:00-16:00" : "09:00-12:00"; }
-                corpo.innerHTML += `<div class="cal-day ${classe}" ${action("ajustarDia", dISO)}><b>${dia}</b><span style="font-size:8px;">${escapeHtml(labelHora)}</span><span class="agendamento-count">${qtd}</span></div>`;
+        if (!adminAuthorized) return;
+        const version = ++calendarQueryVersion, generation = authGeneration;
+        const monthSelect = document.getElementById('filtroMesCalendario'), yearSelect = document.getElementById('filtroAnoCalendario');
+        const mes = Number(monthSelect.value), ano = yearSelect.value === '' ? new Date().getFullYear() : Number(yearSelect.value);
+        const corpo = document.getElementById('corpoCalendario'), status = document.getElementById('calendarStatus');
+        corpo.replaceChildren(); status.textContent = 'Consultando o expediente confirmado…';
+        const current = () => adminAuthorized && authGeneration === generation && calendarQueryVersion === version && Number(monthSelect.value) === mes && (yearSelect.value === '' ? ano : Number(yearSelect.value)) === ano;
+        if (!Number.isInteger(mes) || mes < 0 || mes > 11 || !Number.isInteger(ano) || ano < 2000 || ano > 2100) { status.textContent = 'Selecione um mês e ano válidos.'; return; }
+        database.ref('bookingV1/revision').once('value').then(async before => {
+            const [windowSnap, calendarSnap, appointmentSnap] = await Promise.all([database.ref('bookingV1/dayWindows').once('value'), database.ref('bookingV1/calendar').once('value'), database.ref('agendamentos').once('value')]);
+            const after = await database.ref('bookingV1/revision').once('value');
+            if (!current()) return;
+            if (!Number.isSafeInteger(before.val()) || before.val() < 0 || !Number.isSafeInteger(after.val()) || after.val() < 0 || before.val() !== after.val()) throw new Error('Calendário mudou');
+            const calendar = calendarSnap.val();
+            if (!calendar || !/^\d{4}-\d{2}-\d{2}$/.test(calendar.from || '') || !/^\d{4}-\d{2}-\d{2}$/.test(calendar.through || '') || calendar.from > calendar.through) throw new Error('Calendário indisponível');
+            const firstYear = Number(calendar.from.slice(0,4)), lastYear = Number(calendar.through.slice(0,4));
+            if (!Number.isSafeInteger(firstYear) || !Number.isSafeInteger(lastYear) || firstYear < 2000 || lastYear > 2100 || lastYear-firstYear > 2) throw new Error('Anos inválidos');
+            const years = Array.from({length:lastYear-firstYear+1},(_,i)=>String(firstYear+i));
+            if (JSON.stringify([...yearSelect.options].map(o=>o.value)) !== JSON.stringify(years)) {
+                yearSelect.replaceChildren(); for (const value of years) { const option=document.createElement('option');option.value=value;option.textContent=value;yearSelect.append(option); }
+                yearSelect.value = years.includes(String(ano)) ? String(ano) : years[0];
+                if (Number(yearSelect.value) !== ano) { gerarCalendarioVisivel(); return; }
             }
-        });
+            const windows = windowSnap.val() || {}, counts = {};
+            Object.values(appointmentSnap.val() || {}).forEach(a => { if (['pendente', 'agendado', 'confirmado'].includes(a.status)) counts[a.dataISO] = (counts[a.dataISO] || 0) + 1; });
+            const first = new Date(ano, mes, 1).getDay(), days = new Date(ano, mes + 1, 0).getDate(), fragment = document.createDocumentFragment();
+            for (let i = 0; i < first; i++) fragment.append(document.createElement('div'));
+            for (let day = 1; day <= days; day++) {
+                const iso = `${ano}-${String(mes + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const inside = iso >= calendar.from && iso <= calendar.through;
+                const label = inside ? calendarWindowText(windows[iso]) : 'Fora do calendário';
+                const button = document.createElement('button'); button.type = 'button'; button.className = 'cal-day ' + (label === 'Fechado' ? 'dia-fechado' : 'dia-padrao'); button.disabled = !inside;
+                button.setAttribute('aria-label', `${String(day).padStart(2,'0')}/${String(mes+1).padStart(2,'0')}/${ano}: ${label}; ${counts[iso] || 0} atendimentos`);
+                const number = document.createElement('b'), hours = document.createElement('span'), count = document.createElement('span'); number.textContent = String(day); hours.textContent = label; hours.style.fontSize = '11px'; count.className = 'agendamento-count'; count.textContent = String(counts[iso] || 0); button.append(number, hours, count);
+                button.addEventListener('click', () => { if (current() && inside) ajustarDia(iso); }); fragment.append(button);
+            }
+            corpo.replaceChildren(fragment); status.textContent = 'Horários efetivos, incluindo feriados e ajustes. Deslize a grade no celular. Atendimentos devem terminar dentro do expediente.';
+        }).catch(() => { if (current()) { corpo.replaceChildren(); status.textContent = 'Não foi possível confirmar o expediente. Selecione novamente o mês; nenhuma configuração foi alterada.'; } });
     }
 
-    function ajustarDia(data) { dataSelecionadaExpediente = data; document.getElementById('tituloDiaEspecial').innerText = data; document.getElementById('modalDiaEspecial').style.display = "flex"; }
-    
-    function salvarConfigDia() {
+    let specialDayReady = false, specialDayQueryVersion = 0;
+    function ajustarDia(data) {
+        if (!adminAuthorized || !/^\d{4}-\d{2}-\d{2}$/.test(data)) return;
+        dataSelecionadaExpediente = data; specialDayReady = false;
+        const queryVersion = ++specialDayQueryVersion, generation = authGeneration, modal = document.getElementById('modalDiaEspecial'), save = modal.querySelector('[data-event-click="legacyEvent23"]');
+        const status = document.getElementById('e_status'), start = document.getElementById('e_inicio'), end = document.getElementById('e_fim');
+        document.getElementById('tituloDiaEspecial').textContent = data.split('-').reverse().join('/');
+        status.value = 'padrao'; start.value = ''; end.value = ''; status.disabled = start.disabled = end.disabled = save.disabled = true;
+        document.getElementById('divHorariosEspeciais').style.display = 'none'; modal.style.display = 'flex';
+        document.getElementById('specialDayStatus').textContent = 'Consultando configuração desta data…';
+        const current = () => specialDayQueryVersion === queryVersion && adminAuthorized && authGeneration === generation && dataSelecionadaExpediente === data && modal.style.display === 'flex';
+        database.ref('expediente/config/' + data).once('value').then(snapshot => {
+            if (!current()) return;
+            const value = snapshot.val() || {status:'padrao'};
+            if (!['padrao','fechado','especial'].includes(value.status)) throw new Error('Configuração inválida');
+            const normalize = v => typeof v === 'string' ? v.padStart(5,'0') : '';
+            const a=normalize(value.inicio),b=normalize(value.fim);
+            if(value.status==='especial'&&(!/^([01]\d|2[0-3]):[0-5]\d$/.test(a)||!/^([01]\d|2[0-3]):[0-5]\d$/.test(b)))throw new Error('Configuração inválida');
+            status.value=value.status;start.value=a;end.value=b;
+            document.getElementById('divHorariosEspeciais').style.display=value.status==='especial'?'block':'none';
+            status.disabled=start.disabled=end.disabled=save.disabled=false;specialDayReady={generation,data,queryVersion};
+            document.getElementById('specialDayStatus').textContent='Configuração atual carregada. Alterações só serão aplicadas ao salvar.';
+        }).catch(()=>{if(current())document.getElementById('specialDayStatus').textContent='Não foi possível consultar esta data. Feche e tente novamente; nada foi alterado.';});
+    }
+
+    function salvarConfigDia() { if (!adminAuthorized || !specialDayReady || specialDayReady.generation !== authGeneration || specialDayReady.data !== dataSelecionadaExpediente || specialDayReady.queryVersion !== specialDayQueryVersion || document.getElementById("modalDiaEspecial").style.display !== "flex") return;
         const conf = { status: document.getElementById('e_status').value, inicio: document.getElementById('e_inicio').value, fim: document.getElementById('e_fim').value };
         database.ref('expediente/config/' + dataSelecionadaExpediente).set(conf).then(() => { fecharModais(); gerarCalendarioVisivel(); });
     }
@@ -1365,5 +1425,15 @@ document.addEventListener("input", event => { const el = event.target.closest("[
 if (id === "legacyEvent36") { mascaraTel(el); }
 }, true);
 </script>
-</body>
-</html>
+
+
+<script id="dialog-keyboard-review">// Keyboard-only UI enhancement. Uses existing close controls; no writes or auth changes.
+(function(){
+ const modals=[...document.querySelectorAll('.modal')], opened=new Map();let active=null;
+ const visible=el=>{for(let n=el;n&&n.nodeType===1;n=n.parentElement)if(n.hidden||getComputedStyle(n).display==='none'||getComputedStyle(n).visibility==='hidden')return false;return true;};
+ const focusables=modal=>[...modal.querySelectorAll('button,[href],input,select,textarea,[tabindex]')].filter(e=>!e.disabled&&e.tabIndex>=0&&visible(e));
+ function refresh(){for(const modal of modals){const now=visible(modal);if(now&&!opened.has(modal)){opened.set(modal,document.activeElement);modal.setAttribute('aria-hidden','false');active=modal;const first=focusables(modal)[0]||modal;first.focus();}else if(!now&&opened.has(modal)){const previous=opened.get(modal);opened.delete(modal);modal.setAttribute('aria-hidden','true');if(active===modal){active=[...opened.keys()].at(-1)||null;if(previous?.isConnected&&visible(previous))previous.focus();else if(active)(focusables(active)[0]||active).focus();}}}}
+ modals.forEach(m=>new MutationObserver(refresh).observe(m,{attributes:true,attributeFilter:['style','hidden','class']}));
+ document.addEventListener('keydown',e=>{if(!active||!visible(active))return;if(e.key==='Escape'){const close=active.querySelector('.close-modal');if(close){e.preventDefault();close.click();}}else if(e.key==='Tab'){const list=focusables(active),first=list[0],last=list.at(-1);if(!first){e.preventDefault();active.focus();}else if(e.shiftKey&&(document.activeElement===first||!active.contains(document.activeElement))){e.preventDefault();last.focus();}else if(!e.shiftKey&&(document.activeElement===last||!active.contains(document.activeElement))){e.preventDefault();first.focus();}}});refresh();
+})();
+</script></body></html>
