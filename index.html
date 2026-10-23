@@ -3,209 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exclusiva Noivas | Grife Internacional</title>
-    <!-- Google tag: AW no src (detecção Tag Manager/Ads); GA4 em gtag-init.js -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-11113682948"></script>
-    <script src="js/gtag-init.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
-    <style>
-        :root { 
-            --gold: #b89754; 
-            --gold-gradient: linear-gradient(135deg, #b89754 0%, #d4af37 50%, #b89754 100%);
-            --dark: #1a1a1a; 
-            --text-gray: #444;
-            --glass: rgba(255, 255, 255, 0.85);
-        }
-        
-        body { 
-            font-family: 'Garamond', serif; 
-            margin: 0; 
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 20px;
-            background: linear-gradient(rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.4)), 
-                        url('fundo.png');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-        }
-
-        .profile-container {
-            text-align: center;
-            max-width: 400px;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 50px 30px;
-            border-radius: 4px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(184, 151, 84, 0.2);
-        }
-
-        .logo {
-            width: 220px;
-            margin-bottom: 25px;
-        }
-
-        .pronovias-section {
-            border-top: 1px solid #eee;
-            border-bottom: 1px solid #eee;
-            padding: 20px 0;
-            margin-bottom: 40px;
-        }
-
-        .badge-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 8px;
-        }
-
-        .flag-icon {
-            width: 22px;
-            height: auto;
-            border-radius: 2px;
-        }
-
-        .grife-badge {
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: var(--dark);
-            font-weight: bold;
-        }
-
-        .grife-desc {
-            font-size: 15px;
-            color: var(--text-gray);
-            display: block;
-            font-style: italic;
-            font-weight: 500;
-        }
-
-        .cta-title {
-            text-transform: uppercase;
-            letter-spacing: 6px;
-            font-size: 14px;
-            margin-bottom: 30px;
-            color: var(--gold);
-            font-weight: 400;
-        }
-
-        .links-wrapper {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .link-card {
-            background: white;
-            border: 1px solid #e0e0e0;
-            padding: 18px;
-            text-decoration: none;
-            color: var(--dark);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-size: 11px;
-            font-weight: bold;
-            transition: all 0.4s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 2px;
-        }
-
-        .btn-gold {
-            background: var(--gold-gradient);
-            color: white;
-            border: none;
-            box-shadow: 0 4px 15px rgba(184, 151, 84, 0.3);
-            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
-        }
-
-        .link-card:hover {
-            border-color: var(--gold);
-            background-color: #fffdfa;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-        }
-
-        .btn-gold:hover {
-            filter: brightness(1.1);
-            box-shadow: 0 8px 25px rgba(184, 151, 84, 0.5);
-        }
-
-        .footer-info {
-            margin-top: 45px;
-            text-align: center;
-            font-size: 11px;
-            color: #777;
-            line-height: 1.8;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .cnpj-tag {
-            display: block;
-            margin-top: 12px;
-            font-weight: bold;
-            color: var(--gold);
-        }
-
-        @media (max-width: 480px) {
-            .profile-container { padding: 40px 20px; }
-            .logo { width: 180px; }
-        }
-    </style>
+    <title>Exclusiva Noivas | Vestidos de noiva em Marília</title>
+    
+    <meta name="description" content="Aluguel de vestidos de noiva em Marília. Vestidos Pronovias e St. Patrick e curadoria exclusiva de vestidos nacionais na Exclusiva Noivas.">
+    
+    
+    
+    
+    
+    <link rel="stylesheet" href="/public-design.css">
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-11113682948"></script>
+<script src="js/gtag-init.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 </head>
 <body>
-
-    <div class="profile-container">
-        <img src="logo.png" alt="Exclusiva Noivas" class="logo">
-        
-        <div class="pronovias-section">
-            <div class="badge-wrapper">
-                <img src="espanha.png" alt="Espanha" class="flag-icon">
-                <span class="grife-badge">GRUPO PRONOVIAS BARCELONA</span>
-            </div>
-            <span class="grife-desc">A maior referência mundial em moda noiva</span>
-        </div>
-        
-        <h3 class="cta-title">Seja Exclusiva</h3>
-
-        <div class="links-wrapper">
-            <a href="agenda.html" class="link-card btn-gold" onclick="registrarClique('agendar_horario')">
-                💍 Agendar um Horário
-            </a>
-
-            <a href="https://wa.me/5514997105505?text=Olá Gostaria de Conversar com uma Consultora" 
-               target="_blank" class="link-card" onclick="registrarClique('falar_consultora')">
-                💬 Falar com uma Consultora
-            </a>
-
-            <a href="https://www.instagram.com/exclusivanoivas.marilia/" 
-               target="_blank" class="link-card" onclick="registrarClique('instagram')">
-                📸 Instagram Oficial
-            </a>
-
-            <a href="https://www.google.com/maps/dir/?api=1&destination=Avenida+Rio+Branco+481+Marilia+SP" 
-               target="_blank" class="link-card" onclick="registrarClique('localizacao')">
-                📍 Localização da Loja
-            </a>
-        </div>
-
-        <div class="footer-info">
-            <p>Avenida Rio Branco, 481 - Marília/SP<br>
-            Seg a Sex: 09:30 às 17:00 | Sáb: 09:00 às 16:00</p>
-            <span class="cnpj-tag">CNPJ: 24.508-035/0001-02</span>
-        </div>
+<a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+<header class="site-header wrap">
+  <a class="brand" href="/" aria-label="Exclusiva Noivas — início"><img src="/logo.png" width="1426" height="450" alt="Exclusiva Noivas"></a>
+  <nav aria-label="Navegação principal"><a href="#sua-visita">Sua visita</a><a href="#encontre">Nosso espaço</a><a class="nav-book" href="/agenda.html" onclick="registrarClique('agendar_horario')">Agendar horário <span aria-hidden="true">↗</span></a></nav>
+</header>
+<main id="conteudo">
+  <section class="hero wrap" aria-labelledby="hero-title">
+    <div class="hero-copy">
+      <p class="eyebrow">EXCLUSIVA NOIVAS · MARÍLIA</p>
+      <h1 id="hero-title">O seu vestido.<br>A sua história.<br><em>Seu momento.</em></h1>
+      <p class="intro">O encontro com o vestido começa com você. Conheça a Exclusiva Noivas e dê o próximo passo para a sua escolha.</p>
+      <a class="button primary" href="/agenda.html" onclick="registrarClique('agendar_horario')">Agendar meu horário <span aria-hidden="true">↗</span></a>
+      <a class="text-link" href="https://wa.me/5514997105505?text=Olá%20Gostaria%20de%20Conversar%20com%20uma%20Consultora" target="_blank" rel="noopener noreferrer" onclick="registrarClique('falar_consultora')">Prefere conversar? Fale com uma consultora <span aria-hidden="true">↗</span></a>
     </div>
-
-    <script>
+    <figure class="hero-visual"><img src="/fundo.png" width="1024" height="1024" alt="Detalhe delicado de renda floral em um vestido de noiva" fetchpriority="high"><figcaption>Beleza que se revela nos detalhes.</figcaption></figure>
+  </section>
+  <section class="brand-strip wrap" aria-label="Marcas"><p class="eyebrow">MODA NOIVA INTERNACIONAL</p><div class="brand-logos"><img class="pronovias-logo" src="/brands/pronovias-official.svg" alt="Pronovias" width="180" height="30" loading="lazy"><img class="st-patrick-logo" src="/brands/st-patrick-official.svg" alt="House of St. Patrick" width="657" height="595" loading="lazy"></div><div class="national-curation"><p class="eyebrow">SELEÇÃO EXCLUSIVA NOIVAS</p><p>Curadoria exclusiva<br>de vestidos nacionais</p></div></section>
+  <section class="visit-section wrap" id="sua-visita" aria-labelledby="visit-title">
+    <div class="section-intro"><p class="eyebrow">UM PASSO DE CADA VEZ</p><h2 id="visit-title">Uma visita que<br>começa <em>com você.</em></h2><p>Da escolha do horário aos detalhes que importam, prepare esse encontro do seu jeito.</p></div>
+    <ol class="visit-steps">
+      <li><span class="step-no" aria-hidden="true">01</span><div><h3>Escolha seu horário</h3><p>Envie sua solicitação de agendamento. A equipe entrará em contato para confirmar os detalhes da visita.</p><a class="inline-link" href="/agenda.html" onclick="registrarClique('agendar_horario')">Solicitar um horário <span aria-hidden="true">↗</span></a></div></li>
+      <li><span class="step-no" aria-hidden="true">02</span><div><h3>Conte um pouco sobre você</h3><p>Pense nos estilos e detalhes que você gostaria de experimentar e compartilhe suas preferências com a equipe durante a visita.</p></div></li>
+      <li><span class="step-no" aria-hidden="true">03</span><div><h3>Conheça nosso espaço</h3><p>Com o horário confirmado, esperamos você na Exclusiva Noivas, em Marília.</p></div></li>
+    </ol>
+  </section>
+  <section class="space" id="encontre" aria-labelledby="space-title"><div class="space-inner wrap">
+    <div><p class="eyebrow">ESPERAMOS VOCÊ</p><h2 id="space-title">Conheça nosso espaço</h2><a class="button primary" href="/agenda.html" onclick="registrarClique('agendar_horario')">Agendar uma visita <span aria-hidden="true">↗</span></a></div>
+    <div class="location-details"><h3>Exclusiva Noivas</h3><address>Avenida Rio Branco, 481<br>Marília · São Paulo</address><p>Segunda a sexta · 09:30 às 17:00<br>Sábado · 09:00 às 16:00</p><a class="inline-link" href="https://www.google.com/maps/dir/?api=1&amp;destination=Avenida+Rio+Branco+481+Marilia+SP" target="_blank" rel="noopener noreferrer" onclick="registrarClique('localizacao')">Como chegar <span aria-hidden="true">↗</span></a></div>
+  </div></section>
+</main>
+<footer class="site-footer wrap"><div><a class="brand" href="/" aria-label="Exclusiva Noivas — início"><img src="/logo.png" width="1426" height="450" alt="Exclusiva Noivas" loading="lazy"></a><div class="brand-logos"><img class="pronovias-logo" src="/brands/pronovias-official.svg" alt="Pronovias" width="180" height="30" loading="lazy"><img class="st-patrick-logo" src="/brands/st-patrick-official.svg" alt="House of St. Patrick" width="657" height="595" loading="lazy"></div></div><nav aria-label="Contato e redes sociais"><a href="https://wa.me/5514997105505?text=Olá%20Gostaria%20de%20Conversar%20com%20uma%20Consultora" target="_blank" rel="noopener noreferrer" onclick="registrarClique('falar_consultora')">WhatsApp ↗</a><a href="https://www.instagram.com/exclusivanoivas.marilia/" target="_blank" rel="noopener noreferrer" onclick="registrarClique('instagram')">Instagram ↗</a></nav><p class="business-id">CNPJ: 24.508-035/0001-02</p></footer>
+    
+<script>
         const firebaseConfig = { 
             apiKey: "AIzaSyC8MacELfK0_avvpWIWBHZpJO_WYqhjOaE", 
             authDomain: "exclusiva-noivas---agendamento.firebaseapp.com", 
