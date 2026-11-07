@@ -3,9 +3,9 @@
  */
 export const RESPONSE_PATH = 'checklistV1/responses';
 const ID = /^[a-f0-9-]{36}$/;
-export const responseLabels = Object.freeze({name:'Nome',size:'Numeração que costuma vestir',eventDate:'Data da cerimônia',eventTime:'Horário da cerimônia',fittings:'Experiência com provas',stage:'Momento da escolha',stageOther:'Seu momento',companions:'Acompanhantes',companionWho:'Quem vem com você',silhouette:'Silhuetas',style:'Caimentos e estilos',styleOther:'Outro estilo',color:'Cores',details:'Detalhes',detailsOther:'Outros detalhes',veil:'Véu',neckline:'Decotes',necklineOther:'Outro decote',sleeves:'Mangas e alças',sleevesOther:'Outras mangas ou alças',budget:'Investimento confortável',concerns:'O que gostaria de esclarecer',decisionPeople:'Pessoas importantes na escolha',cerimonialista:'Cerimonialista'});
+export const responseLabels = Object.freeze({name:'Nome',city:'Cidade onde você mora',size:'Numeração que costuma vestir',eventDate:'Data da cerimônia',eventTime:'Horário da cerimônia',fittings:'Experiência com provas',stage:'Momento da escolha',stageOther:'Seu momento',companions:'Acompanhantes',companionWho:'Quem vem com você',silhouette:'Silhuetas',style:'Caimentos e estilos',styleOther:'Outro estilo',color:'Cores',details:'Detalhes',detailsOther:'Outros detalhes',veil:'Véu',neckline:'Decotes',necklineOther:'Outro decote',sleeves:'Mangas e alças',sleevesOther:'Outras mangas ou alças',budget:'Investimento confortável',concerns:'O que gostaria de esclarecer',decisionPeople:'Pessoas importantes na escolha',cerimonialista:'Cerimonialista'});
 const FIELD_GROUPS = [
- ['Sobre a noiva',['name','size','eventDate','eventTime','fittings','stage','stageOther']],
+ ['Sobre a noiva',['name','city','size','eventDate','eventTime','fittings','stage','stageOther']],
  ['Seu vestido',['silhouette','style','styleOther','color','details','detailsOther','veil','neckline','necklineOther','sleeves','sleevesOther']],
  ['Sua visita',['companions','companionWho','budget','concerns','decisionPeople','cerimonialista']]
 ];
